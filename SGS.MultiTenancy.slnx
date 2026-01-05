@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SGS.MultiTenancy.Core/SGS.MultiTenancy.Core.csproj" Id="f17f6344-0a46-4be7-a0a0-3c98057eb5c8" />
+  <Project Path="SGS.MultiTenancy.Infra/SGS.MultiTenancy.Infra.csproj" Id="f507189b-b5f9-41ca-8fb3-e5d321eebc67" />
+  <Project Path="SGS.MultiTenancy.UI/SGS.MultiTenancy.UI.csproj" />
+</Solution>
