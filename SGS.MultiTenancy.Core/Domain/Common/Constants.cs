@@ -17,6 +17,10 @@
         /// </summary>
         public const string PhoneNumber = "Phone Number";
 
+        public const string AddressLine = "Address Line";
+
+        public const string PostalCode = "Postal Code";
+
         #endregion
 
         #region Display Error Messages
