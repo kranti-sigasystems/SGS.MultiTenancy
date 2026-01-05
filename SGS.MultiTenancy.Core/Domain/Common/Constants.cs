@@ -17,8 +17,14 @@
         /// </summary>
         public const string PhoneNumber = "Phone Number";
 
+        /// <summary>
+        /// Gets the address line display label.
+        /// </summary>
         public const string AddressLine = "Address Line";
 
+        /// <summary>
+        /// Gets the postal code display label.
+        /// </summary>
         public const string PostalCode = "Postal Code";
 
         #endregion

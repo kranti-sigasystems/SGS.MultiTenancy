@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,7 +21,6 @@ namespace SGS.MultiTenancy.Core.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = Constants.RequiredErrorMessage)]
         [MaxLength(50, ErrorMessage = Constants.MaxErrorMessage)]
-        [DisplayName("Country Name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -28,12 +28,11 @@ namespace SGS.MultiTenancy.Core.Domain.Entities
         /// </summary>
         [Required(ErrorMessage = Constants.RequiredErrorMessage)]
         [MaxLength(5, ErrorMessage = Constants.MaxErrorMessage)]
-        [DisplayName("Country Code")]
         public string Code { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the country is active.
+        /// Gets or sets status of tenant.
         /// </summary>
-        public bool IsActive { get; set; } = true;
+        public EntityStatus Status { get; set; }
     }
 }

@@ -17,12 +17,6 @@ namespace SGS.MultiTenancy.Core.Entities.Common
         public Guid ID { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier of the city this address belongs to.
-        /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
-        public Guid CityID { get; set; }
-
-        /// <summary>
         /// Gets or sets the address line (e.g., street name and number).
         /// </summary>
         [Required(ErrorMessage = Constants.RequiredErrorMessage)]
@@ -41,6 +35,6 @@ namespace SGS.MultiTenancy.Core.Entities.Common
         /// <summary>
         /// Gets or sets the city associated with this address.
         /// </summary>
-        public City City { get; set; }
+        public string City { get; set; }
     }
 }
