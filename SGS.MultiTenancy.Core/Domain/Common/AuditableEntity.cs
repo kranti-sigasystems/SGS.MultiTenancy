@@ -1,5 +1,8 @@
 ﻿namespace SGS.MultiTenancy.Core.Domain.Common
 {
+    /// <summary>
+    /// Represents a base entity that includes audit information.
+    /// </summary>
     public abstract class AuditableEntity
     {
         /// <summary>
