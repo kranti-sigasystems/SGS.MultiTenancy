@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Infra.DataContext;
+using System;
+
 namespace SGS.MultiTenancy.UI
 {
     public class Program
@@ -8,6 +12,15 @@ namespace SGS.MultiTenancy.UI
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(
+                    builder.Configuration.GetConnectionString("DefaultConnection")
+                )
+            ));
+            
 
             var app = builder.Build();
 

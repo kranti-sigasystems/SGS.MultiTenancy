@@ -10,8 +10,8 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
     public class Permission : AuditableEntity
     { 
         /// <summary>
-      /// Gets or sets the unique identifier of the permission.
-      /// </summary>
+        /// Gets or sets the unique identifier of the permission.
+        /// </summary>
         [Key]
         public Guid ID { get; set; }
 
