@@ -19,17 +19,15 @@ namespace SGS.MultiTenancy.Core.Entities.Common
         /// <summary>
         /// Gets or sets the address line (e.g., street name and number).
         /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
-        [MaxLength(250, ErrorMessage = Constants.MaxErrorMessage)]
-        [DisplayName(Constants.AddressLine)]
+        [Required]
+        [MaxLength(250)]
         public string AddressLine { get; set; }
 
         /// <summary>
         /// Gets or sets the postal code of the address.
         /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
-        [MaxLength(10, ErrorMessage = Constants.MaxErrorMessage)]
-        [DisplayName(Constants.PostalCode)]
+        [Required]
+        [MaxLength(10)]
         public string PostalCode { get; set; }
 
         /// <summary>
