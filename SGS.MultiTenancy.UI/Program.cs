@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
 using SGS.MultiTenancy.UI.Infrastructure;
 using SGS.MultiTenancy.UI.Middleware;
@@ -20,16 +22,15 @@ namespace SGS.MultiTenancy.UI
             builder.Services.AddScoped<ITenantProvider, HttpContextTenantProvider>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseMySql(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
-                    ServerVersion.AutoDetect(
-                        builder.Configuration.GetConnectionString("DefaultConnection")
-                    )
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(
+                    builder.Configuration.GetConnectionString("DefaultConnection")
                 )
-            );
+            ));
 
-            // Register global exception middleware so it can be added to the pipeline if needed
-            // (we will add it in the pipeline below)
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+            builder.Services.AddInfrastructureDependencies();
 
             var app = builder.Build();
 
