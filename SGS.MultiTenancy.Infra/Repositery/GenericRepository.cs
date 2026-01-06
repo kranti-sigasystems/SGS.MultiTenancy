@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Infra.DataContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,12 @@ namespace SGS.MultiTenancy.Infra.Repositery
     /// This repository implements the Repository Pattern to abstract data access logic.
     /// It provides automatic audit trail support and soft delete functionality.
     /// </remarks>
-    public class GenericRepository<TDbContext, TEntity> : IGenericRepository<TEntity>
-        where TDbContext : DbContext
-        where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         /// <summary>
         /// The database context instance used by this repository.
         /// </summary>
-        protected readonly TDbContext _dbContext;
+        protected readonly AppDbContext _dbContext;
 
         /// <summary>
         /// The DbSet for the entity type managed by this repository.
@@ -38,7 +37,7 @@ namespace SGS.MultiTenancy.Infra.Repositery
         /// </summary>
         /// <param name="dbContext">The database context to be used by this repository.</param>
         /// <exception cref="ArgumentNullException">Thrown when dbContext is null.</exception>
-        public GenericRepository(TDbContext dbContext)
+        public GenericRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _dbSet = _dbContext.Set<TEntity>();

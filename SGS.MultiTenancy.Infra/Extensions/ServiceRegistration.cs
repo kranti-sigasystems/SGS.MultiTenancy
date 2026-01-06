@@ -10,11 +10,17 @@ namespace SGS.MultiTenancy.Infa.Extension
 {
     public static class ServiceRegistration
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+        /// <summary>
+        /// Adds infrastructure services to the dependency injection container.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        /// <returns>Updated service collection.</returns>
+        public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor(); // Needed if you use IHttpContextAccessor
 
             // Register Generic Repository
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<,>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             // Register Specific Repositories
             services.AddScoped<IAddressRepository, AddressRepository>();
@@ -24,6 +30,11 @@ namespace SGS.MultiTenancy.Infa.Extension
             // Register Services
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<ICountryService, CountryService>();
+            services.AddScoped<IStateService, StateService>();
+            services.AddScoped<ITenantProvider, TenantProvider>();
+
+            // Register JwtTokenGenerator Services
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
             return services;
         }

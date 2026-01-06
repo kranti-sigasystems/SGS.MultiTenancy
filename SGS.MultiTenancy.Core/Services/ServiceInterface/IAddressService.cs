@@ -70,7 +70,7 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// A task that represents the asynchronous operation.
         /// The task result contains a list of matching <see cref="Address"/> entities.
         /// </returns>
-        Task<List<Address>> SearchAddresses(string city, string postalCode);
+        List<Address> SearchAddresses(string city, string postalCode);
 
         /// <summary>
         /// Validates the given address based on business rules.

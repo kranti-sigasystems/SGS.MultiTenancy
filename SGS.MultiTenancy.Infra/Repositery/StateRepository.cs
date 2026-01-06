@@ -15,7 +15,7 @@ namespace SGS.MultiTenancy.Infra.Repositery
     /// Provides Entity Framework Core–based data access operations
     /// including country associations and status filtering.
     /// </summary>
-    public class StateRepository : GenericRepository<AppDbContext, State>, IStateRepository
+    public class StateRepository : GenericRepository<State>, IStateRepository
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StateRepository"/> class.

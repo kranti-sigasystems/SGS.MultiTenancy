@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
-using System;
 
 namespace SGS.MultiTenancy.UI
 {
@@ -21,8 +20,7 @@ namespace SGS.MultiTenancy.UI
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             ));
-
-            ServiceRegistration.AddInfrastructureServices(builder.Services);
+            ServiceRegistration.AddInfrastructureDependencies(builder.Services);
 
             var app = builder.Build();
 

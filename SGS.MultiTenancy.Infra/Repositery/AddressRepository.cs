@@ -14,7 +14,7 @@ namespace SGS.MultiTenancy.Infra.Repositery
     /// Repository implementation for managing <see cref="Address"/> entity data access operations.
     /// Provides address-specific data access methods in addition to the generic CRUD operations.
     /// </summary>
-    public class AddressRepository : GenericRepository<AppDbContext, Address>, IAddressRepository
+    public class AddressRepository : GenericRepository<Address>, IAddressRepository
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddressRepository"/> class.

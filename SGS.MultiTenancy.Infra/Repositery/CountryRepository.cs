@@ -15,7 +15,7 @@ namespace SGS.MultiTenancy.Infra.Repositery
     /// Repository implementation for managing <see cref="Country"/> entity data access operations.
     /// Provides country-specific data access methods in addition to the generic CRUD operations.
     /// </summary>
-    public class CountryRepository : GenericRepository<AppDbContext, Country>, ICountryRepository
+    public class CountryRepository : GenericRepository<Country>, ICountryRepository
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CountryRepository"/> class.
