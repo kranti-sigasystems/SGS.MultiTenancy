@@ -62,12 +62,12 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         // <summary>
         /// Gets or sets address identifier.
         /// </summary>
-        public Guid AddressID { get; set; }
+        public Guid? AddressID { get; set; }
 
         /// <summary>
         /// Gets or sets address.
         /// </summary>
-        public Address Address { get; set; }
+        public Address? Address { get; set; }
 
         /// <summary>
         /// Gets or sets the roles assigned to the user.

@@ -1,9 +1,16 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
 {
     public class UserRoles : AuditableEntity
     {
+        /// <summary>
+        /// Gets or sets the unique identifier of the permission.
+        /// </summary>
+        [Key]
+        public Guid ID { get; set; }
+
         /// <summary>
         /// Gets or sets user identifier.
         /// </summary>
@@ -24,6 +31,9 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// </summary>
         public Role Role { get; set; }
 
+        /// <summary>
+        /// Gets or sets tenant identifier.
+        /// </summary>
         public Guid TenantID { get; set; }
     }
 }

@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Infa.Extension;
+using SGS.MultiTenancy.Infra.DataContext;
+
 namespace SGS.MultiTenancy.UI
 {
     public class Program
@@ -8,7 +13,16 @@ namespace SGS.MultiTenancy.UI
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseMySql(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                ServerVersion.AutoDetect(
+                    builder.Configuration.GetConnectionString("DefaultConnection")
+                )
+            ));
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+            builder.Services.AddInfrastructureDependencies();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

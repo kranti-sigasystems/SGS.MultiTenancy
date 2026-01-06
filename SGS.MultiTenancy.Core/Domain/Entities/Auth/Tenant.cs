@@ -32,7 +32,6 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// </summary>
         [Required(ErrorMessage = Constants.RequiredErrorMessage)]
         [MaxLength(100, ErrorMessage = Constants.MaxErrorMessage)]
-        [EmailAddress(ErrorMessage = Constants.EmailErrorMessage)]
         public string Email { get; set; }
 
         /// <summary>
