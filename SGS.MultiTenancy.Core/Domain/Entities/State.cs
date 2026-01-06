@@ -19,20 +19,20 @@ namespace SGS.MultiTenancy.Core.Domain.Entities
         /// <summary>
         /// Gets or sets the identifier of the country this state belongs to.
         /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        [Required]
         public Guid CountryID { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the state.
         /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
-        [MaxLength(50, ErrorMessage = Constants.MaxErrorMessage)]
+        [Required]
+        [MaxLength(50)]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the optional code of the state (e.g., abbreviation).
         /// </summary>
-        [MaxLength(10, ErrorMessage = Constants.MaxErrorMessage)]
+        [MaxLength(10)]
         public string? Code { get; set; }
 
         /// <summary>

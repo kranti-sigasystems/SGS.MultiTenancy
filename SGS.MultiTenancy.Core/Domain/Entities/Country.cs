@@ -19,15 +19,15 @@ namespace SGS.MultiTenancy.Core.Domain.Entities
         /// <summary>
         /// Gets or sets the name of the country.
         /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
-        [MaxLength(50, ErrorMessage = Constants.MaxErrorMessage)]
+        [Required]
+        [MaxLength(50)]
         public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the code of the country (e.g., ISO code).
         /// </summary>
-        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
-        [MaxLength(5, ErrorMessage = Constants.MaxErrorMessage)]
+        [Required]
+        [MaxLength(5)]
         public string Code { get; set; }
 
         /// <summary>
