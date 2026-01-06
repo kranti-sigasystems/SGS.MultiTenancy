@@ -27,6 +27,11 @@
         /// </summary>
         public const string PostalCode = "Postal Code";
 
+        /// <summary>
+        /// Gets the tenant identifier const..
+        /// </summary>
+        public const string TenantID = "TenantID";
+
         #endregion
 
         #region Display Error Messages

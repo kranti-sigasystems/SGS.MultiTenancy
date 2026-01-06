@@ -7,6 +7,9 @@ namespace SGS.MultiTenancy.Infra.DataContext
 {
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
+        /// <summary>
+        /// Creates a configured <see cref="AppDbContext"/> instance for design-time operations.
+        /// </summary>
         public AppDbContext CreateDbContext(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
@@ -14,12 +17,12 @@ namespace SGS.MultiTenancy.Infra.DataContext
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            DbContextOptionsBuilder<AppDbContext> optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseMySql(
                 connectionString,
-                new MySqlServerVersion(new Version(8,0,44)) // 👈 IMPORTANT
+                new MySqlServerVersion(new Version(8,0,44))
             );
 
             return new AppDbContext(
@@ -29,8 +32,14 @@ namespace SGS.MultiTenancy.Infra.DataContext
         }
     }
 
+    /// <summary>
+    /// Tenant provider used only during design time operations.
+    /// </summary>
     internal sealed class DesignTimeTenantProvider : ITenantProvider
     {
+        /// <summary>
+        /// Returns an empty tenant identifier to disable tenant filtering.
+        /// </summary>
         public Guid TenantId => Guid.Empty;
     }
 }
