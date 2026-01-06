@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
+using SGS.MultiTenancy.UI.Infrastructure;
+using SGS.MultiTenancy.UI.Middleware;
 
 namespace SGS.MultiTenancy.UI
 {
@@ -14,6 +17,10 @@ namespace SGS.MultiTenancy.UI
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
+
+            // Register tenant provider and DbContext
+            builder.Services.AddScoped<ITenantProvider, HttpContextTenantProvider>();
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(
                 builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -31,9 +38,11 @@ namespace SGS.MultiTenancy.UI
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // Add our global exception middleware first
+            app.UseGlobalExceptionHandling();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
