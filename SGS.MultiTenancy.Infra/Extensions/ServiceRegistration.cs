@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Infra.Repositery;
+using SGS.MultiTenancy.Infra.Repository;
 
 namespace SGS.MultiTenancy.Infa.Extension
 {
