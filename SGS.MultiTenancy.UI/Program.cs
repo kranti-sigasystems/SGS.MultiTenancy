@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
+using SGS.MultiTenancy.Core.Extension;
 
 namespace SGS.MultiTenancy.UI
 {
@@ -13,7 +14,6 @@ namespace SGS.MultiTenancy.UI
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddHttpContextAccessor();
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(
                 builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -21,8 +21,9 @@ namespace SGS.MultiTenancy.UI
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             ));
-
+            builder.Services.AddHttpContextAccessor(); // Needed if you use IHttpContextAccessor
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+            builder.Services.AddCoreDependencies();
             builder.Services.AddInfrastructureDependencies();
 
             var app = builder.Build();
@@ -40,11 +41,12 @@ namespace SGS.MultiTenancy.UI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Auth}/{action=Login}/{id?}");
 
             app.Run();
         }

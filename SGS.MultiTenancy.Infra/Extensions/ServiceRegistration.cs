@@ -14,12 +14,12 @@ namespace SGS.MultiTenancy.Infa.Extension
         /// <returns>Updated service collection.</returns>
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services)
         {
-            services.AddHttpContextAccessor(); // Needed if you use IHttpContextAccessor
 
             // Register Generic Repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddScoped<ITenantProvider, TenantProvider>();
+            services.AddScoped<IUserRepositery, UserRepositery>();
 
             // Register JwtTokenGenerator Services
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
