@@ -1,0 +1,58 @@
+﻿body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
+    margin: 0;
+}
+
+/* Wrapper */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Card */
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+}
+
+    /* Inputs */
+    .auth-container .form-control {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #d1d5db;
+    }
+
+        .auth-container .form-control:focus {
+            border-color: #2473c7;
+            box-shadow: 0 0 0 3px rgba(36,115,199,0.15);
+        }
+
+    /* Buttons */
+    .auth-container .btn-primary {
+        background-color: #2473c7;
+        border: none;
+        padding: 0.75rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+    }
+
+    .auth-container .btn-outline-secondary {
+        border-radius: 0.5rem;
+        padding: 0.65rem;
+    }
+
+/* Google button */
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
