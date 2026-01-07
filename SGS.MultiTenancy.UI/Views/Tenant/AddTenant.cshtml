@@ -1,0 +1,80 @@
+﻿@model SGS.MultiTenancy.UI.Models.TenantFormViewModel
+
+@{
+    ViewData["Title"] = "Add Tenant";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Header -->
+                <div class="mb-4 text-center">
+                    <h3 class="fw-bold mb-1">Add Tenant</h3>
+                   
+                </div>
+
+                <form asp-action="Create" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name"
+                               class="form-control"
+                               placeholder="Tenant name" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BussinessName" class="form-label fw-semibold"></label>
+                        <input asp-for="BussinessName"
+                               class="form-control"
+                               placeholder="Business name" />
+                        <span asp-validation-for="BussinessName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold"></label>
+                        <input asp-for="Email"
+                               class="form-control"
+                               placeholder="Enter Email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                        <input asp-for="PhoneNumber"
+                               class="form-control"
+                               placeholder="Enter Mobile No" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="AddressId" class="form-label fw-semibold"></label>
+                        <input asp-for="AddressId"
+                               class="form-control"
+                               placeholder="Address ID" />
+                        <span asp-validation-for="AddressId" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                        Create Tenant
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary w-100">
+                        Cancel
+                    </a>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
