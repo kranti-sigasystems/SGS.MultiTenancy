@@ -5,30 +5,17 @@ namespace SGS.MultiTenancy.Infra.Repositery
 {
     public class TenantProvider : ITenantProvider
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        public Guid TenantId { get; }
 
         public TenantProvider(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
-        }
+            string? tenantClaim = httpContextAccessor.HttpContext?
+                .User?
+                .FindFirst("tenant_id")?.Value;
 
-        public Guid TenantId
-        {
-            get
-            {
-                var context = _httpContextAccessor.HttpContext;
-
-                if (context == null || context.User?.Identity?.IsAuthenticated != true)
-                    return Guid.Empty; // SuperAdmin / Host / Migrations
-
-                string? tenantClaim =
-                    context.User.FindFirst("tenantId")?.Value
-                    ?? context.User.FindFirst("tenant_id")?.Value;
-
-                return Guid.TryParse(tenantClaim, out var tenantId)
-                    ? tenantId
-                    : Guid.Empty;
-            }
+            TenantId = string.IsNullOrWhiteSpace(tenantClaim)
+                ? Guid.Empty
+                : Guid.Parse(tenantClaim);
         }
     }
 }
