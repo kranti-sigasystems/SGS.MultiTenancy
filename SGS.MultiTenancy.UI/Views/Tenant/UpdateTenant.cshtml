@@ -1,0 +1,80 @@
+﻿@model SGS.MultiTenancy.UI.Models.TenantFormViewModel
+@using SGS.MultiTenancy.Core.Domain.Enums
+@{
+    ViewData["Title"] = "Edit Tenant";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+
+                <!-- Header -->
+                <div class="mb-4 text-center">
+                    <h3 class="fw-bold mb-1">Edit Tenant</h3>
+                   
+                </div>
+
+                <form asp-action="UpdateTenant" asp-route-id="@Model.Id" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="BussinessName" class="form-label fw-semibold"></label>
+                        <input asp-for="BussinessName" class="form-control" />
+                        <span asp-validation-for="BussinessName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AddressId" class="form-label fw-semibold"></label>
+                        <input asp-for="AddressId" class="form-control" />
+                        <span asp-validation-for="AddressId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Status" class="form-label fw-semibold"></label>
+                        <select asp-for="Status"
+                                asp-items="Html.GetEnumSelectList<EntityStatus>()"
+                                class="form-select">
+                        </select>
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                        Update Tenant
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary w-100">
+                        Cancel
+                    </a>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
