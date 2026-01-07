@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Extension;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
-using SGS.MultiTenancy.Core.Extension;
+using System;
 
 namespace SGS.MultiTenancy.UI
 {
@@ -23,7 +24,6 @@ namespace SGS.MultiTenancy.UI
             ));
             builder.Services.AddHttpContextAccessor(); // Needed if you use IHttpContextAccessor
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
-            builder.Services.AddCoreDependencies();
             builder.Services.AddInfrastructureDependencies();
 
             var app = builder.Build();
