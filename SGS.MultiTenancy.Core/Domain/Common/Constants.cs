@@ -51,10 +51,6 @@
         /// </summary>
         public const string EmailErrorMessage = "Please enter a valid email address";
 
-        /// <summary>
-        /// Gets the minimum length validation error message.
-        /// </summary>
-        public const string MinErrorMessage = "The {0} field must be at least {1} characters.";
         #endregion
     }
 }
