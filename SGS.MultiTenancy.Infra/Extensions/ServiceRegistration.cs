@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
@@ -16,16 +17,14 @@ namespace SGS.MultiTenancy.Infa.Extension
         /// <returns>Updated service collection.</returns>
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services)
         {
-            services.AddHttpContextAccessor(); // Needed if you use IHttpContextAccessor
-
             // Register Generic Repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IUserRepositery, UserRepository>();
 
             services.AddScoped<ITenantProvider, TenantProvider>();
 
             // Register JwtTokenGenerator Services
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
             return services;
         }
     }

@@ -1,9 +1,10 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SGS.MultiTenancy.UI.Models;
 
 namespace SGS.MultiTenancy.UI.Controllers
 {
+    [Authorize (Roles = "SGS_SuperHost")]
     public class TenantController : Controller
     {
         private readonly ILogger<TenantController> _logger;
