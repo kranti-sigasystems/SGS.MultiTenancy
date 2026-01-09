@@ -14,6 +14,7 @@ namespace SGS.MultiTenancy.Core.Extension
         public static IServiceCollection AddCoreDependencies(this IServiceCollection services)
         {
             services.AddScoped<IUserService,UserService>();
+            services.AddScoped<IPasswordHasherService,PasswordHasherService>();
             return services;
         }
     }

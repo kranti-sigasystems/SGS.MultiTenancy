@@ -10,19 +10,5 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="loginRequestDto">The login request data containing user credentials.</param>
         /// <returns>Returns login response dto </returns>
         Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
-
-        /// <summary>
-        /// Generates a secure hash for the specified password.
-        /// </summary>
-        /// <param name="password">The plain text password to hash.</param>
-        /// <returns>A string containing the hashed representation of the password.</returns>
-        string HashPassword(string password);
-        /// <summary>
-        /// Verifies whether the specified password matches the provided hashed password.
-        /// </summary>
-        /// <param name="password">The plain text password to verify.</param>
-        /// <param name="hashedPassword">The hashed password to compare against. Cannot be null.</param>
-        /// <returns>true if the password matches the hashed password; otherwise, false.</returns>
-        bool VerifyPassword(string password, string hashedPassword);
     }
 }

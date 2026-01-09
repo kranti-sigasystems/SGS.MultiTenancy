@@ -3,19 +3,18 @@ using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
-using System.Security.Cryptography;
-using System.Text;
 namespace SGS.MultiTenancy.Core.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepositery _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
-
-        public UserService(IUserRepositery userRepositery, IJwtTokenGenerator jwtTokenGenerator)
+        private readonly IPasswordHasherService _passwordHasherService;
+        public UserService(IUserRepositery userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
+            _passwordHasherService = passwordHasherService;
         }
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         { 
@@ -23,7 +22,7 @@ namespace SGS.MultiTenancy.Core.Services
             x => x.Name.ToLower() == loginRequestDto.UserName.ToLower(),
             query => query.Include(u => u.UserRoles));
            
-            bool isPasswordValid = VerifyPassword(loginRequestDto.Password, user.Password);
+            bool isPasswordValid = _passwordHasherService.VerifyPassword(loginRequestDto.Password, user.Password);
 
             if (!isPasswordValid ||user == null || !user.UserRoles.Any())
             {
@@ -72,18 +71,6 @@ namespace SGS.MultiTenancy.Core.Services
 
             return Response;
         } 
-        public string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            byte[] inputBytes = Encoding.UTF8.GetBytes(password);
-            byte[] hashBytes = sha256.ComputeHash(inputBytes);
-            return Convert.ToHexString(hashBytes);
-        }
-       
-        public  bool VerifyPassword(string enteredPassword, string storedHash)
-        {
-            string enteredPasswordHash = HashPassword(enteredPassword);
-            return enteredPasswordHash.Equals(storedHash, StringComparison.OrdinalIgnoreCase);
-        }
+      
     }
 }
