@@ -1,16 +1,18 @@
-﻿using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
-    public interface IUserService
+    /// <summary>
+    /// Defines methods for securely hashing passwords and verifying password hashes.
+    /// </summary>
+    /// <remarks>The interface is intended to abstract password hashing logic for authentication
+    /// systems.</remarks>
+    public interface IPasswordHasherService
     {
-        /// <summary>
-        /// Authenticates a user using the provided login credentials.
-        /// </summary>
-        /// <param name="loginRequestDto">The login request data containing user credentials.</param>
-        /// <returns>Returns login response dto </returns>
-        Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
-
         /// <summary>
         /// Generates a secure hash for the specified password.
         /// </summary>

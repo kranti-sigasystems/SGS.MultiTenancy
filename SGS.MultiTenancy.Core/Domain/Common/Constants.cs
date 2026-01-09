@@ -34,6 +34,19 @@
 
         #endregion
 
+        #region Role Names
+
+        /// <summary>
+        /// Role identifier for a super administrator.
+        /// </summary>
+        public const string SuperAdminHost = "SGS_SuperHost";
+
+        /// <summary>
+        /// Role identifier for a tenant administrator.
+        /// </summary>
+        public const string TenantHost = "SGS_TenantHost";
+
+        #endregion
         #region Display Error Messages
 
         /// <summary>
@@ -56,5 +69,11 @@
         /// </summary>
         public const string MinErrorMessage = "The {0} field must be at least {1} characters.";
         #endregion
+
+        /// <summary>
+        /// Authentication failed.
+        /// </summary>
+        public const string InvalidLogin = "Login unsuccessful. Please check your credentials.";
+
     }
 }
