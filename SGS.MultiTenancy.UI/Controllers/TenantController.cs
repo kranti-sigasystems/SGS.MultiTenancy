@@ -111,21 +111,21 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             await _tenantService.UpdateAsync(model);
 
-            return Json(new { success = true });
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
-        /// Delete confirmation page (soft delete).
+        /// Performs SOFT DELETE (Status = Deleted).
         /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            Tenant? tenant = await _tenantService.GetByIdAsync(id);
-            if (tenant == null)
-                return NotFound();
+        //[HttpGet]
+        //public async Task<IActionResult> Delete(Guid id)
+        //{
+        //    Tenant? tenant = await _tenantService.GetByIdAsync(id);
+        //    if (tenant == null)
+        //        return NotFound();
 
-            return View(tenant);
-        }
+        //    return View(tenant);
+        //}
 
         /// <summary>
         /// Performs SOFT DELETE (Status = Deleted).
