@@ -1,6 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Entities.Common
@@ -34,5 +33,16 @@ namespace SGS.MultiTenancy.Core.Entities.Common
         /// Gets or sets the city associated with this address.
         /// </summary>
         public string City { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of the state this city belongs to.
+        /// </summary>
+        [Required]
+        public Guid StateID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the state associated with this address.
+        /// </summary>
+        public State State { get; set; }
     }
 }

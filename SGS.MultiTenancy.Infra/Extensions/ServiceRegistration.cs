@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
+using SGS.MultiTenancy.Core.Services;
+using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.Infra.Repositery;
-using SGS.MultiTenancy.Infra.Repository;
 
 namespace SGS.MultiTenancy.Infa.Extension
 {
@@ -17,14 +16,25 @@ namespace SGS.MultiTenancy.Infa.Extension
         /// <returns>Updated service collection.</returns>
         public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             // Register Generic Repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<ITenantService, TenantService>();
+            services.AddScoped<ITenantProvider, TenantProvider>();
+            services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IUserRepositery, UserRepository>();
 
-            services.AddScoped<ITenantProvider, TenantProvider>();
 
             // Register JwtTokenGenerator Services
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            return services;
+        }
+
+        public static IServiceCollection AddCoreDependencies(this IServiceCollection services)
+        {
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             return services;
         }
     }

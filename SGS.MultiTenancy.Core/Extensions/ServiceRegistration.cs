@@ -11,11 +11,11 @@ namespace SGS.MultiTenancy.Core.Extension
         /// </summary>
         /// <param name="services">Service collection.</param>
         /// <returns>Updated service collection.</returns>
-        public static IServiceCollection AddCoreDependencies(this IServiceCollection services)
-        {
-            services.AddScoped<IUserService,UserService>();
-            services.AddScoped<IPasswordHasherService,PasswordHasherService>();
-            return services;
-        }
+        //public static IServiceCollection AddCoreDependencies(this IServiceCollection services)
+        //{
+        //    services.AddScoped<IUserService,UserService>();
+        //    services.AddScoped<IPasswordHasherService,PasswordHasherService>();
+        //    return services;
+        //}
     }
 }

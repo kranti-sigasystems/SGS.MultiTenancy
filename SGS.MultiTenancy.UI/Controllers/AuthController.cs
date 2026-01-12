@@ -81,5 +81,11 @@ namespace SGS.MultiTenancy.UI.Controllers
                 ))
             );
         }
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete("SGS_AuthToken");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Auth");
+        }
     }
 }

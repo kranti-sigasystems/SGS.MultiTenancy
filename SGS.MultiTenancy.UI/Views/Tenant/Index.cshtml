@@ -1,0 +1,166 @@
+﻿@model IEnumerable<SGS.MultiTenancy.Core.Domain.Entities.Auth.Tenant>
+@{
+    ViewData["Title"] = "Tenants";
+}
+
+<div class="d-flex justify-content-end mt-3 mb-3">
+    <a asp-action="AddTenant"
+       class="btn btn-success rounded-pill px-4" style="background-color:#00305f;">
+        Create Tenant
+    </a>
+</div>
+
+<div>
+    <div class="card-body p-0">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Business</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model)
+                {
+                    <tr>
+                        <td>@t.Name</td>
+                        <td>@t.BussinessName</td>
+                        <td>@t.Email</td>
+                        <td>@t.PhoneNumber</td>
+                        <td>@t.Status</td>
+                        <td class="text-center">
+                            <!-- EDIT -->
+                            <button type="button"
+                                    class="btn btn-link text-primary p-0 me-4"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editTenantModal"
+                                    data-id="@t.ID">
+                                <i class="bi bi-pencil-square fs-5"></i>
+                            </button>
+
+                            <!-- DELETE -->
+                            <button type="button"
+                                    class="btn btn-sm btn-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteTenantModal"
+                                    data-tenant-id="@t.ID"
+                                    data-tenant-name="@t.Name">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal fade" id="deleteTenantModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header text-white" style="background-color:#00305f;">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to delete
+                <strong id="tenantName"></strong>?
+                <br />
+                <small class="text-muted">
+                    This will perform a soft delete.
+                </small>
+            </div>
+
+            <div class="modal-footer">
+                <form asp-action="DeleteTenant" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="tenantId" />
+
+                    <button type="submit" class="btn btn-secondary">
+                        Yes, Delete
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- EDIT TENANT MODAL -->
+<div class="modal fade" id="editTenantModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header text-white"
+                 style="background-color:#00305f;">
+                <h5 class="modal-title">Edit Tenant</h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="editTenantBody">
+                <div class="text-center p-3">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        $(document).on('change', '#CountryID', function () {
+            var countryId = $(this).val();
+            var stateDropdown = $('#StateID');
+
+            stateDropdown.empty().append('<option value="">Select State</option>');
+
+            if (countryId) {
+                $.get('/Tenant/GetStates', { countryId: countryId }, function (data) {
+                    $.each(data, function (i, state) {
+                        stateDropdown.append(
+                            $('<option></option>').val(state.value).text(state.text)
+                        );
+                    });
+                });
+            }
+        });
+
+        var deleteModal = document.getElementById('deleteTenantModal');
+
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+
+            var tenantId = button.getAttribute('data-tenant-id');
+            var tenantName = button.getAttribute('data-tenant-name');
+
+            document.getElementById('tenantId').value = tenantId;
+            document.getElementById('tenantName').innerText = tenantName;
+        });
+
+        $('#editTenantModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var tenantId = button.data('id');
+
+            $('#editTenantBody').load('/Tenant/UpdateTenant?id=' + tenantId);
+        });
+    </script>
+}
+
