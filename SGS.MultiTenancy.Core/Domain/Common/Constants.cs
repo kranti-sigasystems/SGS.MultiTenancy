@@ -73,7 +73,7 @@
         /// <summary>
         /// Authentication failed.
         /// </summary>
-        public const string InvalidLogin = "Login unsuccessful. Please check your credentials.";
+        public const string InvalidLogin = "Invalid username or password.";
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using SGS.MultiTenancy.Core.Application.DTOs;
+﻿using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 

@@ -4,7 +4,7 @@ using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Infra.DataContext;
 using System.Linq.Expressions;
 
-namespace SGS.MultiTenancy.Infra.Repositery
+namespace SGS.MultiTenancy.Infra.Repository
 {
     /// <summary>
     /// Provides a generic repository implementation for auditable entities.
@@ -155,7 +155,7 @@ namespace SGS.MultiTenancy.Infra.Repositery
         public async Task<TEntity> AddAsync(TEntity entity)
         {
             entity.CreateOn = DateTime.UtcNow;
-            //entity.CreateBy = _currentUser?.UserId ?? new Guid();
+            entity.CreateBy = _currentUser?.UserId ?? new Guid();
 
             await _dbSet.AddAsync(entity);
             return entity;

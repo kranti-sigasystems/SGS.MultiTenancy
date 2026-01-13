@@ -2,7 +2,7 @@
 using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace SGS.MultiTenancy.Core.Application.DTOs
+namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
 {
     public class TenantFormViewModel
     {

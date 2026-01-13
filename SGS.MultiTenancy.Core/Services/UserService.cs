@@ -7,10 +7,10 @@ namespace SGS.MultiTenancy.Core.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepositery _userRepositery;
+        private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
-        public UserService(IUserRepositery userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService)
+        public UserService(IUserRepository userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;

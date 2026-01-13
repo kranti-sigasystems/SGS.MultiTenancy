@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace SGS.MultiTenancy.Infra.Repositery
+namespace SGS.MultiTenancy.Infra.Repository
 {
     /// <summary>
     /// Generates JSON Web Tokens for authenticated users.

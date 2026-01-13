@@ -3,9 +3,9 @@ using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Infra.DataContext;
 
-namespace SGS.MultiTenancy.Infra.Repositery
+namespace SGS.MultiTenancy.Infra.Repository
 {
-    public class UserRepository : GenericRepository<User>, IUserRepositery
+    public class UserRepository : GenericRepository<User>, IUserRepository
     {
         private readonly AppDbContext _context;
 

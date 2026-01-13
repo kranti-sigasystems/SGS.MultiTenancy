@@ -24,6 +24,14 @@
             <form asp-controller="Auth" asp-action="Login" method="post">
                 @Html.AntiForgeryToken()
 
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @Html.ValidationSummary(false)
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
                 <div class="mb-3">
                     <label class="form-label fw-semibold">User Name</label>
                     <input asp-for="UserName"
