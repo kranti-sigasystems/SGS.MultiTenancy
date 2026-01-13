@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Infra.DataContext;
 using System.Linq.Expressions;

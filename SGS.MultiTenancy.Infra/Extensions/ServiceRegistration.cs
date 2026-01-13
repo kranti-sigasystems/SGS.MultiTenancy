@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Services;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.Infra.Repositery;

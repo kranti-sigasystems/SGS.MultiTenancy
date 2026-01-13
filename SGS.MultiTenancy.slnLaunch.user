@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "SGS.MultiTenancy.Core\\SGS.MultiTenancy.Core.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "SGS.MultiTenancy.Infra\\SGS.MultiTenancy.Infra.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "SGS.MultiTenancy.UI\\SGS.MultiTenancy.UI.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

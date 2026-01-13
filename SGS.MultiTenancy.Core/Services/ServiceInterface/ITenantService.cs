@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
@@ -40,5 +41,10 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// Ensures tenant is hidden from UI but kept in the database.
         /// </summary>
         Task<bool> DeleteAsync(Guid id);
+
+        /// <summary>
+        /// Retrieves a paginated list of active tenants.
+        /// </summary>
+        Task<PagedResult<Tenant>> GetPagedTenantsAsync(int page, int pageSize);
     }
 }

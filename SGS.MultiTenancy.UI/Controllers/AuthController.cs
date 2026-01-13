@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
@@ -21,15 +22,25 @@ namespace SGS.MultiTenancy.UI.Controllers
             _jwtOptions = jwtOptions.Value;
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public  IActionResult Login()
+        public IActionResult Login()
         {
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction(nameof(DashBoardController.Index), Utility.PrepareControllerName(nameof(DashBoardController)));
+            }
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(loginViewModel);
+            }
+
             LoginRequestDto loginRequestDto = new LoginRequestDto()
             {
                 Password = loginViewModel.Password,

@@ -2,34 +2,43 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
 namespace SGS.MultiTenancy.UI.Controllers
 {
-    //[Authorize (Roles = "SGS_SuperHost")]
+    [Authorize (Roles = "SGS_SuperHost")]
     public class TenantController : Controller
     {
         private readonly ILogger<TenantController> _logger;
+        private readonly IConfiguration _configuration;
         private readonly ITenantService _tenantService;
         private readonly ILocationService _locationService;
+        private readonly int _pageSizeFromConfig;
 
-        public TenantController(ILogger<TenantController> logger, ITenantService tenantService, ILocationService locationService)
+        public TenantController(ILogger<TenantController> logger, IConfiguration configuration, ITenantService tenantService, ILocationService locationService)
         {
             _logger = logger;
+            _configuration = configuration;
             _tenantService = tenantService;
             _locationService = locationService;
+            _pageSizeFromConfig = configuration.GetValue<int>("ApiSettings:PageSize", 10);
         }
 
         /// <summary>
         /// Displays the list of all tenants.
         /// </summary>
         /// <returns>A view displaying the list of tenants.</returns>
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int? pageSize = null)
         {
-            IEnumerable<Tenant> tenants = await _tenantService.GetAllAsync();
-            return View(tenants);
+            int itemsPerPage = pageSize ?? _pageSizeFromConfig;
+
+            PagedResult<Tenant> result = await _tenantService.GetPagedTenantsAsync(page, itemsPerPage);
+
+            return View(result);
         }
+
 
         /// <summary>
         /// Retrieves the states for a given country.
@@ -114,22 +123,6 @@ namespace SGS.MultiTenancy.UI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /// <summary>
-        /// Performs SOFT DELETE (Status = Deleted).
-        /// </summary>
-        //[HttpGet]
-        //public async Task<IActionResult> Delete(Guid id)
-        //{
-        //    Tenant? tenant = await _tenantService.GetByIdAsync(id);
-        //    if (tenant == null)
-        //        return NotFound();
-
-        //    return View(tenant);
-        //}
-
-        /// <summary>
-        /// Performs SOFT DELETE (Status = Deleted).
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTenant(Guid id)

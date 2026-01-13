@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
+using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Entities.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
+using System.Linq.Expressions;
 
 namespace SGS.MultiTenancy.Core.Services
 {
@@ -39,6 +40,32 @@ namespace SGS.MultiTenancy.Core.Services
         public Task<List<Tenant>> GetAllAsync()
         {
             return _tenantRepo.ListAsync(t => t.Status == EntityStatus.Active);
+        }
+
+        /// <summary>
+        /// Retrieves a paginated list of active tenants.
+        /// </summary>
+        /// <param name="page">The current page number.</param>
+        /// <param name="pageSize">The number of records per page.</param>
+        /// <returns>A paged result containing tenants and pagination metadata.</returns>
+        public async Task<PagedResult<Tenant>> GetPagedTenantsAsync(int page, int pageSize)
+        {
+            Expression<Func<Tenant, bool>> filter = t => t.Status == EntityStatus.Active;
+
+            var tenants = await _tenantRepo
+                .GetPaged(filter, page, pageSize)
+                .ToListAsync();
+
+            var totalCount = await _tenantRepo
+                .CountAsync(filter);
+
+            return new PagedResult<Tenant>
+            {
+                Items = tenants,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
         }
 
         /// <summary>

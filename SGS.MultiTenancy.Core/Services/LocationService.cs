@@ -4,7 +4,6 @@ using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 
 namespace SGS.MultiTenancy.Core.Services
 {

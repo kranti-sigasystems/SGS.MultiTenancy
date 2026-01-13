@@ -1,0 +1,16 @@
+﻿@using SGS.MultiTenancy.Core.Domain.Common
+
+<div class="modal fade" id="editTenantModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+            @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(("EditTenant")))
+            
+            <div class="modal-body" id="editTenantBody">
+                <div class="text-center p-3">
+                    <div class="spinner-border"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

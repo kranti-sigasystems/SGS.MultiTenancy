@@ -4,135 +4,96 @@
     ViewData["Title"] = "Add Tenant";
 }
 
-<h2 class="mb-4">Add Tenant</h2>
+<div class="mt-4">
+    <form asp-action="AddTenant" method="post">
+        @Html.AntiForgeryToken()
 
-<form asp-action="AddTenant" method="post">
-    @Html.AntiForgeryToken()
+        <!-- Row 1 -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
 
-    <!-- Row 1 -->
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="col-md-4 mb-3">
+                <label asp-for="BussinessName">Bussiness Name</label>
+                <input asp-for="BussinessName" class="form-control" />
+                <span asp-validation-for="BussinessName" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <label asp-for="BussinessName">Bussiness Name</label>
-            <input asp-for="BussinessName" class="form-control" />
-            <span asp-validation-for="BussinessName" class="text-danger"></span>
-        </div>
+        <!-- Row 2 -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="PhoneNumber">Phone</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
 
-        <div class="col-md-4 mb-3">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-    </div>
-
-    <!-- Row 2 -->
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label asp-for="PhoneNumber">Phone</label>
-            <input asp-for="PhoneNumber" class="form-control" />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <label>Country</label>
-            <div class="position-relative">
-                <select id="CountryID" class="form-control pe-5">
-                    <option value="">Select</option>
-                    @if (Model.Countries != null)
-                    {
-                        foreach (var country in Model.Countries)
+            <div class="col-md-4 mb-3">
+                <label>Country</label>
+                <div class="position-relative">
+                    <select id="CountryID" class="form-control pe-5">
+                        <option value="">Select</option>
+                        @if (Model.Countries != null)
                         {
-                            <option value="@country.Value">@country.Text</option>
+                            foreach (var country in Model.Countries)
+                            {
+                                <option value="@country.Value">@country.Text</option>
+                            }
                         }
-                    }
-                </select>
+                    </select>
 
-                <i class="bi bi-chevron-down dropdown-icon"></i>
+                    <i class="bi bi-chevron-down dropdown-icon"></i>
+                </div>
+            </div>
+
+
+            <div class="col-md-4 mb-3">
+                <label>State</label>
+                <div class="position-relative">
+                    <select id="StateID" asp-for="StateID" class="form-control pe-5">
+                        <option value="">Select</option>
+                    </select>
+
+                    <i class="bi bi-chevron-down dropdown-icon"></i>
+                </div>
+                <span asp-validation-for="StateID" class="text-danger"></span>
             </div>
         </div>
 
-
-        <div class="col-md-4 mb-3">
-            <label>State</label>
-            <div class="position-relative">
-                <select id="StateID" asp-for="StateID" class="form-control pe-5">
-                    <option value="">Select</option>
-                </select>
-
-                <i class="bi bi-chevron-down dropdown-icon"></i>
+        <!-- Row 3 -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="AddressLine">Address</label>
+                <input asp-for="AddressLine" class="form-control" />
+                <span asp-validation-for="AddressLine" class="text-danger"></span>
             </div>
-            <span asp-validation-for="StateID" class="text-danger"></span>
-        </div>
-    </div>
 
-    <!-- Row 3 -->
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label asp-for="AddressLine">Address</label>
-            <input asp-for="AddressLine" class="form-control" />
-            <span asp-validation-for="AddressLine" class="text-danger"></span>
-        </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="City"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
 
-        <div class="col-md-4 mb-3">
-            <label asp-for="City"></label>
-            <input asp-for="City" class="form-control" />
-            <span asp-validation-for="City" class="text-danger"></span>
+            <div class="col-md-4 mb-3">
+                <label asp-for="PostalCode">Postal Code</label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div>
         </div>
-
-        <div class="col-md-4 mb-3">
-            <label asp-for="PostalCode">Postal Code</label>
-            <input asp-for="PostalCode" class="form-control" />
-            <span asp-validation-for="PostalCode" class="text-danger"></span>
-        </div>
-    </div>
-
-    <!-- Buttons -->
-    <div class="mt-4">
-        <button type="submit" class="btn btn-outline-primary px-4">Save</button>
-        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
-    </div>
-</form>
+        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
+    </form>
+ </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-
-            $('#CountryID').change(function () {
-                var countryId = $(this).val();
-                var stateDropdown = $('#StateID');
-
-                stateDropdown.empty();
-                stateDropdown.append('<option value="">Select</option>');
-
-                if (countryId) {
-                    $.ajax({
-                        url: '/Tenant/GetStates',
-                        type: 'GET',
-                        data: { countryId: countryId },
-                        success: function (data) {
-                            $.each(data, function (index, state) {
-                                stateDropdown.append(
-                                    $('<option></option>')
-                                        .val(state.value)
-                                        .text(state.text)
-                                );
-                            });
-                        },
-                        error: function () {
-                            alert('Failed to load states');
-                        }
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="~/js/tenant-management.js"></script>
 }
