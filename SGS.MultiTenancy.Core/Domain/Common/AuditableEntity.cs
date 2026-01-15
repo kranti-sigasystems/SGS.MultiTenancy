@@ -7,7 +7,7 @@
     {
         /// <summary>
         /// Gets or set create by
-        /// </summary>
+        /// </summary>12
         public Guid CreateBy { get; set; }
 
         /// <summary>
@@ -24,5 +24,10 @@
         /// Gets or set create on
         /// </summary>
         public DateTime CreateOn { get; set; }
-    }
+
+        /// <summary>
+        /// Gets or set IsDeleted
+        /// </summary>
+        public bool IsDeleted { get; set; } = false;
+        }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+﻿
 using Microsoft.Extensions.DependencyInjection;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
@@ -22,7 +21,8 @@ namespace SGS.MultiTenancy.Infa.Extension
             services.AddScoped<IUserRepositery, UserRepository>();
 
             services.AddScoped<ITenantProvider, TenantProvider>();
-
+            services.AddScoped<IPermissionRepository, PermissionRepository>();
+         
             // Register JwtTokenGenerator Services
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             return services;

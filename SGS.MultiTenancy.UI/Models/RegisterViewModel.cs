@@ -5,14 +5,14 @@ namespace SGS.MultiTenancy.UI.Models
     public class RegisterViewModel
     {
         /// <summary>
-        /// Gets or sets the user name used for identification within the tenant.
+        /// Gets or sets the Permission name used for identification within the tenant.
         /// </summary>
         [Required]
         [MaxLength(100)]
-        public string UserName { get; set; }
+        public string PermissionName { get; set; }
 
         /// <summary>
-        /// Gets or sets the email address of the user.
+        /// Gets or sets the email address of the Permission.
         /// This value is used for communication and login purposes.
         /// </summary>
         [Required]
@@ -21,7 +21,7 @@ namespace SGS.MultiTenancy.UI.Models
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets the password for the user account.
+        /// Gets or sets the password for the Permission account.
         /// Must be between 8 and 25 characters.
         /// </summary>
         [Required]
@@ -31,7 +31,7 @@ namespace SGS.MultiTenancy.UI.Models
         public required string Password { get; set; }
 
         /// <summary>
-        /// Gets or sets the Confirm Password for the user account.
+        /// Gets or sets the Confirm Password for the Permission account.
         /// Must be between 8 and 25 characters.
         /// </summary>
         [Required]
@@ -39,7 +39,7 @@ namespace SGS.MultiTenancy.UI.Models
         public string ConfirmPassword { get; set; }
 
         /// <summary>
-        /// Gets or sets the phone number associated with the user.
+        /// Gets or sets the phone number associated with the Permission.
         /// </summary>
         [Required(ErrorMessage = "Phone number is required.")]
         [MaxLength(25)]
@@ -48,13 +48,13 @@ namespace SGS.MultiTenancy.UI.Models
 
 
         /// <summary>
-        /// Gets or sets the unique identifier of the tenant to which the user belongs.
+        /// Gets or sets the unique identifier of the tenant to which the Permission belongs.
         /// </summary>
         [Required]
         public Guid TenantId { get; set; }
 
         /// <summary>
-        /// Gets or sets the optional address identifier associated with the user.
+        /// Gets or sets the optional address identifier associated with the Permission.
         /// </summary>
         public Guid? AddressId { get; set; }
     }

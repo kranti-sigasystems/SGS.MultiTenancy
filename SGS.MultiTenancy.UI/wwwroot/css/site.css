@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+:root {
+    --brand-primary: #00305f;
+}
+
+.btn-outline-custom:hover {
+    border-color: var(--brand-primary);
+}
+.btn-danger-custom:hover{
+    border-color:red;
+}

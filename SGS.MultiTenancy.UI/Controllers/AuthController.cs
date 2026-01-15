@@ -22,8 +22,12 @@ namespace SGS.MultiTenancy.UI.Controllers
         }
 
         [HttpGet]
-        public  IActionResult Login()
+        public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -36,13 +40,13 @@ namespace SGS.MultiTenancy.UI.Controllers
                 UserName = loginViewModel.UserName,
             };
             LoginResponseDto loginResponse = await _userService.Login(loginRequestDto);
-            
+
             if (string.IsNullOrWhiteSpace(loginResponse.Token) || loginResponse.User == null)
             {
                 ModelState.AddModelError("", Constants.InvalidLogin);
                 return View(loginViewModel);
             }
-            
+
             Response.Cookies.Append("SGS_AuthToken", loginResponse.Token, new CookieOptions
             {
                 HttpOnly = true,
@@ -60,7 +64,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, loginResponse.User.ID.ToString()),
-                new Claim(ClaimTypes.Name, loginResponse.User.UserName)
+                new Claim(ClaimTypes.Name, loginResponse.User.UserName),
             };
 
             foreach (string role in loginResponse.Roles)

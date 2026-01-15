@@ -26,5 +26,6 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// Gets or sets the description of the permission.
         /// </summary>
         public string Description { get; set; }
+
     }
 }
