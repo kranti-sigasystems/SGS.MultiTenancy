@@ -41,10 +41,5 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// Ensures tenant is hidden from UI but kept in the database.
         /// </summary>
         Task<bool> DeleteAsync(Guid id);
-
-        /// <summary>
-        /// Retrieves a paginated list of active tenants.
-        /// </summary>
-        Task<PagedResult<Tenant>> GetPagedTenantsAsync(int page, int pageSize);
     }
 }

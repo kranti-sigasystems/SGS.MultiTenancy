@@ -75,5 +75,16 @@
         /// </summary>
         public const string InvalidLogin = "Invalid username or password.";
 
+        /// <summary>
+        /// The default table page number.
+        /// </summary>
+        public static readonly uint? DefaultPageNumber = 1;
+
+        /// <summary>
+        /// The default table page size.
+        /// </summary>
+        public static readonly uint? DefaultPageSize = 10;
+
+        public static readonly string BrandName="SGS";
     }
 }

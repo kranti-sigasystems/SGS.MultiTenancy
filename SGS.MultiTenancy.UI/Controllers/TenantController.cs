@@ -11,32 +11,27 @@ namespace SGS.MultiTenancy.UI.Controllers
     [Authorize (Roles = "SGS_SuperHost")]
     public class TenantController : Controller
     {
-        private readonly ILogger<TenantController> _logger;
-        private readonly IConfiguration _configuration;
         private readonly ITenantService _tenantService;
         private readonly ILocationService _locationService;
         private readonly int _pageSizeFromConfig;
 
-        public TenantController(ILogger<TenantController> logger, IConfiguration configuration, ITenantService tenantService, ILocationService locationService)
+        public TenantController(ITenantService tenantService, ILocationService locationService)
         {
-            _logger = logger;
-            _configuration = configuration;
             _tenantService = tenantService;
             _locationService = locationService;
-            _pageSizeFromConfig = configuration.GetValue<int>("ApiSettings:PageSize", 10);
         }
 
         /// <summary>
         /// Displays the list of all tenants.
         /// </summary>
         /// <returns>A view displaying the list of tenants.</returns>
-        public async Task<IActionResult> Index(int page = 1, int? pageSize = null)
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            int itemsPerPage = pageSize ?? _pageSizeFromConfig;
+            var result = this.User;
+            //PagedResult<Tenant> result = await _tenantService.GetPagedTenantsAsync(page, itemsPerPage);
 
-            PagedResult<Tenant> result = await _tenantService.GetPagedTenantsAsync(page, itemsPerPage);
-
-            return View(result);
+            return View();
         }
 
 
