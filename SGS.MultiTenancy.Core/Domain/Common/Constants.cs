@@ -107,7 +107,7 @@
         /// <summary>
         /// Gets the new password display label.
         /// </summary>
-        public const string NewPasswordNewPasswordDisplay = "New Password";
+        public const string NewPasswordDisplay = "New Password";
 
         /// <summary>
         /// Gets the old password display label.

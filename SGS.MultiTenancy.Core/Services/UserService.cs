@@ -4,7 +4,6 @@ using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
-using System.Reflection.Metadata;
 namespace SGS.MultiTenancy.Core.Services
 {
     public class UserService : IUserService

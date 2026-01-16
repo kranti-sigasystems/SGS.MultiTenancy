@@ -56,3 +56,8 @@
     justify-content: center;
     gap: 0.5rem;
 }
+.validation-summary-errors ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
