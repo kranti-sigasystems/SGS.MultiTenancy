@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
@@ -11,8 +12,17 @@ using System.Security.Claims;
 
 namespace SGS.MultiTenancy.UI.Controllers
 {
+    /// <summary>
+    /// Manages user authentication: login, logout, and password operations.
+    /// </summary>
     public class AuthController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="AuthController"/>.
+        /// </summary>
+        /// <param name="userService">Service for user authentication.</param>
+        /// <param name="jwtOptions">JWT configuration options.</param>
+
         private readonly IUserService _userService;
         private readonly JwtOptions _jwtOptions;
         public AuthController(IUserService userService, IOptions<JwtOptions> jwtOptions)
@@ -21,28 +31,47 @@ namespace SGS.MultiTenancy.UI.Controllers
             _jwtOptions = jwtOptions.Value;
         }
 
+        /// <summary>
+        /// Shows login page and redirects authenticated users to dashboard.
+        /// </summary>
         [HttpGet]
-        public  IActionResult Login()
+        public IActionResult Login()
         {
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction(nameof(DashBoardController.Index),
+                    Utility.PrepareControllerName(nameof(DashBoardController)));
+            }
             return View();
         }
 
+        /// <summary>
+        /// Processes login requests.
+        /// Validates credentials and sets authentication cookie.
+        /// </summary>
+        /// <param name="loginViewModel">User login input.</param>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(loginViewModel);
+            }
+
             LoginRequestDto loginRequestDto = new LoginRequestDto()
             {
                 Password = loginViewModel.Password,
                 UserName = loginViewModel.UserName,
             };
             LoginResponseDto loginResponse = await _userService.Login(loginRequestDto);
-            
+
             if (string.IsNullOrWhiteSpace(loginResponse.Token) || loginResponse.User == null)
             {
-                ModelState.AddModelError("", Constants.InvalidLogin);
+                ModelState.AddModelError(string.Empty, Constants.InvalidLogin);
                 return View(loginViewModel);
             }
-            
+
             Response.Cookies.Append("SGS_AuthToken", loginResponse.Token, new CookieOptions
             {
                 HttpOnly = true,
@@ -55,6 +84,65 @@ namespace SGS.MultiTenancy.UI.Controllers
             return RedirectToAction(nameof(DashBoardController.Index), Utility.PrepareControllerName(nameof(DashBoardController)));
         }
 
+        /// <summary>
+        /// Displays the change password page.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Processes change password requests.
+        /// Signs out user and prompts login on success.
+        /// </summary>
+        /// <param name="changePasswordViewModel">New and current password input.</param>
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(changePasswordViewModel);
+            }
+
+            string? userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrWhiteSpace(userIdValue) || !Guid.TryParse(userIdValue, out Guid userId))
+            {
+                return RedirectToAction(nameof(Login), Utility.PrepareControllerName(nameof(AuthController)));
+            }
+
+            (bool success, string errorMessage) result =
+            await _userService.ChangePasswordAsync(
+            userId,
+            changePasswordViewModel.CurrentPassword,
+            changePasswordViewModel.NewPassword
+            );
+
+            bool success = result.success;
+            string errorMessage = result.errorMessage;
+
+            if (!success)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
+                return View(changePasswordViewModel);
+            }
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Response.Cookies.Delete("SGS_AuthToken");
+
+            TempData["SuccessMessage"] = Constants.PasswordChangedSuccess;
+
+            return RedirectToAction(nameof(Login), Utility.PrepareControllerName(nameof(AuthController)));
+        }
+        /// <summary>
+        /// Creates authentication session with user claims, roles, and permissions.
+        /// </summary>
+        /// <param name="loginResponse">Authenticated user information.</param>
         private async Task CreateMvcSessionAsync(LoginResponseDto loginResponse)
         {
             List<Claim> claims = new List<Claim>
@@ -80,6 +168,16 @@ namespace SGS.MultiTenancy.UI.Controllers
                     CookieAuthenticationDefaults.AuthenticationScheme
                 ))
             );
+        }
+        /// <summary>
+        /// Logs out the current user and clears authentication cookies.
+        /// </summary>
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete("SGS_AuthToken");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Auth");
         }
     }
 }

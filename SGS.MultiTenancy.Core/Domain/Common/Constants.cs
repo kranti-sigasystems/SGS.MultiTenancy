@@ -57,7 +57,7 @@
         /// <summary>
         /// Gets the required field validation error message.
         /// </summary>
-        public const string RequiredErrorMessage = "{0} is required field";
+        public const string RequiredErrorMessage = "{0} is required";
 
         /// <summary>
         /// Gets the invalid email address validation error message.
@@ -68,12 +68,66 @@
         /// Gets the minimum length validation error message.
         /// </summary>
         public const string MinErrorMessage = "The {0} field must be at least {1} characters.";
-        #endregion
-
+        
         /// <summary>
         /// Authentication failed.
         /// </summary>
         public const string InvalidLogin = "Login unsuccessful. Please check your credentials.";
+        
+        /// <summary>
+        /// Password changed successfully message.
+        /// </summary>
+        public const string PasswordChangedSuccess = "Password changed successfully. Please login again.";
 
+        /// <summary>
+        /// User not found 
+        /// </summary>
+        public const string UserNotFound = "User not found.";
+
+        /// <summary>
+        /// Password incorrect message.
+        /// </summary>
+        public const string CurrentPasswordIncorrect = "Current password is incorrect.";
+
+        /// <summary>
+        /// Reads user name field.
+        /// </summary>
+        public const string UserNameDisplay = "User Name";
+
+        /// <summary>
+        /// Password match error.
+        /// </summary>
+        public const string PasswordsDoNotMatch = "Passwords do not match";
+
+        ///  <summary>  
+        ///  Minimum password length requirement.
+        /// </summary>
+        public const int PasswordMinLength = 8;
+
+        /// <summary>
+        /// Gets the new password display label.
+        /// </summary>
+        public const string NewPasswordDisplay = "New Password";
+
+        /// <summary>
+        /// Gets the old password display label.
+        /// </summary>
+        public const string CurrentPasswordDisplay = "Current Password";
+
+        /// <summary>
+        ///  Gets the confirm password display label.
+        /// </summary>
+        public const string ConfirmPasswordDisplay = "Confirm Password";
+
+        /// <summary>
+        /// Regex to check password strength requires one uppercase and one special char.
+        /// </summary>
+        public const string PasswordStrengthRegex =@"^(?=.*[A-Z])(?=.*[\W_]).+$";
+
+        /// <summary>
+        /// Error message when password fails strength check.
+        /// </summary>
+        public const string PasswordStrengthErrorMessage ="Password must contain at least one uppercase letter and one special character.";
+        #endregion
     }
 }
