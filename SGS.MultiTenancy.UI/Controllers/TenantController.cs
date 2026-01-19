@@ -108,8 +108,6 @@ namespace SGS.MultiTenancy.UI.Controllers
             {
                 model.Countries = await _locationService.GetCountriesAsync();
                 model.States = await _locationService.GetStatesByCountryAsync(model.CountryID);
-
-                return PartialView("_EditTenantPartial", model);
             }
 
             await _tenantService.UpdateAsync(model);

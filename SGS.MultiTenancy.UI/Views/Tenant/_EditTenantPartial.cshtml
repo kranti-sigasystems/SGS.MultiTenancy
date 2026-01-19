@@ -10,6 +10,10 @@
     <!-- Hidden IDs -->
     <input type="hidden" asp-for="ID" />
     <input type="hidden" asp-for="AddressID" />
+    <input type="hidden" asp-for="AddressLine" />
+    <input type="hidden" asp-for="PostalCode" />
+    <input type="hidden" asp-for="City" />
+    <input type="hidden" asp-for="CountryID" />
 
     <!-- Row 1 -->
     <div class="row mb-3">
@@ -20,7 +24,7 @@
         </div>
 
         <div class="col-md-4">
-            <label asp-for="BussinessName" class="form-label"></label>
+            <label asp-for="BussinessName" class="form-label">Bussiness Name</label>
             <input asp-for="BussinessName" class="form-control" />
             <span asp-validation-for="BussinessName" class="text-danger"></span>
         </div>
@@ -35,7 +39,7 @@
     <!-- Row 2 -->
     <div class="row mb-3">
         <div class="col-md-4">
-            <label asp-for="PhoneNumber" class="form-label"></label>
+            <label asp-for="PhoneNumber" class="form-label">Phone</label>
             <input asp-for="PhoneNumber" class="form-control" />
             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>

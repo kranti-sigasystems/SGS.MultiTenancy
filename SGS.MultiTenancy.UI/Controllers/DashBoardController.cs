@@ -16,10 +16,5 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
             return View();
         }
-
-        public IActionResult SuperTenantDashboard()
-        {
-            return View();
-        }
     }
 }
