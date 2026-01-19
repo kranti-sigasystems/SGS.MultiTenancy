@@ -34,6 +34,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <summary>
         /// Shows login page and redirects authenticated users to dashboard.
         /// </summary>
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Login()
         {
@@ -148,17 +149,13 @@ namespace SGS.MultiTenancy.UI.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, loginResponse.User.ID.ToString()),
-                new Claim(ClaimTypes.Name, loginResponse.User.UserName)
+                new Claim(ClaimTypes.Name, loginResponse.User.UserName),
+                new Claim("tenantId", loginResponse.TenantID.ToString())
             };
 
             foreach (string role in loginResponse.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            foreach (string permission in loginResponse.Permissions)
-            {
-                claims.Add(new Claim("permission", permission));
             }
 
             await HttpContext.SignInAsync(

@@ -12,5 +12,6 @@
         {
             return controllerName?.Substring(0, controllerName.LastIndexOf("Controller", StringComparison.InvariantCultureIgnoreCase));
         }
+        
     }
 }

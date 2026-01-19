@@ -9,13 +9,11 @@ namespace SGS.MultiTenancy.UI.Controllers
             
             if (User.IsInRole(Constants.SuperAdminHost))
             {
-                return RedirectToAction(nameof(SuperTenantDashboard));
+                return RedirectToAction(
+                        nameof(TenantController.Index),
+                        Utility.PrepareControllerName(nameof(TenantController))
+                );
             }
-            return View();
-        }
-
-        public IActionResult SuperTenantDashboard()
-        {
             return View();
         }
     }

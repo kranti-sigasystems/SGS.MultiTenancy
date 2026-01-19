@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Extension;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
+using SGS.MultiTenancy.UI.Attribute;
 using System.Text;
+
 namespace SGS.MultiTenancy.UI
 {
     public class Program
@@ -14,8 +17,10 @@ namespace SGS.MultiTenancy.UI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(
                 builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -23,10 +28,20 @@ namespace SGS.MultiTenancy.UI
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             ));
-            builder.Services.AddHttpContextAccessor(); 
+
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+            builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Permission",
+                    policy => policy.AddRequirements(new PermissionRequirement()));
+            });
             builder.Services.AddCoreDependencies();
             builder.Services.AddInfrastructureDependencies();
+
             JwtOptions? jwtOptions = builder.Configuration
                    .GetSection("ApiSettings:JwtOptions")
                    .Get<JwtOptions>();
@@ -70,6 +85,7 @@ namespace SGS.MultiTenancy.UI
                     }
                 };
             });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace SGS.MultiTenancy.Infra.Repositery
+namespace SGS.MultiTenancy.Infra.Repository
 {
     /// <summary>
     /// Generates JSON Web Tokens for authenticated users.
@@ -31,7 +31,7 @@ namespace SGS.MultiTenancy.Infra.Repositery
         /// <param name="roles">Roles assigned to the user.</param>
         /// <param name="permissions">Permissions granted to the user.</param>
         /// <returns>Serialized JWT token string.</returns>
-        public string GenerateToken(User applicationUser, IEnumerable<string> roles, IEnumerable<string> permissions)
+        public string GenerateToken(User applicationUser, IEnumerable<string> roles)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -45,11 +45,6 @@ namespace SGS.MultiTenancy.Infra.Repositery
             foreach (string role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            foreach (string permission in permissions)
-            {
-                claims.Add(new Claim("permission", permission));
             }
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(

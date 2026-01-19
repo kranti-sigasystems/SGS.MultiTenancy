@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
@@ -15,14 +16,22 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="jwtTokenGenerator">JWT generator.</param>
         /// <param name="passwordHasherService">Password hasher.</param>
        
-        private readonly IUserRepositery _userRepositery;
+        private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
-        public UserService(IUserRepositery userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService)
+        private readonly IGenericRepository<UserRoles> _userRoles;
+        private readonly IMemoryCache _cache;
+        public UserService(IUserRepository userRepositery,
+            IJwtTokenGenerator jwtTokenGenerator,
+            IPasswordHasherService passwordHasherService,
+            IGenericRepository<UserRoles> userRoles,
+            IMemoryCache memoryCache)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasherService = passwordHasherService;
+            _userRoles = userRoles;
+            _cache = memoryCache;
         }
         /// <summary>
         /// Validates credentials and returns JWT with roles and permissions.
@@ -50,19 +59,13 @@ namespace SGS.MultiTenancy.Core.Services
                           .ToList();
             List<Role> roles = await _userRepositery.GetRolesWithPermissionsAsync(roleIds);
 
-            List<string> userPermissions = roles
-                .SelectMany(r => r.RolePermissions)
-                .Select(rp => rp.Permission.Code)
-                .Distinct()
-                .ToList();
-
             List<string> userRoles = roles
                 .Select(r => r.Name)
                 .Where(name => !string.IsNullOrWhiteSpace(name))
                 .Distinct()
                 .ToList();
 
-            string token = _jwtTokenGenerator.GenerateToken(user, userRoles, userPermissions);
+            string token = _jwtTokenGenerator.GenerateToken(user, userRoles);
             UserDto userDTO = new()
             {
                 Email = user.Email,
@@ -76,7 +79,7 @@ namespace SGS.MultiTenancy.Core.Services
                 User = userDTO,
                 Token = token,
                 Roles = userRoles,
-                Permissions = userPermissions,
+                TenantID = user.TenantID
             };
             return LoginResponse;
         }
@@ -108,6 +111,40 @@ namespace SGS.MultiTenancy.Core.Services
             await _userRepositery.CompleteAsync();
 
             return (true, string.Empty);
+        }
+
+        public async Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId)
+        {
+            HashSet <Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
+            return permissionIds.Contains(permissionId);
+        }
+
+        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(
+            Guid userId,
+            Guid tenantId)
+        {
+            string cacheKey = $"perm:{tenantId}:{userId}";
+
+            if (_cache.TryGetValue(cacheKey, out HashSet<Guid> cached))
+                return cached;
+
+            List<Guid> permissionIds = await _userRoles.Query()
+                .Where(ur =>
+                    ur.UserID == userId &&
+                    ur.TenantID == tenantId)
+                .SelectMany(ur => ur.Role.RolePermissions)
+                .Select(rp => rp.PermissionID)
+                .Distinct()
+                .ToListAsync();
+
+            var result = permissionIds.ToHashSet();
+
+            _cache.Set(
+                cacheKey,
+                result,
+                TimeSpan.FromMinutes(30));
+
+            return result;
         }
     }
 }                                             

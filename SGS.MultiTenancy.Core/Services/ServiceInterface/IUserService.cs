@@ -19,5 +19,8 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="newPassword">New password.</param>
         /// <returns>Success flag and error message if failed.</returns>
         Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword);
+
+       
+        Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId);
     }
 }

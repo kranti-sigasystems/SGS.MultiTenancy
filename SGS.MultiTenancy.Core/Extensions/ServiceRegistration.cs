@@ -6,15 +6,15 @@ namespace SGS.MultiTenancy.Core.Extension
 {
     public static class ServiceRegistration
     {
-        /// <summary>
-        /// Adds infrastructure services to the dependency injection container.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
-        /// <returns>Updated service collection.</returns>
+        // <summary>
+        // Adds infrastructure services to the dependency injection container.
+        // </summary>
+        // <param name = "services" > Service collection.</param>
+        // <returns>Updated service collection.</returns>
         public static IServiceCollection AddCoreDependencies(this IServiceCollection services)
         {
-            services.AddScoped<IUserService,UserService>();
-            services.AddScoped<IPasswordHasherService,PasswordHasherService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             return services;
         }
     }

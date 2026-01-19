@@ -1,6 +1,6 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
 using System.Linq.Expressions;
-namespace SGS.MultiTenancy.Core.Application.Interfaces.Repositories
+namespace SGS.MultiTenancy.Core.Application.Interfaces
 {
     /// <summary>
     /// Defines a generic repository contract for managing auditable entities.
@@ -83,6 +83,7 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces.Repositories
         /// <returns>The number of matching entities.</returns>
         Task<int> CountAsync(
             Expression<Func<TEntity, bool>> predicate);
+
         /// <summary>
         /// Returns a paged subset of entities matching the given predicate.
         /// </summary>

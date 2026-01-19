@@ -72,7 +72,7 @@
         /// <summary>
         /// Authentication failed.
         /// </summary>
-        public const string InvalidLogin = "Login unsuccessful. Please check your credentials.";
+        public const string InvalidLogin = "Invalid username or password.";
         
         /// <summary>
         /// Password changed successfully message.
@@ -129,5 +129,17 @@
         /// </summary>
         public const string PasswordStrengthErrorMessage ="Password must contain at least one uppercase letter and one special character.";
         #endregion
+
+        /// <summary>
+        /// The default table page number.
+        /// </summary>
+        public static readonly uint? DefaultPageNumber = 1;
+
+        /// <summary>
+        /// The default table page size.
+        /// </summary>
+        public static readonly uint? DefaultPageSize = 10;
+
+        public static readonly string BrandName="SGS";
     }
 }

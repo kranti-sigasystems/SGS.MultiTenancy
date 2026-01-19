@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 
-namespace SGS.MultiTenancy.Infra.Repositery
+namespace SGS.MultiTenancy.Infra.Repository
 {
     public class TenantProvider : ITenantProvider
     {

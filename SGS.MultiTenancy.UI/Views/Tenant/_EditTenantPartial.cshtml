@@ -1,0 +1,102 @@
+﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
+@model TenantDto
+
+@{
+    Layout = null;
+}
+<form asp-action="UpdateTenant" method="post" id="editTenantForm">
+    @Html.AntiForgeryToken()
+
+    <!-- Hidden IDs -->
+    <input type="hidden" asp-for="ID" />
+    <input type="hidden" asp-for="AddressID" />
+    <input type="hidden" asp-for="AddressLine" />
+    <input type="hidden" asp-for="PostalCode" />
+    <input type="hidden" asp-for="City" />
+    <input type="hidden" asp-for="CountryID" />
+
+    <!-- Row 1 -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="BussinessName" class="form-label">Bussiness Name</label>
+            <input asp-for="BussinessName" class="form-control" />
+            <span asp-validation-for="BussinessName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="PhoneNumber" class="form-label">Phone</label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Country</label>
+            <div class="input-group">
+                <select asp-for="CountryID"
+                        asp-items="Model.Countries"
+                        class="form-select"
+                        id="CountryID">
+                    <option value="">Select Country</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">State</label>
+            <div class="input-group">
+                <select asp-for="StateID"
+                        asp-items="Model.States"
+                        class="form-select"
+                        id="StateID">
+                    <option value="">Select</option>
+                </select>
+            </div>
+            <span asp-validation-for="StateID" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row mb-3">
+        @* <div class="col-md-4">
+            <label asp-for="AddressLine" class="form-label"></label>
+            <input asp-for="AddressLine" class="form-control" />
+            <span asp-validation-for="AddressLine" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="City"></label>
+            <input asp-for="City" class="form-control" />
+            <span asp-validation-for="City" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="PostalCode" class="form-label"></label>
+            <input asp-for="PostalCode" class="form-control" />
+            <span asp-validation-for="PostalCode" class="text-danger"></span>
+        </div> *@
+
+        <div class="col-md-4">
+            <label asp-for="Status" class="form-label"></label>
+            <select asp-for="Status" class="form-select">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", true)
+</form>

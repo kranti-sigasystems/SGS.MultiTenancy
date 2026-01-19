@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Infra.DataContext;
 using System.Linq.Expressions;
@@ -156,7 +155,7 @@ namespace SGS.MultiTenancy.Infra.Repository
         public async Task<TEntity> AddAsync(TEntity entity)
         {
             entity.CreateOn = DateTime.UtcNow;
-            entity.CreateBy = _currentUser?.UserId ?? Guid.Empty;
+            entity.CreateBy = _currentUser?.UserId ?? new Guid();
 
             await _dbSet.AddAsync(entity);
             return entity;
@@ -182,7 +181,7 @@ namespace SGS.MultiTenancy.Infra.Repository
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
             entity.UpdateOn = DateTime.UtcNow;
-            entity.UpdateBy = _currentUser?.UserId;
+            //entity.UpdateBy = _currentUser?.UserId ?? new Guid();
 
             _dbSet.Update(entity);
             return await Task.FromResult(entity);

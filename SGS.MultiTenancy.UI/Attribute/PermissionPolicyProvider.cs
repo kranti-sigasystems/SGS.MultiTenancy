@@ -1,0 +1,29 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+
+namespace SGS.MultiTenancy.UI.Attribute
+{
+    public class PermissionPolicyProvider : DefaultAuthorizationPolicyProvider
+    {
+        private const string PolicyPrefix = "Permission:";
+
+        public PermissionPolicyProvider(IOptions<AuthorizationOptions> options)
+            : base(options)
+        {
+        }
+
+        public override Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
+        {
+            if (policyName.StartsWith(PolicyPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .AddRequirements(new PermissionRequirement())
+                    .Build();
+
+                return Task.FromResult<AuthorizationPolicy?>(policy);
+            }
+
+            return base.GetPolicyAsync(policyName);
+        }
+    }
+}

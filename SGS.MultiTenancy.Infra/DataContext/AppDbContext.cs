@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Entities.Common;
 
 namespace SGS.MultiTenancy.Infra.DataContext
 {
@@ -8,14 +10,12 @@ namespace SGS.MultiTenancy.Infra.DataContext
     {
         private readonly Guid _tenantId;
 
-        // 👇 Design-time constructor
         protected AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
             _tenantId = Guid.Empty;
         }
 
-        // Run time constructor
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
             ITenantProvider tenantProvider)
@@ -25,6 +25,9 @@ namespace SGS.MultiTenancy.Infra.DataContext
         }
 
         public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<Address> Address { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<State> States { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<UserRoles> UserRoles { get; set; }
         public DbSet<Role> Roles { get; set; }
