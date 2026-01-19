@@ -1,4 +1,7 @@
-﻿body {
+﻿/*google font cdn for the roboto font table*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
     font-family: 'Inter', sans-serif;
     background-color: #f9fafb;
     margin: 0;
@@ -23,7 +26,6 @@
     box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
 }
 
-    /* Inputs */
     .auth-container .form-control {
         padding: 0.75rem 1rem;
         border-radius: 0.5rem;
@@ -55,4 +57,53 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+}
+
+:root {
+    --primary-color: #00305f;
+}
+
+/*hover color for the text*/
+
+.hover-text-dark:hover {
+    color: var(--primary-color) !important;
+}
+
+.hover-bg:hover {
+    background-color: var(--primary-color);
+}
+
+.bg-color {
+    background-color: var(--primary-color);
+}
+
+.btn {
+    background-color: var(--primary-color);
+    color: aliceblue;
+}
+
+    .btn:hover {
+        color: aliceblue;
+        background-color: #023b74;
+    }
+
+.text-brand {
+    color: var(--primary-color);
+}
+
+.table-header {
+    background: gainsboro;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.table {
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    color: black;
+}
+
+td {
+    text-transform: capitalize;
+    font-weight: 700;
 }

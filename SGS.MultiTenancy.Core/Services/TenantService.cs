@@ -32,12 +32,27 @@ namespace SGS.MultiTenancy.Core.Services
         }
 
         /// <summary>
-        /// Retrieves all active tenants.
+        /// Gets list of tenant.
         /// </summary>
         /// <returns>A list of active tenants.</returns>
-        public Task<List<Tenant>> GetAllAsync()
+        public async Task<List<TenantDto>> GetAllAsync()
         {
-            return _tenantRepo.ListAsync(t => t.Status == EntityStatus.Active);
+            return await _tenantRepo
+            .Query(t => t.Status == EntityStatus.Active)
+            .Select(t => new TenantDto
+            {
+                ID = t.ID,
+                Name = t.Name,
+                BussinessName = t.BussinessName,
+                Email = t.Email,
+                PhoneNumber = t.PhoneNumber,
+                Status = t.Status,
+                AddressLine = t.Address.AddressLine,
+                PostalCode = t.Address.PostalCode,
+                City = t.Address.City,
+                Country = t.Address.State.Country.Name,
+                State = t.Address.State.Name
+            }).ToListAsync();
         }
 
         /// <summary>
@@ -54,7 +69,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// Creates a new tenant based on the provided form data.
         /// </summary>
         /// <param name="model">The tenant form view model.</param>
-        public async Task CreateAsync(TenantFormViewModel model)
+        public async Task CreateAsync(TenantDto model)
         {
             Tenant tenant = new Tenant
             {
@@ -64,15 +79,7 @@ namespace SGS.MultiTenancy.Core.Services
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Status = EntityStatus.Active,
-                CreateBy = model.ID,//temporary used tenantID as CreateBy Id
-                Address = new Address
-                {
-                    ID = Guid.NewGuid(),
-                    AddressLine = model.AddressLine,
-                    PostalCode = model.PostalCode,
-                    City = model.City,
-                    StateID = model.StateID
-                }
+               
             };
             
 
@@ -85,7 +92,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// </summary>
         /// <param name="tenantId">The tenant ID.</param>
         /// <returns>A populated tenant form view model.</returns>
-        public async Task<TenantFormViewModel> GetEditModelAsync(Guid tenantId)
+        public async Task<TenantDto> GetEditModelAsync(Guid tenantId)
         {
             Tenant? tenant = await _tenantRepo.Query()
                 .Include(t => t.Address)
@@ -103,7 +110,7 @@ namespace SGS.MultiTenancy.Core.Services
             var states = await _locationService
                 .GetStatesByCountryAsync(tenant.Address.State.CountryID);
 
-            return new TenantFormViewModel
+            return new TenantDto
             {
                 ID = tenant.ID,
                 AddressID = tenant.AddressID,
@@ -113,13 +120,6 @@ namespace SGS.MultiTenancy.Core.Services
                 Email = tenant.Email,
                 PhoneNumber = tenant.PhoneNumber,
                 Status = tenant.Status,
-
-                AddressLine = tenant.Address.AddressLine,
-                City = tenant.Address.City,
-                PostalCode = tenant.Address.PostalCode,
-                StateID = tenant.Address.StateID,
-                CountryID = tenant.Address.State.CountryID,
-
                 Countries = countries,
                 States = states
             };
@@ -129,7 +129,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// Updates an existing tenant with new form data.
         /// </summary>
         /// <param name="model">The tenant form view model.</param>
-        public async Task UpdateAsync(TenantFormViewModel model)
+        public async Task UpdateAsync(TenantDto model)
         {
             Tenant? tenant = await _tenantRepo.Query()
                 .Include(t => t.Address)
@@ -147,9 +147,7 @@ namespace SGS.MultiTenancy.Core.Services
             tenant.PhoneNumber = model.PhoneNumber;
             tenant.Status = model.Status;
             tenant.UpdateBy = tenant.ID; //temporary used tenantID as UpdateBy Id
-            tenant.Address.AddressLine = model.AddressLine;
-            tenant.Address.PostalCode = model.PostalCode;
-            tenant.Address.City = model.City;
+            
             tenant.Address.StateID = model.StateID;
 
             await _tenantRepo.UpdateAsync(tenant);

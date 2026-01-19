@@ -1,4 +1,14 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('addressModal');
 
-// Write your JavaScript code.
+    modal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+
+        document.getElementById('modalLine1').textContent = button.dataset.line1 || '-';
+        document.getElementById('modalCity').textContent = button.dataset.city || '-';
+        document.getElementById('modalState').textContent = button.dataset.state || '-';
+        document.getElementById('modalCountry').textContent = button.dataset.country || '-';
+        document.getElementById('modalPostal').textContent = button.dataset.postal || '-';
+    });
+});

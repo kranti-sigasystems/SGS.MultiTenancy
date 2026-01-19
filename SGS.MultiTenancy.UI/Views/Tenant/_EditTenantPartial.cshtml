@@ -1,5 +1,5 @@
 ﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
-@model TenantFormViewModel
+@model TenantDto
 
 @{
     Layout = null;
@@ -68,7 +68,7 @@
 
     <!-- Row 3 -->
     <div class="row mb-3">
-        <div class="col-md-4">
+        @* <div class="col-md-4">
             <label asp-for="AddressLine" class="form-label"></label>
             <input asp-for="AddressLine" class="form-control" />
             <span asp-validation-for="AddressLine" class="text-danger"></span>
@@ -84,7 +84,7 @@
             <label asp-for="PostalCode" class="form-label"></label>
             <input asp-for="PostalCode" class="form-control" />
             <span asp-validation-for="PostalCode" class="text-danger"></span>
-        </div>
+        </div> *@
 
         <div class="col-md-4">
             <label asp-for="Status" class="form-label"></label>

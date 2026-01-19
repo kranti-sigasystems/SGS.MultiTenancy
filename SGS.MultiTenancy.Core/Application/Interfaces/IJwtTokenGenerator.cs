@@ -16,7 +16,6 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces
         /// <returns>JWT access token.</returns>
         string GenerateToken(
             User applicationUser,
-            IEnumerable<string> roles,
-            IEnumerable<string> permissions);
+            IEnumerable<string> roles);
     }
 }

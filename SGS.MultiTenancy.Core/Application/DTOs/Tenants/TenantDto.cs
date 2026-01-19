@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
 {
-    public class TenantFormViewModel
+    public class TenantDto
     {
         /// <summary>
         /// Gets or sets the unique identifier for the tenant.
         /// </summary>
-        public Guid ID { get; set; }
-        
+        public Guid? ID { get; set; }
+
         /// <summary>
         /// Gets or sets the tenant's display name.
         /// </summary>
@@ -53,6 +53,16 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// </summary>
         public string City { get; set; }
 
+        // <summary>
+        /// Gets or sets the country associated with this address.
+        /// </summary>
+        public string Country { get; set; }
+
+        // <summary>
+        /// Gets or sets the state associated with this address.
+        /// </summary>
+        public string State { get; set; }
+
         /// <summary>
         /// Gets or sets the identifier of the state associated with the tenant's address.
         /// </summary>
@@ -74,7 +84,14 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// </summary>
         public EntityStatus Status { get; set; }
 
+        /// <summary>
+        /// Gets or sets the unique identifier for the address.
+        /// </summary>
         public Guid AddressID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the country.
+        /// </summary>
         public Guid CountryID { get; set; }
     }
 }

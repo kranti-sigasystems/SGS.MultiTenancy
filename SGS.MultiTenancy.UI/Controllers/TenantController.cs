@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
-using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
+using SGS.MultiTenancy.UI.Attribute;
 
 namespace SGS.MultiTenancy.UI.Controllers
 {
@@ -13,7 +13,6 @@ namespace SGS.MultiTenancy.UI.Controllers
     {
         private readonly ITenantService _tenantService;
         private readonly ILocationService _locationService;
-        private readonly int _pageSizeFromConfig;
 
         public TenantController(ITenantService tenantService, ILocationService locationService)
         {
@@ -26,12 +25,12 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// </summary>
         /// <returns>A view displaying the list of tenants.</returns>
         [HttpGet]
+        [HasPermission(permissionId:Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
+        
         {
-            var result = this.User;
-            //PagedResult<Tenant> result = await _tenantService.GetPagedTenantsAsync(page, itemsPerPage);
-
-            return View();
+            List<TenantDto> list = await _tenantService.GetAllAsync();
+            return View(list);
         }
 
 
@@ -56,7 +55,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
 
-            TenantFormViewModel model = new TenantFormViewModel
+            TenantDto model = new TenantDto
             {
                 Countries = countries,
                 States = Enumerable.Empty<SelectListItem>()
@@ -72,7 +71,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>Redirects to the tenant list or redisplays the form if invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTenant(TenantFormViewModel model)
+        public async Task<IActionResult> AddTenant(TenantDto model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -89,7 +88,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateTenant(Guid id)
         {
-            TenantFormViewModel model = await _tenantService.GetEditModelAsync(id);
+            TenantDto model = await _tenantService.GetEditModelAsync(id);
             if (model == null)
                 return NotFound();
 
@@ -103,7 +102,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>Redirects to the tenant list or redisplays the form if invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateTenant(TenantFormViewModel model)
+        public async Task<IActionResult> UpdateTenant(TenantDto model)
         {
             if (!ModelState.IsValid)
             {

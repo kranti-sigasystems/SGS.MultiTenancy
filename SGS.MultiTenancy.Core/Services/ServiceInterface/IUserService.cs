@@ -10,5 +10,8 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="loginRequestDto">The login request data containing user credentials.</param>
         /// <returns>Returns login response dto </returns>
         Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
+
+       
+        Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId);
     }
 }

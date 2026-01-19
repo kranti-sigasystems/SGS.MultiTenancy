@@ -1,67 +1,129 @@
-﻿@* @model SGS.MultiTenancy.Core.Domain.Common.SGS.MultiTenancy.Core.Domain.Entities.Auth.Tenant
+﻿@model List<SGS.MultiTenancy.Core.Application.DTOs.Tenants.TenantDto>
+
 
 @{
     ViewData["Title"] = "Tenants";
 }
 
-<div class="d-flex justify-content-between align-items-center my-4">
-    <a asp-action="AddTenant" class="btn btn-success rounded-pill px-4 shadow-sm ms-auto" style="background-color:#00305f;">
+<div class="d-flex justify-content-between align-items-center my-4" >
+    <a asp-action="AddTenant" class="btn  rounded-pill px-4 shadow-sm ms-auto bg-color">
         <i class="bi bi-plus-circle me-2"></i> Create Tenant
     </a>
 </div>
 
 <div class="card-body p-0">
-    <table class="table">
-        <thead>
+    <table class="table text-center p-4">
+        <thead class="table-header">
             <tr>
                 <th>Name</th>
-                <th>Business</th>
+                <th>Business Name</th>
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Status</th>
+                <th>Address</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var t in Model.Items)
+            @if (Model != null && Model.Any())
+            {
+                foreach (var t in Model)
+                {
+                    <tr>
+                        <td>@t.Name</td>
+                        <td>@t.BussinessName</td>
+                        <td>@t.Email</td>
+                        <td>@t.PhoneNumber</td>
+                        <td>@t.Status</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-sm  view-address-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addressModal"
+                                    data-line1="@t.AddressLine"
+                                    data-city="@t.City"
+                                    data-state="@t.State"
+                                    data-country="@t.Country"
+                                    data-postal="@t.PostalCode">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                        <td class="text-center">
+                            <button class=" bg-light text-brand btn-link p-0 me-4"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editTenantModal"
+                                    data-id="@t.ID"
+                                    title="Edit" style="border:none;">
+                                <i class="bi bi-pencil-square  fs-5"></i>
+                            </button>
+
+                            <button class=" bg-light text-brand btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteTenantModal"
+                                    data-tenant-id="@t.ID"
+                                    data-tenant-name="@t.Name" style="border:none;">
+                                <i class="bi bi-trash   fs-5"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@t.Name</td>
-                    <td>@t.BussinessName</td>
-                    <td>@t.Email</td>
-                    <td>@t.PhoneNumber</td>
-                    <td>@t.Status</td>
-                    <td class="text-center">
-                        <button class="btn btn-link p-0 me-4"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editTenantModal"
-                                data-id="@t.ID"
-                                title="Edit">
-                            <i class="bi bi-pencil-square text-dark fs-5"></i>
-                        </button>
-
-                        <button class="btn btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteTenantModal"
-                                data-tenant-id="@t.ID"
-                                data-tenant-name="@t.Name">
-                            <i class="bi bi-trash text-dark fs-5"></i>
-                        </button>
-                    </td>
+                    <td colspan="7" class="text-center text-muted">No tenants found.</td>
                 </tr>
             }
         </tbody>
     </table>
-
-    <!-- Include Pagination Partial -->
-    @await Html.PartialAsync("_Pagination", Model)
 </div>
 
+@* model *@
+
+<div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow-sm">
+
+            <div class="modal-header text-white"
+                 style="background-color:#00305f;">
+                <h6 class="modal-title mb-0">
+                    <i class="bi bi-geo-alt-fill me-1"></i>
+                    Tenant Address
+                </h6>
+                @* <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"></button> *@
+            </div>
+
+            <div class="modal-body py-2">
+                <dl class="row mb-0 small">
+                    <dt class="col-5 text-muted">Address</dt>
+                    <dd class="col-7" id="modalLine1"></dd>
+
+                    <dt class="col-5 text-muted">City</dt>
+                    <dd class="col-7" id="modalCity"></dd>
+
+                    <dt class="col-5 text-muted">State</dt>
+                    <dd class="col-7" id="modalState"></dd>
+
+                    <dt class="col-5 text-muted">Country</dt>
+                    <dd class="col-7" id="modalCountry"></dd>
+
+                    <dt class="col-5 text-muted">Postal</dt>
+                    <dd class="col-7" id="modalPostal"></dd>
+                </dl>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@* 
 <!-- Include Modal Partials -->
 @await Html.PartialAsync("_EditTenantModal")
 @await Html.PartialAsync("_DeleteTenantModal")
-
-@section Scripts {
-    <script src="~/js/tenant-management.js"></script>
-}
  *@
