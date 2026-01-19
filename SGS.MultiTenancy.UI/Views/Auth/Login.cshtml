@@ -19,6 +19,13 @@
                     Welcome back! Please enter your details.
                 </p>
             </div>
+            @if (TempData["SuccessMessage"] is string successMessage && !string.IsNullOrWhiteSpace(successMessage))
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @successMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
 
             <!-- Form -->
             <form asp-controller="Auth" asp-action="Login" method="post">
@@ -63,5 +70,10 @@
             </p>
         </div>
     </div>
+
+    <!-- Ensure jQuery + unobtrusive validation are loaded so client validation runs and prevents submission -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>
