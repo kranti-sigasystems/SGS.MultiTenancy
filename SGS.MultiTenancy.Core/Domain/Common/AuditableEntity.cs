@@ -13,12 +13,12 @@
         /// <summary>
         /// Gets or set update by
         /// </summary>
-        public Guid? UpdateBy { get; set; }
+        public Guid? LastUpdateBy { get; set; }
 
         /// <summary>
         /// Gets or set update on
         /// </summary>
-        public DateTime? UpdateOn { get; set; }
+        public DateTime? LastUpdateOn { get; set; }
 
         /// <summary>
         /// Gets or set create on
