@@ -1,7 +1,5 @@
-﻿using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Domain.Common;
+﻿using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
-using SGS.MultiTenancy.Core.Entities.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
@@ -40,7 +38,7 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         public EntityStatus Status { get; set; }
 
         /// <summary>
-        /// Logo URL.
+        /// Gets or sets logo URL.
         /// </summary>
         [MaxLength(500)]
         public string? LogoUrl { get; set; }
