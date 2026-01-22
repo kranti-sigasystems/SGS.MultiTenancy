@@ -9,6 +9,7 @@ using SGS.MultiTenancy.Core.Extension;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
 using SGS.MultiTenancy.UI.Attribute;
+using SGS.MultiTenancy.UI.Middlewares;
 using System.Text;
 
 namespace SGS.MultiTenancy.UI
@@ -18,8 +19,6 @@ namespace SGS.MultiTenancy.UI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -61,7 +60,7 @@ namespace SGS.MultiTenancy.UI
                 options.Cookie.Name = "SGS_MultiTenancyAuth";
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SameSite = SameSiteMode.None;
                 options.SlidingExpiration = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(jwtOptions!.ExpiryMinutes);
                 options.Events = new CookieAuthenticationEvents
@@ -69,8 +68,17 @@ namespace SGS.MultiTenancy.UI
                     OnRedirectToLogin = context =>
                     {
                         var returnUrl = context.Request.Path + context.Request.QueryString;
-                        var redirectUrl = "/Tenant/Discovery";
-                        context.Response.Redirect(redirectUrl);
+                        //var redirectUrl = "/Tenant/Discovery";
+                        var host = context.Request.Host.Host;
+                        if (!host.Contains("."))
+                        {
+                            context.Response.Redirect("/Tenant/Discovery");
+                        }
+                        else
+                        {
+                            context.Response.Redirect("/Auth/Login");
+                        }
+                        //context.Response.Redirect(redirectUrl);
                         return Task.CompletedTask;
                     },
                     OnRedirectToAccessDenied = context =>
@@ -103,7 +111,6 @@ namespace SGS.MultiTenancy.UI
                     }
                 };
             });
-            builder.WebHost.UseUrls("https://localhost:7079", "https://*.localhost:7079");
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -114,8 +121,8 @@ namespace SGS.MultiTenancy.UI
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
+            app.UseMiddleware<TenantMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -124,7 +131,9 @@ namespace SGS.MultiTenancy.UI
                 name: "tenantDiscovery",
                 pattern: "/",
                 defaults: new { controller = "Tenant", action = "Discovery" });
-
+            app.MapControllerRoute(
+                 name: "default",
+                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.Run();
         }
     }

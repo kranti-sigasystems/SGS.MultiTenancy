@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -22,6 +21,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// Displays the list of all tenants.
         /// </summary>
         /// <returns>A view displaying the list of tenants.</returns>
+        [Authorize(Roles = "SGS_SuperHost")]
         [HttpGet]
         [HasPermission(permissionId: Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
@@ -35,6 +35,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// </summary>
         /// <returns>A view for adding a new tenant.</returns>
         [HttpGet]
+        [Authorize(Roles = "SGS_SuperHost")]
         public async Task<IActionResult> AddTenant()
         {
             return View(new TenantDto());
@@ -47,6 +48,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>Redirects to the tenant list or redisplays the form if invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SGS_SuperHost")]
         public async Task<IActionResult> AddTenant(TenantDto model)
         {
             if (!ModelState.IsValid)
@@ -62,6 +64,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <param name="id">The unique identifier of the tenant.</param>
         /// <returns>A view for updating the tenant or NotFound if not found.</returns>
         [HttpGet]
+        [Authorize(Roles = "SGS_SuperHost")]
         public async Task<IActionResult> UpdateTenant(Guid id)
         {
             TenantDto tenant = await _tenantService.GetEditModelAsync(id);
@@ -77,6 +80,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>Redirects to the tenant list or redisplays the form if invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SGS_SuperHost")]
         public async Task<IActionResult> UpdateTenant(TenantDto model)
         {
             if (!ModelState.IsValid)
@@ -90,6 +94,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "SGS_SuperHost")]
         public async Task<IActionResult> DeleteTenant(Guid id)
         {
             bool deleted = await _tenantService.DeleteAsync(id);
@@ -121,14 +126,14 @@ namespace SGS.MultiTenancy.UI.Controllers
             {
                 // Generic message, no leakage
                 ModelState.AddModelError("", "Unable to find workspace");
-                return View("Index");
+                return View();
             }
-            var scheme = Request.Scheme;             
-            var host = Request.Host.Host;           
+            var scheme = Request.Scheme;
+            var host = Request.Host.Host;
             var port = Request.Host.Port;
             var loginPath = "/Auth/Login";
 
-            var tenantHost = $"{tenant.Name}.{host}";
+            var tenantHost = $"{tenant.Slug}.{host}";
 
             var loginUrl = port.HasValue
                 ? $"{scheme}://{tenantHost}:{port}{loginPath}"

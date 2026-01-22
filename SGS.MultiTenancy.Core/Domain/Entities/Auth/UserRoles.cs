@@ -1,6 +1,8 @@
-﻿namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
+﻿using SGS.MultiTenancy.Core.Domain.Common;
+
+namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
 {
-    public class UserRoles
+    public class UserRoles: AuditableEntity
     {
         /// <summary>
         /// Gets or sets user identifier.

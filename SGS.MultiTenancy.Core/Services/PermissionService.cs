@@ -159,8 +159,8 @@ namespace SGS.MultiTenancy.Core.Services
             {
                 permission.Code = permissionRequest.Code!.ToUpper();
                 permission.Description = permissionRequest.Description!;
-                permission.UpdateOn = DateTime.Now;
-                permission.UpdateBy =permissionRequest.UpdatedBy;
+                permission.LastUpdateOn = DateTime.Now;
+                permission.LastUpdateBy =permissionRequest.UpdatedBy;
                 Permission updatedPermission = await _permissionRepository.UpdateAsync(permission);
                 await _permissionRepository.CompleteAsync();
                 return new PermissionResponseDto

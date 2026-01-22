@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
 namespace SGS.MultiTenancy.UI.Models
 {
     public class TenantDiscoveryViewModel

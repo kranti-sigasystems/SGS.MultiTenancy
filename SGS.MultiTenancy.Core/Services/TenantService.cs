@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -171,10 +170,6 @@ namespace SGS.MultiTenancy.Core.Services
         /// <returns>Tenant name and id</returns>
         public async Task<TenantDto?> GetTenantByNameAsync(string tenantName)
         {
-
-            try
-            {
-
                 var tenant = await _tenantRepo.FirstOrDefaultAsync(t => t.Name.ToLower() == tenantName.ToLower());
                 if (tenant == null)
                     return null;
@@ -182,14 +177,11 @@ namespace SGS.MultiTenancy.Core.Services
                 return new TenantDto
                 {
                     ID = tenant.ID,
-                    Name = tenant.Name
+                    Name = tenant.Name,
+                    Domain = tenant.Domain,
+                    Slug = tenant.Slug,
+                    Status = tenant.Status,
                 };
-            }
-            catch (Exception e)
-            {
-                var message = e.Message;
-                return new TenantDto();
-            }
         }
     }
 }
