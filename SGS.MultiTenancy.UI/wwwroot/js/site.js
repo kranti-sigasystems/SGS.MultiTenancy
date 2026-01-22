@@ -30,9 +30,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    /* =======================
-       ADDRESS MODAL
-    ======================= */
     const addressModal = document.getElementById('addressModal');
 
     if (addressModal) {
@@ -48,9 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* =======================
-       EDIT TENANT MODAL
-    ======================= */
     const editModal = document.getElementById('editTenantModal');
     const editBody = document.getElementById('editTenantBody');
 
@@ -75,9 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* =======================
-       DELETE TENANT MODAL
-    ======================= */
     const deleteModal = document.getElementById('deleteTenantModal');
 
     if (deleteModal) {
@@ -90,3 +81,33 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+//js for permissions management
+let createModal;
+let editModal;
+let deleteModel;
+document.addEventListener('DOMContentLoaded', function () {
+    createModal = new bootstrap.Modal(document.getElementById('createPermissionModal'));
+    editModal = new bootstrap.Modal(document.getElementById('permissionModal'));
+    deleteModal = new bootstrap.Modal(document.getElementById('deletePermissionModal'));
+});
+
+function openCreate() {
+    document.getElementById('CreatePermissionCode').value = '';
+    document.getElementById('CreatePermissionDescription').value = '';
+    createModal.show();
+}
+
+function openEdit(id, code, description) {
+    document.getElementById('UpdatePermissionId').value = id;
+    document.getElementById('UpdatePermissionCode').value = code;
+    document.getElementById('UpdatePermissionDescription').value = description;
+    editModal.show();
+}
+
+
+function openDelete(id) {
+    console.log("delete is open")
+    document.getElementById("DeletePermissionId").value = id;
+    deleteModal.show()
+}
