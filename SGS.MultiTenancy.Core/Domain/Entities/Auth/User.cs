@@ -10,68 +10,52 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
     public class User : AuditableEntity
     {
         /// <summary>
-        /// Gets or sets user identifier.
+        /// Gets or sets Primary key (UUID).
         /// </summary>
         [Key]
         public Guid ID { get; set; }
 
         /// <summary>
-        /// Gets or sets the unique identifier of the tenant.
+        /// Gets or sets User Name.
         /// </summary>
         [Required]
-        public Guid TenantID { get; set; }
+        [MaxLength(255)]
+        public string UserName { get; set; }
 
         /// <summary>
-        /// Gets or sets name.
+        /// Gets or sets Email address (unique).
         /// </summary>
         [Required]
-        [MaxLength(100)]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets email.
-        /// </summary>
-        [Required]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string Email { get; set; }
 
         /// <summary>
-        /// Gets or sets phone number.
+        /// Gets or sets password hash.
         /// </summary>
         [Required]
-        [MaxLength(25)]
-        public string PhoneNumber { get; set; }
+        [MaxLength(500)]
+        public string PasswordHash { get; set; }
 
         /// <summary>
-        /// Gets or sets password.
+        /// Gets or sets User avatar URL.
+        /// </summary>
+        [MaxLength(500)]
+        public string? AvatarUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unique identifier of the tenant.
         /// </summary>
         [Required]
-        [MaxLength(25)]
-        public string Password { get; set; }
+        public Guid? TenantID { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user mobile number is verified.
+        /// Tenant + role mappings.
         /// </summary>
-        public bool IsMobileConfirmed { get; set; }
+        public ICollection<UserRoles> UserRoles { get; set; } = new List<UserRoles>();
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user email is verified.
+        /// Gets or sets the address associated with this user.
         /// </summary>
-        public bool IsEmailConfirmed { get; set; }
-
-        // <summary>
-        /// Gets or sets address identifier.
-        /// </summary>
-        public Guid? AddressID { get; set; }
-
-        /// <summary>
-        /// Gets or sets address.
-        /// </summary>
-        public Address? Address { get; set; }
-
-        /// <summary>
-        /// Gets or sets the roles assigned to the user.
-        /// </summary>
-        public ICollection<UserRoles> UserRoles { get; set; }
+        public ICollection<UserAddress> UserAddresses { get; set; }
     }
 }

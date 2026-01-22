@@ -1,19 +1,10 @@
-﻿using SGS.MultiTenancy.Core.Domain.Common;
-using System.ComponentModel.DataAnnotations;
-
-namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
+﻿namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
 {
     /// <summary>
     /// Represents the association between a role and a permission within a tenant.
     /// </summary>
-    public class RolePermission : AuditableEntity
+    public class RolePermission
     {
-        /// <summary>
-        /// Gets or sets the unique identifier of the permission.
-        /// </summary>
-        [Key]
-        public Guid ID { get; set; }
-
         /// <summary>
         /// Gets or sets the unique identifier of the role.
         /// </summary>
@@ -37,6 +28,6 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// <summary>
         /// Gets or sets the unique identifier of the tenant.
         /// </summary>
-        public Guid TenantID { get; set; }
+        public Guid? TenantID { get; set; }
     }
 }

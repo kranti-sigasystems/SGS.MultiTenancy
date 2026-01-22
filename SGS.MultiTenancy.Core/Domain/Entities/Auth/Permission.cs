@@ -26,5 +26,15 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// Gets or sets the description of the permission.
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unique identifier of the tenant.
+        /// </summary>
+        public Guid? TenantID { get; set; }
+
+        /// <summary>
+        /// Gets or sets the permissions associated with this role.
+        /// </summary>
+        public ICollection<RolePermission> RolePermissions { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
-using SGS.MultiTenancy.Core.Domain.Entities;
+using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Entities.Common
@@ -14,6 +14,13 @@ namespace SGS.MultiTenancy.Core.Entities.Common
         /// </summary>
         [Key]
         public Guid ID { get; set; }
+
+        /// <summary>
+        /// Gets or sets phone number.
+        /// </summary>
+        [Required]
+        [MaxLength(25)]
+        public string PhoneNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the address line (e.g., street name and number).
@@ -35,14 +42,29 @@ namespace SGS.MultiTenancy.Core.Entities.Common
         public string City { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier of the state this city belongs to.
-        /// </summary>
-        [Required]
-        public Guid StateID { get; set; }
-
-        /// <summary>
         /// Gets or sets the state associated with this address.
         /// </summary>
-        public State State { get; set; }
+        public string State { get; set; }
+
+        /// <summary>
+        /// Gets or sets the country associated with this address.
+        /// </summary>
+        public string Country { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unique identifier of the tenant.
+        /// </summary>
+        public Guid? TenantID { get; set; }
+
+        /// <summary>
+        /// Indicates whether this is the default address for the user
+        /// </summary>
+        public bool IsDefault { get; set; }
+
+        /// <summary>
+        /// Gets or sets the address associated with this user.
+        /// </summary>
+        public ICollection<UserAddress> UserAddresses { get; set; }
+
     }
 }
