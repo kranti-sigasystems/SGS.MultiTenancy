@@ -4,7 +4,6 @@ using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
-using SGS.MultiTenancy.Core.Entities.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
 namespace SGS.MultiTenancy.Core.Services
@@ -74,14 +73,14 @@ namespace SGS.MultiTenancy.Core.Services
             Tenant tenant = new Tenant
             {
                 ID = Guid.NewGuid(),
-                Name = model.Name,
-                BussinessName = model.BussinessName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
+                Name = model.Name!,
+                BussinessName = model.BussinessName!,
+                Email = model.Email!,
+                PhoneNumber = model.PhoneNumber!,
                 Status = EntityStatus.Active,
-               
+
             };
-            
+
 
             await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
@@ -141,14 +140,14 @@ namespace SGS.MultiTenancy.Core.Services
             if (!await _stateRepo.AnyAsync(s => s.ID == model.StateID))
                 throw new Exception("Invalid State");
 
-            tenant.Name = model.Name;
-            tenant.BussinessName = model.BussinessName;
-            tenant.Email = model.Email;
-            tenant.PhoneNumber = model.PhoneNumber;
-            tenant.Status = model.Status;
+            tenant.Name = model.Name!;
+            tenant.BussinessName = model.BussinessName!;
+            tenant.Email = model.Email!;
+            tenant.PhoneNumber = model.PhoneNumber!;
+            tenant.Status = (EntityStatus)model.Status!;
             tenant.UpdateBy = tenant.ID; //temporary used tenantID as UpdateBy Id
-            
-            tenant.Address.StateID = model.StateID;
+
+            tenant.Address.StateID = (Guid)model.StateID!;
 
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
@@ -171,6 +170,34 @@ namespace SGS.MultiTenancy.Core.Services
             await _tenantRepo.CompleteAsync();
 
             return true;
+        }
+
+        /// <summary>
+        /// Return the tenant by specified name
+        /// </summary>
+        /// <param name="tenantName">Tenant name</param>
+        /// <returns>Tenant name and id</returns>
+        public async Task<TenantDto?> GetTenantByNameAsync(string tenantName)
+        {
+
+            try
+            {
+
+                var tenant = await _tenantRepo.FirstOrDefaultAsync(t => t.Name.ToLower() == tenantName.ToLower());
+                if (tenant == null)
+                    return null;
+
+                return new TenantDto
+                {
+                    ID = tenant.ID,
+                    Name = tenant.Name
+                };
+            }
+            catch (Exception e)
+            {
+                var message = e.Message;
+                return new TenantDto();
+            }
         }
     }
 }

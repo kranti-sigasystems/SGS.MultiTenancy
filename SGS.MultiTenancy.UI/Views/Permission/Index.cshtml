@@ -1,0 +1,157 @@
+﻿@model PermissionPageViewModel
+
+<div class="container-fluid p-4">
+    <!-- Header Section -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="fw-bold m-0">Permissions</h3>
+        <button type="button"
+                class="btn shadow-sm d-flex align-items-center gap-2 "
+                onclick="openCreate()">
+            <i class="bi bi-plus-lg"></i>
+            Create permission
+        </button>
+    </div>
+
+    <!-- Table Section -->
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-header">
+                    <tr style="background-color: var(--brand-primary);">
+                        <th class=" border-0 ps-4 py-3 small small fw-bold text-uppercase">Code</th>
+                        <th class=" border-0 py-3 small fw-bold text-uppercase">Description</th>
+                        <th class=" border-0 pe-4 py-3 small fw-bold text-uppercase text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @if (Model.Permissions.Any())
+                    {
+                        foreach (var permission in Model.Permissions)
+                        {
+                            <tr>
+                                @* <td class="ps-4 text-muted small font-monospace">@permission.Id</td> *@
+                                <td class="ps-4">@permission.Code</td>
+                                <td >@permission.Description</td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-custom"
+                                                onclick="openEdit('@permission.Id', '@permission.Code', '@permission.Description')">
+                                            <i class="bi bi-pencil-square  fs-5"></i>
+                                        </button>
+                                        <button type="button"
+                                                class="btn btn-sm btn-danger-custom"
+                                                onclick="openDelete('@permission.Id')">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                No records found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-3 px-1">
+        <small class="text-muted fw-bold">Total Records: @Model.Permissions.Count()</small>
+    </div>
+</div>
+
+@* form Create *@
+<div class="modal fade" id="createPermissionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white bg-color">
+                <h5 class="modal-title fw-bold">Create Permission</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="Create" asp-controller="Permission" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Form.Code" class="form-label small fw-bold"></label>
+                        <input asp-for="Form.Code" class="form-control" id="CreatePermissionCode" />
+                        <span asp-validation-for="Form.Code" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.Description" class="form-label small fw-bold"></label>
+                        <input asp-for="Form.Description" class="form-control" id="CreatePermissionDescription" />
+                        <span asp-validation-for="Form.Description" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn text-white px-4 bg-color">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* form Edit *@
+<div class="modal fade" id="permissionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white bg-color">
+                <h5 class="modal-title fw-bold">Edit Permission</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="Update" asp-controller="Permission" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Form.Id" id="UpdatePermissionId" />
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label asp-for="Form.Code" class="form-label small fw-bold"></label>
+                        <input asp-for="Form.Code" class="form-control" id="UpdatePermissionCode" />
+                        <span asp-validation-for="Form.Code" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Form.Description" class="form-label small fw-bold"></label>
+                        <input asp-for="Form.Description" class="form-control" id="UpdatePermissionDescription" />
+                        <span asp-validation-for="Form.Description" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn text-white px-4 bg-color">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* form Delete *@
+<div class="modal fade" id="deletePermissionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header text-white bg-color">
+                <h5 class="modal-title fw-bold">Delete Permission</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="Delete" asp-controller="Permission" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Form.Id" id="DeletePermissionId" />
+                <div class="modal-body text-center p-2">
+                    <i class="bi bi-exclamation-circle text-danger display-4"></i>
+                    <h5 class="mt-3 fw-bold">Delete</h5>
+                    <p class="text-muted small">Are you sure you want to delete this permission?</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
