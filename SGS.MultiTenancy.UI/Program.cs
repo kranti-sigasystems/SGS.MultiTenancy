@@ -99,8 +99,8 @@ namespace SGS.MultiTenancy.UI
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseAuthentication();
+            app.UseMiddleware<SubdomainRoutingMiddleware>();
             app.UseAuthorization();
 
             app.MapControllerRoute(

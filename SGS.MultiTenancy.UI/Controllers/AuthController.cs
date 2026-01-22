@@ -38,11 +38,6 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (User?.Identity?.IsAuthenticated == true)
-            {
-                return RedirectToAction(nameof(DashBoardController.Index),
-                    Utility.PrepareControllerName(nameof(DashBoardController)));
-            }
             return View();
         }
 
@@ -73,16 +68,8 @@ namespace SGS.MultiTenancy.UI.Controllers
                 return View(loginViewModel);
             }
 
-            Response.Cookies.Append("SGS_AuthToken", loginResponse.Token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTimeOffset.Now.AddMinutes(_jwtOptions.ExpiryMinutes)
-            });
-
             await CreateMvcSessionAsync(loginResponse);
-            return RedirectToAction(nameof(DashBoardController.Index), Utility.PrepareControllerName(nameof(DashBoardController)));
+            return RedirectToAction(nameof(TenantController.Index), Utility.PrepareControllerName(nameof(TenantController)));
         }
 
         /// <summary>
