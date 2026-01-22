@@ -5,10 +5,10 @@ using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Attribute;
-
+using SGS.MultiTenancy.UI.Models;
 namespace SGS.MultiTenancy.UI.Controllers
 {
-    [Authorize (Roles = "SGS_SuperHost")]
+    [Authorize(Roles = "SGS_SuperHost")]
     public class TenantController : Controller
     {
         private readonly ITenantService _tenantService;
@@ -23,7 +23,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// </summary>
         /// <returns>A view displaying the list of tenants.</returns>
         [HttpGet]
-        [HasPermission(permissionId:Permissions.Tenant_View)]
+        [HasPermission(permissionId: Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
         {
             List<TenantDto> list = await _tenantService.GetAllAsync();
@@ -70,7 +70,6 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             return PartialView("_EditTenantPartial", tenant);
         }
-
         /// <summary>
         /// Handles the submission of the update tenant form.
         /// </summary>
@@ -89,17 +88,53 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTenant(Guid id)
         {
             bool deleted = await _tenantService.DeleteAsync(id);
-
             if (!deleted)
                 return NotFound();
-
             return RedirectToAction(nameof(Index));
+        }
+
+
+        /// <summary>
+        /// serving the form for the tenant identity
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Discovery()
+        {
+            return View();
+        }
+        /// <summary>
+        /// serving the form for the tenant identity
+        /// </summary>
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Discovery(TenantDiscoveryViewModel model)
+        {
+            string NoramalizedTenantName = model.TenantName.Trim();
+            TenantDto? tenant = await _tenantService.GetTenantByNameAsync(NoramalizedTenantName);
+            if (tenant == null)
+            {
+                // Generic message, no leakage
+                ModelState.AddModelError("", "Unable to find workspace");
+                return View("Index");
+            }
+            var scheme = Request.Scheme;             
+            var host = Request.Host.Host;           
+            var port = Request.Host.Port;
+            var loginPath = "/Auth/Login";
+
+            var tenantHost = $"{tenant.Name}.{host}";
+
+            var loginUrl = port.HasValue
+                ? $"{scheme}://{tenantHost}:{port}{loginPath}"
+                : $"{scheme}://{tenantHost}{loginPath}";
+
+            return Redirect(loginUrl);
         }
     }
 }

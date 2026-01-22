@@ -163,5 +163,33 @@ namespace SGS.MultiTenancy.Core.Services
 
             return true;
         }
+
+        /// <summary>
+        /// Return the tenant by specified name
+        /// </summary>
+        /// <param name="tenantName">Tenant name</param>
+        /// <returns>Tenant name and id</returns>
+        public async Task<TenantDto?> GetTenantByNameAsync(string tenantName)
+        {
+
+            try
+            {
+
+                var tenant = await _tenantRepo.FirstOrDefaultAsync(t => t.Name.ToLower() == tenantName.ToLower());
+                if (tenant == null)
+                    return null;
+
+                return new TenantDto
+                {
+                    ID = tenant.ID,
+                    Name = tenant.Name
+                };
+            }
+            catch (Exception e)
+            {
+                var message = e.Message;
+                return new TenantDto();
+            }
+        }
     }
 }

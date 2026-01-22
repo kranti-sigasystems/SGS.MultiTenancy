@@ -40,5 +40,11 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// Ensures tenant is hidden from UI but kept in the database.
         /// </summary>
         Task<bool> DeleteAsync(Guid id);
+
+        /// <summary>
+        /// Gets a tenant by its name.
+        /// </summary>
+        /// <param name="tenantName">Tenant name</param>
+        Task<TenantDto?> GetTenantByNameAsync(string tenantName);
     }
 }
