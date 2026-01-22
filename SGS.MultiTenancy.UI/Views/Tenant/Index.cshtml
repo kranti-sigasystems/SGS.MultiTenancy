@@ -17,14 +17,14 @@
             <thead class="table-header">
                 <tr>
                     <th>Name</th>
-                    <th>Business Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
+                    <th>Slug</th>
+                    <th>Domain</th>
                     <th>Status</th>
-                    <th>Address</th>
+                    <th>Logo</th>
                     <th>Action</th>
                 </tr>
             </thead>
+
             <tbody>
                 @if (Model != null && Model.Any())
                 {
@@ -32,38 +32,41 @@
                     {
                         <tr>
                             <td>@t.Name</td>
-                            <td>@t.BussinessName</td>
-                            <td>@t.Email</td>
-                            <td>@t.PhoneNumber</td>
-                            <td>@t.Status</td>
                             <td>
-                                <button type="button"
-                                        class="btn btn-sm  view-address-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#addressModal"
-                                        data-line1="@t.AddressLine"
-                                        data-city="@t.City"
-                                        data-state="@t.State"
-                                        data-country="@t.Country"
-                                        data-postal="@t.PostalCode">
-                                    <i class="bi bi-eye"></i>
-                                </button>
+                                <span class="badge bg-secondary">@t.Slug</span>
+                            </td>
+                            <td>@t.Domain</td>
+                            <td>
+                                <span class="badge @(t.Status == SGS.MultiTenancy.Core.Domain.Enums.EntityStatus.Active ? "bg-success" : "bg-danger")">
+                                    @t.Status
+                                </span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(t.LogoUrl))
+                                {
+                                    <img src="@t.LogoUrl" style="height:32px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
                             </td>
                             <td class="text-center">
-                                <button class=" bg-light text-brand btn-link p-0 me-4"
+                                <button class="bg-light text-brand btn-link p-0 me-4"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editTenantModal"
                                         data-id="@t.ID"
                                         title="Edit" style="border:none;">
-                                    <i class="bi bi-pencil-square  fs-5"></i>
+                                    <i class="bi bi-pencil-square fs-5"></i>
                                 </button>
 
-                                <button class=" bg-light text-brand btn-sm"
+                                <button class="bg-light text-brand btn-sm"
                                         data-bs-toggle="modal"
                                         data-bs-target="#deleteTenantModal"
                                         data-tenant-id="@t.ID"
-                                        data-tenant-name="@t.Name" style="border:none;">
-                                    <i class="bi bi-trash   fs-5"></i>
+                                        data-tenant-name="@t.Name"
+                                        style="border:none;">
+                                    <i class="bi bi-trash fs-5"></i>
                                 </button>
                             </td>
                         </tr>
@@ -72,10 +75,11 @@
                 else
                 {
                     <tr>
-                        <td colspan="7" class="text-center text-muted">No tenants found.</td>
+                        <td colspan="6" class="text-center text-muted">No tenants found.</td>
                     </tr>
                 }
             </tbody>
+
         </table>
     </div>
 </div>

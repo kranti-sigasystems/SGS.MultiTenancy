@@ -180,8 +180,8 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// </summary>
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
-            entity.UpdateOn = DateTime.UtcNow;
-            //entity.UpdateBy = _currentUser?.UserId ?? new Guid();
+            entity.LastUpdateOn = DateTime.UtcNow;
+            entity.LastUpdateBy = _currentUser?.UserId ?? new Guid();
 
             _dbSet.Update(entity);
             return await Task.FromResult(entity);
@@ -194,8 +194,8 @@ namespace SGS.MultiTenancy.Infra.Repository
         {
             foreach (var entity in entities)
             {
-                entity.UpdateOn = DateTime.UtcNow;
-                entity.UpdateBy = _currentUser?.UserId;
+                entity.LastUpdateOn = DateTime.UtcNow;
+                entity.LastUpdateBy = _currentUser?.UserId;
             }
 
             _dbSet.UpdateRange(entities);
@@ -225,8 +225,8 @@ namespace SGS.MultiTenancy.Infra.Repository
                 isDeletedProperty.SetValue(entity, true);
             }
 
-            entity.UpdateOn = DateTime.UtcNow;
-            entity.UpdateBy = _currentUser?.UserId;
+            entity.LastUpdateOn = DateTime.UtcNow;
+            entity.LastUpdateBy = _currentUser?.UserId;
 
             _dbSet.Update(entity);
             await Task.CompletedTask;

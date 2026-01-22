@@ -26,7 +26,8 @@ namespace SGS.MultiTenancy.UI
                 builder.Configuration.GetConnectionString("DefaultConnection"),
                 ServerVersion.AutoDetect(
                     builder.Configuration.GetConnectionString("DefaultConnection")
-                )
+                ),
+                b => b.MigrationsAssembly("SGS.MultiTenancy.Infra")
             ));
 
             builder.Services.AddHttpContextAccessor();

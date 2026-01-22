@@ -38,7 +38,7 @@ namespace SGS.MultiTenancy.Infra.Repository
                 new(JwtRegisteredClaimNames.Sub, applicationUser.ID.ToString()),
                 new("tenantId", applicationUser.TenantID.ToString()),
                 new(JwtRegisteredClaimNames.Email, applicationUser.Email),
-                new(JwtRegisteredClaimNames.Name,applicationUser.Name),
+                new(JwtRegisteredClaimNames.Name,applicationUser.UserName),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
             

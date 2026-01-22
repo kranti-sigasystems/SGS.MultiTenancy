@@ -12,12 +12,10 @@ namespace SGS.MultiTenancy.UI.Controllers
     public class TenantController : Controller
     {
         private readonly ITenantService _tenantService;
-        private readonly ILocationService _locationService;
 
-        public TenantController(ITenantService tenantService, ILocationService locationService)
+        public TenantController(ITenantService tenantService)
         {
             _tenantService = tenantService;
-            _locationService = locationService;
         }
 
         /// <summary>
@@ -27,23 +25,9 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         [HasPermission(permissionId:Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
-        
         {
             List<TenantDto> list = await _tenantService.GetAllAsync();
             return View(list);
-        }
-
-
-        /// <summary>
-        /// Retrieves the states for a given country.
-        /// </summary>
-        /// <param name="countryId">The unique identifier of the country.</param>
-        /// <returns>A JSON result containing the list of states.</returns>
-        [HttpGet]
-        public async Task<JsonResult> GetStates(Guid countryId)
-        {
-            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(countryId);
-            return Json(states);
         }
 
         /// <summary>
@@ -53,15 +37,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTenant()
         {
-            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
-
-            TenantDto model = new TenantDto
-            {
-                Countries = countries,
-                States = Enumerable.Empty<SelectListItem>()
-            };
-
-            return View(model);
+            return View(new TenantDto());
         }
 
         /// <summary>
@@ -88,11 +64,11 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateTenant(Guid id)
         {
-            TenantDto model = await _tenantService.GetEditModelAsync(id);
-            if (model == null)
+            TenantDto tenant = await _tenantService.GetEditModelAsync(id);
+            if (tenant == null)
                 return NotFound();
 
-            return PartialView("_EditTenantPartial", model);
+            return PartialView("_EditTenantPartial", tenant);
         }
 
         /// <summary>
@@ -106,8 +82,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.Countries = await _locationService.GetCountriesAsync();
-                model.States = await _locationService.GetStatesByCountryAsync(model.CountryID);
+                return PartialView("_EditTenantPartial", model);
             }
 
             await _tenantService.UpdateAsync(model);

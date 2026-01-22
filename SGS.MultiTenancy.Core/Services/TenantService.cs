@@ -4,7 +4,6 @@ using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
-using SGS.MultiTenancy.Core.Entities.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
 namespace SGS.MultiTenancy.Core.Services
@@ -15,20 +14,13 @@ namespace SGS.MultiTenancy.Core.Services
     public class TenantService : ITenantService
     {
         private readonly IGenericRepository<Tenant> _tenantRepo;
-        private readonly IGenericRepository<State> _stateRepo;
-        private readonly ILocationService _locationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TenantService"/> class.
         /// </summary>
-        public TenantService(
-            IGenericRepository<Tenant> tenantRepo,
-            IGenericRepository<State> stateRepo,
-            ILocationService locationService)
+        public TenantService(IGenericRepository<Tenant> tenantRepo)
         {
             _tenantRepo = tenantRepo;
-            _stateRepo = stateRepo;
-            _locationService = locationService;
         }
 
         /// <summary>
@@ -37,22 +29,17 @@ namespace SGS.MultiTenancy.Core.Services
         /// <returns>A list of active tenants.</returns>
         public async Task<List<TenantDto>> GetAllAsync()
         {
-            return await _tenantRepo
-            .Query(t => t.Status == EntityStatus.Active)
-            .Select(t => new TenantDto
-            {
-                ID = t.ID,
-                Name = t.Name,
-                BussinessName = t.BussinessName,
-                Email = t.Email,
-                PhoneNumber = t.PhoneNumber,
-                Status = t.Status,
-                AddressLine = t.Address.AddressLine,
-                PostalCode = t.Address.PostalCode,
-                City = t.Address.City,
-                Country = t.Address.State.Country.Name,
-                State = t.Address.State.Name
-            }).ToListAsync();
+            return await _tenantRepo.Query()
+                .Select(t => new TenantDto
+                {
+                    ID = t.ID,
+                    Name = t.Name,
+                    Slug = t.Slug,
+                    Domain = t.Domain,
+                    Status = t.Status,
+                    LogoUrl = t.LogoUrl
+                })
+                .ToListAsync();
         }
 
         /// <summary>
@@ -71,17 +58,26 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="model">The tenant form view model.</param>
         public async Task CreateAsync(TenantDto model)
         {
+            bool slugExists = await _tenantRepo.AnyAsync(t => t.Slug == model.Slug);
+            if (slugExists)
+                throw new Exception("Slug already exists");
+
+            if (!string.IsNullOrEmpty(model.Domain))
+            {
+                bool domainExists = await _tenantRepo.AnyAsync(t => t.Domain == model.Domain);
+                if (domainExists)
+                    throw new Exception("Domain already mapped to another tenant");
+            }
+
             Tenant tenant = new Tenant
             {
                 ID = Guid.NewGuid(),
                 Name = model.Name,
-                BussinessName = model.BussinessName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                Status = EntityStatus.Active,
-               
+                Slug = model.Slug.ToLower(),
+                Domain = model.Domain,
+                Status = model.Status,
+                LogoUrl = model.LogoUrl
             };
-            
 
             await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
@@ -94,35 +90,23 @@ namespace SGS.MultiTenancy.Core.Services
         /// <returns>A populated tenant form view model.</returns>
         public async Task<TenantDto> GetEditModelAsync(Guid tenantId)
         {
-            Tenant? tenant = await _tenantRepo.Query()
-                .Include(t => t.Address)
-                .ThenInclude(a => a.State)
-                .ThenInclude(s => s.Country)
-                .FirstOrDefaultAsync(t => t.ID == tenantId);
+            var tenant = await _tenantRepo.Query()
+                .Where(t => t.ID == tenantId)
+                .Select(t => new TenantDto
+                {
+                    ID = t.ID,
+                    Name = t.Name,
+                    Slug = t.Slug,
+                    Domain = t.Domain,
+                    Status = t.Status,
+                    LogoUrl = t.LogoUrl
+                })
+                .FirstOrDefaultAsync();
 
             if (tenant == null)
                 throw new Exception("Tenant not found");
 
-            if (tenant.Address == null || tenant.Address.State == null)
-                throw new Exception("Tenant address or state is missing");
-
-            var countries = await _locationService.GetCountriesAsync();
-            var states = await _locationService
-                .GetStatesByCountryAsync(tenant.Address.State.CountryID);
-
-            return new TenantDto
-            {
-                ID = tenant.ID,
-                AddressID = tenant.AddressID,
-
-                Name = tenant.Name,
-                BussinessName = tenant.BussinessName,
-                Email = tenant.Email,
-                PhoneNumber = tenant.PhoneNumber,
-                Status = tenant.Status,
-                Countries = countries,
-                States = states
-            };
+            return tenant;
         }
 
         /// <summary>
@@ -131,28 +115,35 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="model">The tenant form view model.</param>
         public async Task UpdateAsync(TenantDto model)
         {
-            Tenant? tenant = await _tenantRepo.Query()
-                .Include(t => t.Address)
-                .FirstOrDefaultAsync(t => t.ID == model.ID) ?? throw new Exception("Tenant not found");
+            Tenant tenant = await _tenantRepo.Query()
+                .FirstOrDefaultAsync(t => t.ID == model.ID)
+                ?? throw new Exception("Tenant not found");
 
-            if (tenant.Address == null)
-                throw new Exception("Address not found");
+            bool slugExists = await _tenantRepo.AnyAsync(t =>
+                t.Slug == model.Slug && t.ID != model.ID);
 
-            if (!await _stateRepo.AnyAsync(s => s.ID == model.StateID))
-                throw new Exception("Invalid State");
+            if (slugExists)
+                throw new Exception("Slug already exists");
+
+            if (!string.IsNullOrEmpty(model.Domain))
+            {
+                bool domainExists = await _tenantRepo.AnyAsync(t =>
+                    t.Domain == model.Domain && t.ID != model.ID);
+
+                if (domainExists)
+                    throw new Exception("Domain already mapped to another tenant");
+            }
 
             tenant.Name = model.Name;
-            tenant.BussinessName = model.BussinessName;
-            tenant.Email = model.Email;
-            tenant.PhoneNumber = model.PhoneNumber;
+            tenant.Slug = model.Slug.ToLower();
+            tenant.Domain = model.Domain;
             tenant.Status = model.Status;
-            tenant.UpdateBy = tenant.ID; //temporary used tenantID as UpdateBy Id
-            
-            tenant.Address.StateID = model.StateID;
+            tenant.LogoUrl = model.LogoUrl;
 
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
         }
+
 
         /// <summary>
         /// Deletes a tenant by its unique identifier.
