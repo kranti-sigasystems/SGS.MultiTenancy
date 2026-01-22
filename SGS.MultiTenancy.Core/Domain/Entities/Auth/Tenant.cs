@@ -13,7 +13,7 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         public Guid ID { get; set; }
 
         /// <summary>
-        /// Customer / business name (e.g., "Acme Corp").
+        /// Gets or sets customer / business name.
         /// </summary>
         [Required]
         [MaxLength(200)]

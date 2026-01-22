@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Infra.DataContext;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace SGS.MultiTenancy.Infra.Repository
 {
@@ -13,7 +15,7 @@ namespace SGS.MultiTenancy.Infra.Repository
     /// </summary>
     /// <typeparam name="TEntity">The entity type.</typeparam>
     public class GenericRepository<TEntity> : IGenericRepository<TEntity>
-        where TEntity : AuditableEntity
+        where TEntity : class
     {
         /// <summary>
         /// The database context.
@@ -154,8 +156,18 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// </summary>
         public async Task<TEntity> AddAsync(TEntity entity)
         {
-            entity.CreateOn = DateTime.UtcNow;
-            entity.CreateBy = _currentUser?.UserId ?? new Guid();
+            PropertyInfo? createdOnProp = typeof(TEntity).GetProperty("CreateOn");
+            PropertyInfo? createdByProp = typeof(TEntity).GetProperty("CreateBy");
+
+            if (createdOnProp != null && createdOnProp.CanWrite)
+            {
+                createdOnProp.SetValue(entity, DateTime.UtcNow);
+            }
+
+            if (createdByProp != null && createdByProp.CanWrite)
+            {
+                createdByProp.SetValue(entity, _currentUser?.UserId ?? new Guid());
+            }
 
             await _dbSet.AddAsync(entity);
             return entity;
@@ -166,13 +178,24 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// </summary>
         public async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
+            PropertyInfo? createdOnProp = typeof(TEntity).GetProperty("CreateOn");
+            PropertyInfo? createdByProp = typeof(TEntity).GetProperty("CreateBy");
+
             foreach (var entity in entities)
             {
-                entity.CreateOn = DateTime.UtcNow;
-                entity.CreateBy = _currentUser?.UserId ?? Guid.Empty;
+                if (createdOnProp?.CanWrite == true)
+                {
+                    createdOnProp.SetValue(entity, DateTime.UtcNow);
+                }
+
+                if (createdByProp?.CanWrite == true)
+                {
+                    createdByProp.SetValue(entity, _currentUser?.UserId ?? Guid.Empty);
+                }
             }
 
             await _dbSet.AddRangeAsync(entities);
+
         }
 
         /// <summary>
@@ -180,27 +203,49 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// </summary>
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
-            entity.LastUpdateOn = DateTime.UtcNow;
-            entity.LastUpdateBy = _currentUser?.UserId ?? new Guid();
+            PropertyInfo? lastUpdateOnProp = typeof(TEntity).GetProperty("LastUpdateOn");
+            PropertyInfo? lastUpdateByProp = typeof(TEntity).GetProperty("LastUpdateBy");
+
+            if (lastUpdateOnProp?.CanWrite == true)
+            {
+                lastUpdateOnProp.SetValue(entity, DateTime.UtcNow);
+            }
+
+            if (lastUpdateByProp?.CanWrite == true)
+            {
+                lastUpdateByProp.SetValue(entity, _currentUser?.UserId ?? Guid.Empty);
+            }
 
             _dbSet.Update(entity);
             return await Task.FromResult(entity);
         }
+
 
         /// <summary>
         /// Updates multiple entities and applies audit information.
         /// </summary>
         public async Task UpdateRangeAsync(IEnumerable<TEntity> entities)
         {
+            PropertyInfo? lastUpdateOnProp = typeof(TEntity).GetProperty("LastUpdateOn");
+            PropertyInfo? lastUpdateByProp = typeof(TEntity).GetProperty("LastUpdateBy");
+
             foreach (var entity in entities)
             {
-                entity.LastUpdateOn = DateTime.UtcNow;
-                entity.LastUpdateBy = _currentUser?.UserId;
+                if (lastUpdateOnProp?.CanWrite == true)
+                {
+                    lastUpdateOnProp.SetValue(entity, DateTime.UtcNow);
+                }
+
+                if (lastUpdateByProp?.CanWrite == true)
+                {
+                    lastUpdateByProp.SetValue(entity, _currentUser?.UserId ?? Guid.Empty);
+                }
             }
 
             _dbSet.UpdateRange(entities);
             await Task.CompletedTask;
         }
+
 
         /// <summary>
         /// Soft-deletes an entity by its identifier.
@@ -219,19 +264,21 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// </summary>
         public async Task DeleteAsync(TEntity entity)
         {
-            var isDeletedProperty = typeof(TEntity).GetProperty("IsDeleted");
-            if (isDeletedProperty != null && isDeletedProperty.PropertyType == typeof(bool))
+            PropertyInfo? lastUpdateOnProp = typeof(TEntity).GetProperty("LastUpdateOn");
+            PropertyInfo? lastUpdateByProp = typeof(TEntity).GetProperty("LastUpdateBy");
+
+            if (lastUpdateOnProp?.CanWrite == true)
             {
-                isDeletedProperty.SetValue(entity, true);
+                lastUpdateOnProp.SetValue(entity, DateTime.UtcNow);
             }
 
-            entity.LastUpdateOn = DateTime.UtcNow;
-            entity.LastUpdateBy = _currentUser?.UserId;
-
+            if (lastUpdateByProp?.CanWrite == true)
+            {
+                lastUpdateByProp.SetValue(entity, _currentUser?.UserId ?? Guid.Empty);
+            }
             _dbSet.Update(entity);
             await Task.CompletedTask;
         }
-
         /// <summary>
         /// Persists all pending changes to the database.
         /// </summary>

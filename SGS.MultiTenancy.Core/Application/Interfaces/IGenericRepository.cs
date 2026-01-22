@@ -9,7 +9,7 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces
     /// </summary>
     /// <typeparam name="TEntity">The entity type.</typeparam>
     public interface IGenericRepository<TEntity>
-        where TEntity : AuditableEntity
+        where TEntity : class
     {
         /// <summary>
         /// Returns a base queryable for the entity type.

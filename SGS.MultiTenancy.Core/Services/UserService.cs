@@ -19,18 +19,18 @@ namespace SGS.MultiTenancy.Core.Services
         private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
-        //private readonly IGenericRepository<UserRoles> _userRoles;
+        private readonly IGenericRepository<UserRoles> _userRoles;
         private readonly IMemoryCache _cache;
         public UserService(IUserRepository userRepositery,
             IJwtTokenGenerator jwtTokenGenerator,
             IPasswordHasherService passwordHasherService,
-            //IGenericRepository<UserRoles> userRoles,
+            IGenericRepository<UserRoles> userRoles,
             IMemoryCache memoryCache)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasherService = passwordHasherService;
-            //_userRoles = userRoles;
+            _userRoles = userRoles;
             _cache = memoryCache;
         }
         /// <summary>
@@ -127,24 +127,24 @@ namespace SGS.MultiTenancy.Core.Services
             if (_cache.TryGetValue(cacheKey, out HashSet<Guid> cached))
                 return cached;
 
-            //List<Guid> permissionIds = await _userRoles.Query()
-            //    .Where(ur =>
-            //        ur.UserID == userId &&
-            //        ur.TenantID == tenantId)
-            //    .SelectMany(ur => ur.Role.RolePermissions)
-            //    .Select(rp => rp.PermissionID)
-            //    .Distinct()
-            //    .ToListAsync();
+            List<Guid> permissionIds = await _userRoles.Query()
+                .Where(ur =>
+                    ur.UserID == userId &&
+                    ur.TenantID == tenantId)
+                .SelectMany(ur => ur.Role.RolePermissions)
+                .Select(rp => rp.PermissionID)
+                .Distinct()
+                .ToListAsync();
 
-            //var result = permissionIds.ToHashSet();
+            var result = permissionIds.ToHashSet();
 
-            //_cache.Set(
-            //    cacheKey,
-            //    result,
-            //    TimeSpan.FromMinutes(30));
+            _cache.Set(
+                cacheKey,
+                result,
+                TimeSpan.FromMinutes(30));
 
-            //return result;
-            return new HashSet<Guid>();
+            return result;
+          
         }
     }
 }                                             
