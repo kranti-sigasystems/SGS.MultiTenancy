@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
@@ -56,28 +55,12 @@ namespace SGS.MultiTenancy.UI
             {
                 options.LoginPath = "/Auth/Login";
                 options.LogoutPath = "/Auth/Logout";
-                options.AccessDeniedPath = "/Auth/PermissionNotFound";
                 options.Cookie.Name = "SGS_MultiTenancyAuth";
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(jwtOptions!.ExpiryMinutes);
-                options.Events = new CookieAuthenticationEvents
-                {
-                    OnRedirectToLogin = context =>
-                    {
-                        var returnUrl = context.Request.Path + context.Request.QueryString;
-                        var redirectUrl = "/Tenant/Discovery";
-                        context.Response.Redirect(redirectUrl);
-                        return Task.CompletedTask;
-                    },
-                    OnRedirectToAccessDenied = context =>
-                    {
-                        context.Response.Redirect("/Auth/PermissionNotFound");
-                        return Task.CompletedTask;
-                    }
-                };
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(jwtOptions.ExpiryMinutes);
             })
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
@@ -87,7 +70,7 @@ namespace SGS.MultiTenancy.UI
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtOptions!.Issuer,
+                    ValidIssuer = jwtOptions.Issuer,
                     ValidAudience = jwtOptions.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(jwtOptions.Secret)
@@ -102,7 +85,7 @@ namespace SGS.MultiTenancy.UI
                     }
                 };
             });
-            builder.WebHost.UseUrls("https://localhost:7079", "https://*.localhost:7079");
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -120,9 +103,8 @@ namespace SGS.MultiTenancy.UI
             app.UseAuthorization();
 
             app.MapControllerRoute(
-                name: "tenantDiscovery",
-                pattern: "/",
-                defaults: new { controller = "Tenant", action = "Discovery" });
+                name: "default",
+                pattern: "{controller=Auth}/{action=Login}/{id?}");
 
             app.Run();
         }

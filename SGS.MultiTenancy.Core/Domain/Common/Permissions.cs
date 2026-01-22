@@ -1,4 +1,5 @@
-﻿namespace SGS.MultiTenancy.Core.Domain.Common
+﻿
+namespace SGS.MultiTenancy.Core.Domain.Common
 {
     public static class Permissions
     {

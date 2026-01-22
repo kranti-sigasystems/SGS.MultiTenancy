@@ -2,7 +2,6 @@
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Services;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
-using SGS.MultiTenancy.Infra.Repositery;
 using SGS.MultiTenancy.Infra.Repository;
 
 namespace SGS.MultiTenancy.Infa.Extension
@@ -24,7 +23,8 @@ namespace SGS.MultiTenancy.Infa.Extension
             services.AddScoped<ITenantProvider, TenantProvider>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IPermissionRepository, PermissionRepository>();
+
+
             // Register JwtTokenGenerator Services
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             return services;
