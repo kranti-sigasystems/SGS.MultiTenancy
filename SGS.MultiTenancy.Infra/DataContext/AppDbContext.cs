@@ -44,6 +44,49 @@ namespace SGS.MultiTenancy.Infra.DataContext
             modelBuilder.ApplyConfigurationsFromAssembly(
                 typeof(AppDbContext).Assembly);
 
+            // UserRoles composite key
+            modelBuilder.Entity<UserRoles>()
+                .HasKey(ur => new { ur.UserID, ur.RoleID, ur.TenantID });
+
+            modelBuilder.Entity<UserRoles>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserID);
+
+            modelBuilder.Entity<UserRoles>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleID);
+
+            // RolePermission composite key
+            modelBuilder.Entity<RolePermission>()
+                .HasKey(rp => new { rp.RoleID, rp.PermissionID, rp.TenantID });
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleID);
+
+            modelBuilder.Entity<RolePermission>()
+                .HasOne(rp => rp.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionID);
+
+            // UserAddress composite key
+            modelBuilder.Entity<UserAddress>()
+                .HasKey(ua => new { ua.UserID, ua.AddressId, ua.TenantID });
+
+            // Relationships
+            modelBuilder.Entity<UserAddress>()
+                .HasOne(ua => ua.User)
+                .WithMany(u => u.UserAddresses)
+                .HasForeignKey(ua => ua.UserID);
+
+            modelBuilder.Entity<UserAddress>()
+                .HasOne(ua => ua.Address)
+                .WithMany(a => a.UserAddresses)
+                .HasForeignKey(ua => ua.AddressId);
+
             // ✅ Apply global tenant filter
             modelBuilder.ApplyTenantFilter(_tenantId);
         }

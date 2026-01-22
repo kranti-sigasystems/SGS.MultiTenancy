@@ -1,102 +1,86 @@
 ﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
+@using SGS.MultiTenancy.Core.Domain.Enums
 @model TenantDto
 
 @{
     Layout = null;
 }
+
 <form asp-action="UpdateTenant" method="post" id="editTenantForm">
     @Html.AntiForgeryToken()
 
     <!-- Hidden IDs -->
     <input type="hidden" asp-for="ID" />
-    <input type="hidden" asp-for="AddressID" />
-    <input type="hidden" asp-for="AddressLine" />
-    <input type="hidden" asp-for="PostalCode" />
-    <input type="hidden" asp-for="City" />
-    <input type="hidden" asp-for="CountryID" />
 
     <!-- Row 1 -->
     <div class="row mb-3">
         <div class="col-md-4">
             <label asp-for="Name" class="form-label"></label>
-            <input asp-for="Name" class="form-control" />
+            <input asp-for="Name" class="form-control" id="EditTenantName" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
         <div class="col-md-4">
-            <label asp-for="BussinessName" class="form-label">Bussiness Name</label>
-            <input asp-for="BussinessName" class="form-control" />
-            <span asp-validation-for="BussinessName" class="text-danger"></span>
+            <label asp-for="Slug" class="form-label">Subdomain</label>
+            <input asp-for="Slug" class="form-control" id="EditSlug" />
+            <span asp-validation-for="Slug" class="text-danger"></span>
         </div>
 
         <div class="col-md-4">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
+            <label asp-for="Domain" class="form-label">Custom Domain</label>
+            <input asp-for="Domain" class="form-control" />
+            <span asp-validation-for="Domain" class="text-danger"></span>
         </div>
     </div>
 
     <!-- Row 2 -->
     <div class="row mb-3">
         <div class="col-md-4">
-            <label asp-for="PhoneNumber" class="form-label">Phone</label>
-            <input asp-for="PhoneNumber" class="form-control" />
-            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            <label asp-for="LogoUrl" class="form-label">Logo URL</label>
+            <input asp-for="LogoUrl" class="form-control" />
+            <span asp-validation-for="LogoUrl" class="text-danger"></span>
         </div>
 
         <div class="col-md-4">
-            <label class="form-label">Country</label>
-            <div class="input-group">
-                <select asp-for="CountryID"
-                        asp-items="Model.Countries"
-                        class="form-select"
-                        id="CountryID">
-                    <option value="">Select Country</option>
-                </select>
+            <label class="form-label">Status</label>
+
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="radio"
+                       asp-for="Status"
+                       value="@EntityStatus.Active"
+                       id="statusActive" />
+                <label class="form-check-label" for="statusActive">
+                    Active
+                </label>
             </div>
+
+            <div class="form-check">
+                <input class="form-check-input"
+                       type="radio"
+                       asp-for="Status"
+                       value="@EntityStatus.Inactive"
+                       id="statusInactive" />
+                <label class="form-check-label" for="statusInactive">
+                    Inactive
+                </label>
+            </div>
+
+            <span asp-validation-for="Status" class="text-danger"></span>
         </div>
 
-        <div class="col-md-4">
-            <label class="form-label">State</label>
-            <div class="input-group">
-                <select asp-for="StateID"
-                        asp-items="Model.States"
-                        class="form-select"
-                        id="StateID">
-                    <option value="">Select</option>
-                </select>
-            </div>
-            <span asp-validation-for="StateID" class="text-danger"></span>
-        </div>
     </div>
 
-    <!-- Row 3 -->
-    <div class="row mb-3">
-        @* <div class="col-md-4">
-            <label asp-for="AddressLine" class="form-label"></label>
-            <input asp-for="AddressLine" class="form-control" />
-            <span asp-validation-for="AddressLine" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="City"></label>
-            <input asp-for="City" class="form-control" />
-            <span asp-validation-for="City" class="text-danger"></span>
-        </div>
-
-        <div class="col-md-4">
-            <label asp-for="PostalCode" class="form-label"></label>
-            <input asp-for="PostalCode" class="form-control" />
-            <span asp-validation-for="PostalCode" class="text-danger"></span>
-        </div> *@
-
-        <div class="col-md-4">
-            <label asp-for="Status" class="form-label"></label>
-            <select asp-for="Status" class="form-select">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-            </select>
-        </div>
-    </div>
     @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", true)
 </form>
+
+<script>
+    document.getElementById("EditTenantName")?.addEventListener("input", function () {
+        let text = this.value.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/-+/g, "-");
+
+        document.getElementById("EditSlug").value = text;
+    });
+</script>

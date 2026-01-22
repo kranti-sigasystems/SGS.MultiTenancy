@@ -19,18 +19,18 @@ namespace SGS.MultiTenancy.Core.Services
         private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
-        private readonly IGenericRepository<UserRoles> _userRoles;
+        //private readonly IGenericRepository<UserRoles> _userRoles;
         private readonly IMemoryCache _cache;
         public UserService(IUserRepository userRepositery,
             IJwtTokenGenerator jwtTokenGenerator,
             IPasswordHasherService passwordHasherService,
-            IGenericRepository<UserRoles> userRoles,
+            //IGenericRepository<UserRoles> userRoles,
             IMemoryCache memoryCache)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasherService = passwordHasherService;
-            _userRoles = userRoles;
+            //_userRoles = userRoles;
             _cache = memoryCache;
         }
         /// <summary>
@@ -41,11 +41,11 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         { 
             User? user = await _userRepositery.FirstOrDefaultAsync(
-            x => x.Name.ToLower() == loginRequestDto.UserName.ToLower(),
+            x => x.UserName.ToLower() == loginRequestDto.UserName.ToLower(),
             query => query.Include(u => u.UserRoles));
-           
+
             if (user == null || !user.UserRoles.Any()
-                || !_passwordHasherService.VerifyPassword(loginRequestDto.Password, user.Password))
+                || !_passwordHasherService.VerifyPassword(loginRequestDto.Password, user.PasswordHash))
             {
                 return new LoginResponseDto()
                 {
@@ -70,8 +70,7 @@ namespace SGS.MultiTenancy.Core.Services
             {
                 Email = user.Email,
                 ID = user.ID,
-                UserName = user.Name,
-                PhoneNumber = user.PhoneNumber
+                UserName = user.UserName
             };
 
             LoginResponseDto LoginResponse = new LoginResponseDto()
@@ -79,7 +78,7 @@ namespace SGS.MultiTenancy.Core.Services
                 User = userDTO,
                 Token = token,
                 Roles = userRoles,
-                TenantID = user.TenantID
+                TenantID = (Guid)user.TenantID
             };
             return LoginResponse;
         }
@@ -100,12 +99,12 @@ namespace SGS.MultiTenancy.Core.Services
                 return (false, Constants.UserNotFound);
             }
             
-            if (!_passwordHasherService.VerifyPassword(currentPassword, user.Password))
+            if (!_passwordHasherService.VerifyPassword(currentPassword, user.PasswordHash))
             {
                 return (false, Constants.CurrentPasswordIncorrect);
             }
             string newPasswordHash = _passwordHasherService.HashPassword(newPassword);
-            user.Password = newPasswordHash;
+            user.PasswordHash = newPasswordHash;
 
             await _userRepositery.UpdateAsync(user);
             await _userRepositery.CompleteAsync();
@@ -128,23 +127,24 @@ namespace SGS.MultiTenancy.Core.Services
             if (_cache.TryGetValue(cacheKey, out HashSet<Guid> cached))
                 return cached;
 
-            List<Guid> permissionIds = await _userRoles.Query()
-                .Where(ur =>
-                    ur.UserID == userId &&
-                    ur.TenantID == tenantId)
-                .SelectMany(ur => ur.Role.RolePermissions)
-                .Select(rp => rp.PermissionID)
-                .Distinct()
-                .ToListAsync();
+            //List<Guid> permissionIds = await _userRoles.Query()
+            //    .Where(ur =>
+            //        ur.UserID == userId &&
+            //        ur.TenantID == tenantId)
+            //    .SelectMany(ur => ur.Role.RolePermissions)
+            //    .Select(rp => rp.PermissionID)
+            //    .Distinct()
+            //    .ToListAsync();
 
-            var result = permissionIds.ToHashSet();
+            //var result = permissionIds.ToHashSet();
 
-            _cache.Set(
-                cacheKey,
-                result,
-                TimeSpan.FromMinutes(30));
+            //_cache.Set(
+            //    cacheKey,
+            //    result,
+            //    TimeSpan.FromMinutes(30));
 
-            return result;
+            //return result;
+            return new HashSet<Guid>();
         }
     }
 }                                             
