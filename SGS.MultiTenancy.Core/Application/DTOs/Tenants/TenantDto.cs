@@ -26,10 +26,9 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         public string Slug { get; set; }
 
         /// <summary>
-        /// Custom domain for tenant (optional).
+        /// Custom domain for tenant.
         /// </summary>
         [MaxLength(255)]
-        [Url(ErrorMessage = "Invalid domain format.")]
         public string? Domain { get; set; }
 
         /// <summary>

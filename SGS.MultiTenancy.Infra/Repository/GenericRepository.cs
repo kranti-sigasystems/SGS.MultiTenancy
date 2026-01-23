@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Infra.DataContext;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -39,7 +37,7 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// <param name="currentUser">The current user context.</param>
         public GenericRepository(
             AppDbContext context,
-            ICurrentUser? currentUser = null)
+            ICurrentUser? currentUser)
         {
             _context = context;
             _dbSet = context.Set<TEntity>();
