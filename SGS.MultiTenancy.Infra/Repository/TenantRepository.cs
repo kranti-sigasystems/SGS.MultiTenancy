@@ -6,7 +6,7 @@ namespace SGS.MultiTenancy.Infra.Repository
 {
     public class TenantRepository : GenericRepository<Tenant>, ITenantRepository
     {
-        public TenantRepository(AppDbContext context) : base(context)
+        public TenantRepository(AppDbContext context, ICurrentUser currentUser) : base(context, currentUser)
         {
         }
     }

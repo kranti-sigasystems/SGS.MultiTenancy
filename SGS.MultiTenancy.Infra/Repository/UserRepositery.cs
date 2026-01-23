@@ -13,8 +13,8 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// Initializes a new instance of the UserRepository class using the specified database context.
         /// </summary>
         /// <param name="context">The database context to be used for data access operations. Cannot be null.</param>
-        public UserRepository(AppDbContext context)
-            : base(context)
+        public UserRepository(AppDbContext context, ICurrentUser currentUser)
+            : base(context, currentUser)
         {
             _context = context;
         }

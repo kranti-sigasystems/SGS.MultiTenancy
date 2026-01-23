@@ -77,13 +77,33 @@ body {
 }
 
 .btn {
-    background-color: var(--primary-color);
-    color: aliceblue;
+    transition: all 0.2s ease-in-out;
 }
 
-.btn:hover {
+/*.btn:hover {
     color: aliceblue;
     background-color: #023b74;
+}*/
+
+.btn-outline-primary {
+    color: #fff;
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+    color: #fff;
 }
 
 .text-brand {

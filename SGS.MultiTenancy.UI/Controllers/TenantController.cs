@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Attribute;
 
@@ -26,7 +27,10 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HasPermission(permissionId:Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
         {
-            List<TenantDto> list = await _tenantService.GetAllAsync();
+            List<TenantDto> list = (await _tenantService.GetAllAsync())
+                        .Where(t => t.Status == EntityStatus.Active)
+                        .ToList();
+
             return View(list);
         }
 
