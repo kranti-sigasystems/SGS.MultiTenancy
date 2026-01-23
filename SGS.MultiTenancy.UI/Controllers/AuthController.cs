@@ -69,6 +69,15 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
 
             await CreateMvcSessionAsync(loginResponse);
+
+            // To do
+            string? portal = HttpContext.Items["Portal"]?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(portal) && portal == "Tenant")
+            {
+                return RedirectToAction(nameof(UserController.Index), Utility.PrepareControllerName(nameof(UserController)));
+            }
+
             return RedirectToAction(nameof(TenantController.Index), Utility.PrepareControllerName(nameof(TenantController)));
         }
 

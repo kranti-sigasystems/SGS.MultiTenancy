@@ -14,6 +14,7 @@ public class SubdomainRoutingMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        
         string path = context.Request.Path.Value?.TrimEnd('/').ToLower() ?? "/";
 
         if (path.StartsWith("/css") || path.StartsWith("/js") || path.StartsWith("/images") || path.StartsWith("/favicon.ico"))
