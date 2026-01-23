@@ -2,7 +2,6 @@
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Infra.DataContext;
-
 public class SubdomainRoutingMiddleware
 {
     private readonly RequestDelegate _next;

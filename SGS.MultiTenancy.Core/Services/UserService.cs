@@ -15,7 +15,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="userRepositery">User data repository.</param>
         /// <param name="jwtTokenGenerator">JWT generator.</param>
         /// <param name="passwordHasherService">Password hasher.</param>
-       
+
         private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
@@ -39,7 +39,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="loginRequestDto">Login request.</param>
         /// <returns>Login response with user info and token.</returns>
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
-        { 
+        {
             User? user = await _userRepositery.FirstOrDefaultAsync(
             x => x.UserName.ToLower() == loginRequestDto.UserName.ToLower(),
             query => query.Include(u => u.UserRoles));
@@ -78,7 +78,7 @@ namespace SGS.MultiTenancy.Core.Services
                 User = userDTO,
                 Token = token,
                 Roles = userRoles,
-                TenantID = (Guid)user.TenantID
+                TenantID = (Guid)user.TenantID!
             };
             return LoginResponse;
         }
@@ -93,12 +93,12 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
         {
             User? user = await _userRepositery.FirstOrDefaultAsync(u => u.ID == userId);
-           
+
             if (user == null)
             {
                 return (false, Constants.UserNotFound);
             }
-            
+
             if (!_passwordHasherService.VerifyPassword(currentPassword, user.PasswordHash))
             {
                 return (false, Constants.CurrentPasswordIncorrect);
@@ -114,13 +114,11 @@ namespace SGS.MultiTenancy.Core.Services
 
         public async Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId)
         {
-            HashSet <Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
+            HashSet<Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
             return permissionIds.Contains(permissionId);
         }
 
-        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(
-            Guid userId,
-            Guid tenantId)
+        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(Guid userId, Guid tenantId)
         {
             string cacheKey = $"perm:{tenantId}:{userId}";
 
@@ -144,7 +142,13 @@ namespace SGS.MultiTenancy.Core.Services
                 TimeSpan.FromMinutes(30));
 
             return result;
-          
+
         }
+
+        public async Task<string> Register(UserDto model)
+        {
+            return "hello";
+        }
+
     }
 }                                             

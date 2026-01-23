@@ -1,0 +1,52 @@
+﻿@using SGS.MultiTenancy.Core.Application.DTOs.Users;
+@model UserDto;
+
+
+<div class="mt-4">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="UserName">User Name</label>
+                <input asp-for="UserName" class="form-control" id="UserName" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" id="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <small class="text-muted"></small>
+            </div>
+
+
+        </div>
+
+        <!-- Row 2 -->
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Password">Password</label>
+                <input type="password" asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="AvtarUrl">Avtar Url</label>
+                <input asp-for="AvtarUrl" class="form-control" />
+                <span asp-validation-for="AvtarUrl" class="text-danger"></span>
+            </div>
+
+
+
+        </div>
+
+        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/tenant-management.js"></script>
+}
+
+

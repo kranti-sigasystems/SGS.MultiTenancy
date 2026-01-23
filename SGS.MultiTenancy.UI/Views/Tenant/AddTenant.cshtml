@@ -2,10 +2,6 @@
 @using SGS.MultiTenancy.Core.Domain.Enums
 @model TenantDto
 
-@{
-    ViewData["Title"] = "Add Tenant";
-}
-
 <div class="mt-4">
     <form asp-action="AddTenant" method="post">
         @Html.AntiForgeryToken()

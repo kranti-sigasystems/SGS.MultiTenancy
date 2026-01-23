@@ -20,7 +20,15 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <returns>Success flag and error message if failed.</returns>
         Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword);
 
-       
+
         Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId);
+
+
+        /// <summary>
+        /// Register a new user.
+        /// </summary>
+        /// <param name="model">Accept the user dto.</param>
+        /// <returns></returns>
+        Task<string> Register(UserDto model);
     }
 }
