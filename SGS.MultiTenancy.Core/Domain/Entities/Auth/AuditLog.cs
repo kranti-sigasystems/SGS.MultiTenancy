@@ -8,7 +8,7 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
     /// Represents an audit log entry used to record system events and user actions
     /// within a multi-tenant application. It captures log severity, timestamp.
     /// </summary>
-    public class AuditLog : AuditableEntity
+    public class AuditLog 
     {
         /// <summary>
         /// Gets or sets unique identifier for the log entry.
@@ -47,5 +47,9 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// HTTP status code related to the log event, if any.
         /// </summary>
         public int? HttpStatusCode { get; set; }
+        /// <summary>
+        /// Stack trace information for error logs.
+        /// </summary>
+        public string? StackTrace { get; set; }
     }
 }

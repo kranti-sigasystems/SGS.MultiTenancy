@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Extension;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
+using SGS.MultiTenancy.Infra.Repository;
 using SGS.MultiTenancy.UI.Attribute;
+using SGS.MultiTenancy.UI.Middleware;
 using System.Text;
 
 namespace SGS.MultiTenancy.UI
@@ -42,7 +45,7 @@ namespace SGS.MultiTenancy.UI
             });
             builder.Services.AddCoreDependencies();
             builder.Services.AddInfrastructureDependencies();
-
+            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
             JwtOptions? jwtOptions = builder.Configuration
                    .GetSection("ApiSettings:JwtOptions")
                    .Get<JwtOptions>();
@@ -90,14 +93,10 @@ namespace SGS.MultiTenancy.UI
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
+            app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+           // app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseMiddleware<SubdomainRoutingMiddleware>();

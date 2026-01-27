@@ -39,7 +39,7 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// <param name="currentUser">The current user context.</param>
         public GenericRepository(
             AppDbContext context,
-            ICurrentUser? currentUser = null)
+             ICurrentUser? currentUser)
         {
             _context = context;
             _dbSet = context.Set<TEntity>();

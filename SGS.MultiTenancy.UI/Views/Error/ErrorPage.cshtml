@@ -1,0 +1,31 @@
+﻿@model SGS.MultiTenancy.UI.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+    Layout = "_Layout"; // Use your shared layout
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header text-center">
+                    <h3 class="card-title">ERROR</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        @Model.ErrorMessage
+                    </p>
+                    <div class="alert alert-info">
+                        <strong>Reference ID:</strong> @Model.LogId
+                    </div>
+                    <p>
+                        If the issue persists, please contact our support team and provide the Log ID above.
+                    </p>
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

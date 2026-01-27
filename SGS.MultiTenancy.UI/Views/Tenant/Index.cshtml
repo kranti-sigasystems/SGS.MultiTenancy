@@ -81,6 +81,14 @@
             </tbody>
 
         </table>
+        <td class="text-center">
+            <!-- Add this form -->
+            <form asp-controller="Home" asp-action="TestDivideByZero" method="post" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-danger ms-2" title="Trigger Test Exception">
+                    <i class="bi bi-bug-fill"></i> Test Error
+                </button>
+            </form>
+        </td>
     </div>
 </div>
 
