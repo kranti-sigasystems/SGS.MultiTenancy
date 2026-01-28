@@ -93,6 +93,7 @@ namespace SGS.MultiTenancy.UI
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
+            app.UseMiddleware<RequestTrackingMiddleware>();
             app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();

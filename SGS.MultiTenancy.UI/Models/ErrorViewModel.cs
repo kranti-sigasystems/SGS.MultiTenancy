@@ -7,5 +7,6 @@ namespace SGS.MultiTenancy.UI.Models
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
         public Guid LogId { get; set; }
         public string ErrorMessage { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }

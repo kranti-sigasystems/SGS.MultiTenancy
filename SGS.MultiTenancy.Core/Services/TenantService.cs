@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
+using SGS.MultiTenancy.Core.Domain.Exceptions;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
 namespace SGS.MultiTenancy.Core.Services
@@ -58,22 +60,28 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="model">The tenant form view model.</param>
         public async Task CreateAsync(TenantDto model)
         {
+            if (model == null)
+                throw new AppException("Invalid tenant data", (System.Net.HttpStatusCode)StatusCodes.Status400BadRequest);
+
             bool slugExists = await _tenantRepo.AnyAsync(t => t.Slug == model.Slug);
             if (slugExists)
-                throw new Exception("Slug already exists");
+                throw new AppException("Slug already exists", (System.Net.HttpStatusCode)StatusCodes.Status400BadRequest);
 
             if (!string.IsNullOrEmpty(model.Domain))
             {
                 bool domainExists = await _tenantRepo.AnyAsync(t => t.Domain == model.Domain);
                 if (domainExists)
-                    throw new Exception("Domain already mapped to another tenant");
+                    throw new AppException("Domain already mapped to another tenant", (System.Net.HttpStatusCode)StatusCodes.Status400BadRequest);
             }
+
+            // SAFE
+            int logoLength = model.LogoUrl?.Length ?? 0;
 
             Tenant tenant = new Tenant
             {
-                ID = Guid.NewGuid(),
+                ID = model.ID.Value,
                 Name = model.Name,
-                Slug = model.Slug.ToLower(),
+                Slug = model.Slug.ToLowerInvariant(),
                 Domain = model.Domain,
                 Status = model.Status,
                 LogoUrl = model.LogoUrl
@@ -82,6 +90,7 @@ namespace SGS.MultiTenancy.Core.Services
             await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
         }
+
 
         /// <summary>
         /// Retrieves the edit model for a tenant.
@@ -115,27 +124,46 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="model">The tenant form view model.</param>
         public async Task UpdateAsync(TenantDto model)
         {
-            Tenant tenant = await _tenantRepo.Query()
-                .FirstOrDefaultAsync(t => t.ID == model.ID)
-                ?? throw new Exception("Tenant not found");
+            if (model == null)
+                throw new AppException(
+                    "Invalid tenant data",
+                    (System.Net.HttpStatusCode)StatusCodes.Status400BadRequest);
+
+            if (!model.ID.HasValue)
+                throw new AppException(
+                    "Tenant ID is missing",
+                    (System.Net.HttpStatusCode)StatusCodes.Status400BadRequest);
+
+            var tenant = await _tenantRepo.Query()
+                .FirstOrDefaultAsync(t => t.ID == model.ID.Value);
+
+            if (tenant == null)
+                throw new AppException(
+                    "Tenant not found",
+                    (System.Net.HttpStatusCode)StatusCodes.Status404NotFound);
 
             bool slugExists = await _tenantRepo.AnyAsync(t =>
-                t.Slug == model.Slug && t.ID != model.ID);
+                t.Slug == model.Slug && t.ID != model.ID.Value);
 
             if (slugExists)
-                throw new Exception("Slug already exists");
+                throw new AppException(
+                    "Slug already exists",
+                    (System.Net.HttpStatusCode)StatusCodes.Status409Conflict);
 
-            if (!string.IsNullOrEmpty(model.Domain))
+            if (!string.IsNullOrWhiteSpace(model.Domain))
             {
                 bool domainExists = await _tenantRepo.AnyAsync(t =>
-                    t.Domain == model.Domain && t.ID != model.ID);
+                    t.Domain == model.Domain && t.ID != model.ID.Value);
 
                 if (domainExists)
-                    throw new Exception("Domain already mapped to another tenant");
+                    throw new AppException(
+                        "Domain already mapped to another tenant",
+                        (System.Net.HttpStatusCode)StatusCodes.Status409Conflict);
             }
 
+            // Safe assignments
             tenant.Name = model.Name;
-            tenant.Slug = model.Slug.ToLower();
+            tenant.Slug = model.Slug.ToLowerInvariant();
             tenant.Domain = model.Domain;
             tenant.Status = model.Status;
             tenant.LogoUrl = model.LogoUrl;
@@ -143,6 +171,7 @@ namespace SGS.MultiTenancy.Core.Services
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
         }
+
 
 
         /// <summary>

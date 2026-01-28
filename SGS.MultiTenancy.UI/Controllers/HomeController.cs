@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SGS.MultiTenancy.UI.Models;
 
@@ -17,22 +17,29 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             return View();
         }
-        [Route("Home/TestDivideByZero")]
-        public IActionResult TestDivideByZero()
-        {
-            _logger.LogInformation("Attempting to divide by zero...");
 
-            int numerator = 10;
-            int denominator = 0;
-            int result = numerator / denominator; // This will throw DivideByZeroException
+        //[HttpPost]
+        //[Route("Home/TestDivideByZero")]
+        //public IActionResult TestDivideByZero(string returnUrl)
+        //{
+        //    // Store returnUrl so middleware can read it
+        //    HttpContext.Items["ReturnUrl"] = returnUrl;
 
-            return Content($"Result: {result}"); // This line will never execute
-        }
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        //    _logger.LogInformation("Attempting to divide by zero...");
+
+        //    int numerator = 10;
+        //    int denominator = 0;
+
+        //    int result = numerator / denominator; // 💥 DivideByZeroException
+
+        //    return Content($"Result: {result}");
+        //}
+
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
 
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using SGS.MultiTenancy.Core.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
@@ -8,7 +7,7 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
     /// Represents an audit log entry used to record system events and user actions
     /// within a multi-tenant application. It captures log severity, timestamp.
     /// </summary>
-    public class AuditLog 
+    public class AuditLog
     {
         /// <summary>
         /// Gets or sets unique identifier for the log entry.
