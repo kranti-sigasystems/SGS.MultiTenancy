@@ -18,28 +18,28 @@ namespace SGS.MultiTenancy.UI.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[Route("Home/TestDivideByZero")]
-        //public IActionResult TestDivideByZero(string returnUrl)
-        //{
-        //    // Store returnUrl so middleware can read it
-        //    HttpContext.Items["ReturnUrl"] = returnUrl;
+        [HttpPost]
+        [Route("Home/TestDivideByZero")]
+        public IActionResult TestDivideByZero(string returnUrl)
+        {
+            // Store returnUrl so middleware can read it
+            HttpContext.Items["ReturnUrl"] = returnUrl;
 
-        //    _logger.LogInformation("Attempting to divide by zero...");
+            _logger.LogInformation("Attempting to divide by zero...");
 
-        //    int numerator = 10;
-        //    int denominator = 0;
+            int numerator = 10;
+            int denominator = 0;
 
-        //    int result = numerator / denominator; // 💥 DivideByZeroException
+            int result = numerator / denominator; // 💥 DivideByZeroException
 
-        //    return Content($"Result: {result}");
-        //}
+            return Content($"Result: {result}");
+        }
 
-        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        //public IActionResult Error()
-        //{
-        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        //}
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
 
     }
 }

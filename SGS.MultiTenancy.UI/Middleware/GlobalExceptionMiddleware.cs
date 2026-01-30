@@ -4,6 +4,7 @@ using MySqlConnector;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Exceptions;
+using SGS.MultiTenancy.Infra.DataContext;
 
 namespace SGS.MultiTenancy.UI.Middleware
 {
@@ -11,6 +12,7 @@ namespace SGS.MultiTenancy.UI.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<GlobalExceptionMiddleware> _logger;
+        private readonly IAuditLogRepository auditLogRepository;
 
         public GlobalExceptionMiddleware(
             RequestDelegate next,
@@ -22,7 +24,7 @@ namespace SGS.MultiTenancy.UI.Middleware
 
         public async Task InvokeAsync(
             HttpContext context,
-            IGenericRepository<AuditLog> auditLogRepository,
+            IAuditLogRepository auditLogRepository,
             ICurrentUser currentUser,
             ITenantProvider tenantProvider)
         {
@@ -70,6 +72,8 @@ namespace SGS.MultiTenancy.UI.Middleware
                 }
                 catch (Exception dbEx)
                 {
+                    await auditLogRepository.AddAuditLogAsync(auditLog, tenantProvider);
+                    auditLogged = true;
                     _logger.LogCritical(dbEx,
                         "AUDIT LOG FAILURE. Original Error LogId: {LogId}", logId);
 

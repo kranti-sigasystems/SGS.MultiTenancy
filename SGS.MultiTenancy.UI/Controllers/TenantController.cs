@@ -37,6 +37,8 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTenant()
         {
+            // Simulate a SQL timeout
+            throw new TimeoutException("Simulated database timeout for testing middleware.");
             return View(new TenantDto());
         }
 

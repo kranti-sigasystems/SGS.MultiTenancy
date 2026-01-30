@@ -23,7 +23,7 @@ namespace SGS.MultiTenancy.Infa.Extension
             services.AddScoped<ITenantProvider, TenantProvider>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IUserRepository, UserRepository>();
-
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
             // Register JwtTokenGenerator Services
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();

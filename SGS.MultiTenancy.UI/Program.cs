@@ -30,7 +30,11 @@ namespace SGS.MultiTenancy.UI
                 ServerVersion.AutoDetect(
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 ),
-                b => b.MigrationsAssembly("SGS.MultiTenancy.Infra")
+                b =>
+                {
+                    b.MigrationsAssembly("SGS.MultiTenancy.Infra");
+                    b.CommandTimeout(60);
+                }
             ));
 
             builder.Services.AddHttpContextAccessor();
