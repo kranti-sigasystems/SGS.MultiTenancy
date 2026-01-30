@@ -1,97 +1,111 @@
 ﻿@model List<SGS.MultiTenancy.Core.Application.DTOs.Tenants.TenantDto>
 
-
 @{
     ViewData["Title"] = "Tenants";
 }
 
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center my-4">
-        <a asp-action="AddTenant" class="btn btn-outline-primary rounded-pill px-4 shadow-sm ms-auto">
+        <div>
+            <h4 class="fw-semibold mb-0">Tenant List</h4>
+        </div>
+
+        <a asp-action="AddTenant"
+           class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
             <i class="bi bi-plus-circle me-2"></i> Create Tenant
         </a>
     </div>
 
-    <div class="card-body p-0">
-        <table class="table text-center p-4">
-            <thead class="table-header">
-                <tr>
-                    <th>Name</th>
-                    <th>Slug</th>
-                    <th>Domain</th>
-                    <th>Status</th>
-                    <th>Logo</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
 
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    foreach (var t in Model)
-                    {
+    <!-- Analytics-style Card -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+                    <thead class="thead-light">
                         <tr>
-                            <td>@t.Name</td>
-                            <td>
-                                <span class="badge bg-secondary">@t.Slug</span>
-                            </td>
-                            <td>@t.Domain</td>
-                            <td>
-                                <span class="badge @(t.Status == SGS.MultiTenancy.Core.Domain.Enums.EntityStatus.Active ? "bg-success" : "bg-danger")">
-                                    @t.Status
-                                </span>
-                            </td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(t.LogoUrl))
-                                {
-                                    <img src="@t.LogoUrl" style="height:32px;" />
-                                }
-                                else
-                                {
-                                    <span class="text-muted">—</span>
-                                }
-                            </td>
-                            <td class="text-center">
-                                <button class="bg-light text-brand btn-link p-0 me-4"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editTenantModal"
-                                        data-id="@t.ID"
-                                        title="Edit" style="border:none;">
-                                    <i class="bi bi-pencil-square fs-5"></i>
-                                </button>
-
-                                <button class="bg-light text-brand btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteTenantModal"
-                                        data-tenant-id="@t.ID"
-                                        data-tenant-name="@t.Name"
-                                        style="border:none;">
-                                    <i class="bi bi-trash fs-5"></i>
-                                </button>
-                            </td>
+                            <th class="border-0 rounded-start">Name</th>
+                            <th class="border-0">Slug</th>
+                            <th class="border-0">Domain</th>
+                            <th class="border-0">Status</th>
+                            <th class="border-0">Logo</th>
+                            <th class="border-0 rounded-end">Action</th>
                         </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="6" class="text-center text-muted">No tenants found.</td>
-                    </tr>
-                }
-            </tbody>
+                    </thead>
 
-        </table>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var t in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@t.Name</td>
+
+                                    <td class="text-muted">@t.Slug</td>
+
+                                    <td>@t.Domain</td>
+
+                                    <td>
+                                        <span class="status-badge @(t.Status == SGS.MultiTenancy.Core.Domain.Enums.EntityStatus.Active
+                                                                                                                                                                                                                                                                      ? "status-active"
+                                                                                                                                                                                                                                                                      : "status-inactive")">
+                                            @t.Status
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(t.LogoUrl))
+                                        {
+                                            <img src="@t.LogoUrl" alt="Tenant Logo" />
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="bg-light text-muted p-0 me-4"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editTenantModal"
+                                                data-id="@t.ID"
+                                                title="Edit" style="border:none;">
+                                            <i class="bi bi-pencil-square fs-5"></i>
+                                        </button>
+
+                                        <button class="bg-light text-muted btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteTenantModal"
+                                                data-tenant-id="@t.ID"
+                                                data-tenant-name="@t.Name"
+                                                style="border:none;">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    No tenants found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
     </div>
 </div>
 
-@* model *@
-
+<!-- Address Modal -->
 <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content shadow-sm">
 
-            <div class="modal-header text-white"
-                 style="background-color:#00305f;">
+            <div class="modal-header text-white" style="background-color:#00305f;">
                 <h6 class="modal-title mb-0">
                     <i class="bi bi-geo-alt-fill me-1"></i>
                     Tenant Address
@@ -118,15 +132,17 @@
                     <dd class="col-7" id="modalPostal"></dd>
                 </dl>
             </div>
-            <div class="modal-footer ">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Include Modal Partials -->
+<!-- Modal Partials -->
 @await Html.PartialAsync("_EditTenantModal")
 @await Html.PartialAsync("_DeleteTenantModal")
-
-

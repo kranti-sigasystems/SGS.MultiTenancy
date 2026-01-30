@@ -141,5 +141,8 @@
         public static readonly uint? DefaultPageSize = 10;
 
         public static readonly string BrandName="SGS";
+
+        public const string PasswordResetLinkSent = "If an account exists with this email, password reset instructions have been sent.";
+
     }
 }

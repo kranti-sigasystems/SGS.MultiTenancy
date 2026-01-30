@@ -2,12 +2,12 @@
 
 @model ModalHeaderViewModel
 <div class="modal-header text-white" style="background-color:#00305f;">
-    <h6 class="modal-title mb-0">
+    <h4 class="modal-title mb-0">
         @if (!string.IsNullOrEmpty(Model.IconClass))
         {
             <i class="@Model.IconClass me-1"></i>
         }
         @Html.Raw(Model.Title)
-    </h6>
+    </h4>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>

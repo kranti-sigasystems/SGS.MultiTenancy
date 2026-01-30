@@ -73,6 +73,39 @@ namespace SGS.MultiTenancy.UI.Controllers
         }
 
         /// <summary>
+        /// Displays forgot password page.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Processes forgot password request.
+        /// Sends reset password instructions to user email.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            bool result = await _userService.ForgotPasswordAsync(model.Email);
+
+            // IMPORTANT: do NOT reveal if email exists (security best practice)
+            TempData["SuccessMessage"] = Constants.PasswordResetLinkSent;
+
+            return RedirectToAction(nameof(Login), Utility.PrepareControllerName(nameof(AuthController)));
+        }
+
+
+        /// <summary>
         /// Displays the change password page.
         /// </summary>
         [Authorize]

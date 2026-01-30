@@ -6,80 +6,74 @@
     ViewData["Title"] = "Add Tenant";
 }
 
-<div class="container mt-4">
-    <h2 class="fw-bold mb-1">Add Tenant</h2>
-    <p class="text-muted mb-0">
-        Create and configure a new tenant.
-    </p>
+<div class="container-fluid mt-4">
+
+    <div class="mb-4">
+        <h4 class="fw-bold">Add Tenant</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="AddTenant" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control" id="TenantName" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Slug" class="form-label">Subdomain</label>
+                        <input asp-for="Slug" class="form-control" id="Slug" />
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Domain" class="form-label"></label>
+                        <input asp-for="Domain" class="form-control" />
+                        <span asp-validation-for="Domain" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="LogoUrl" class="form-label">Logo URL</label>
+                        <input asp-for="LogoUrl" class="form-control" />
+                        <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label d-block">Status</label>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Status"
+                                   value="@EntityStatus.Active"
+                                   id="statusActive"
+                                   checked />
+                            <label class="form-check-label" for="statusActive">Active</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Status"
+                                   value="@EntityStatus.Inactive"
+                                   id="statusInactive" />
+                            <label class="form-check-label" for="statusInactive">Inactive</label>
+                        </div>
+
+                        <span asp-validation-for="Status" class="text-danger d-block"></span>
+                    </div>
+                </div>
+
+                @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
+            </form>
+        </div>
+    </div>
 </div>
-
-<div class="container mt-5">
-    <form asp-action="AddTenant" method="post">
-        @Html.AntiForgeryToken()
-
-        <!-- Row 1 -->
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" id="TenantName" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label asp-for="Slug">Subdomain</label>
-                <input asp-for="Slug" class="form-control" id="Slug" />
-                <span asp-validation-for="Slug" class="text-danger"></span>
-                <small class="text-muted"></small>
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label asp-for="Domain">Domain</label>
-                <input asp-for="Domain" class="form-control" />
-                <span asp-validation-for="Domain" class="text-danger"></span>
-            </div>
-        </div>
-
-        <!-- Row 2 -->
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <label asp-for="LogoUrl">Logo URL</label>
-                <input asp-for="LogoUrl" class="form-control" />
-                <span asp-validation-for="LogoUrl" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <label class="form-label d-block">Status</label>
-
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input"
-                           type="radio"
-                           asp-for="Status"
-                           value="@EntityStatus.Active"
-                           id="statusActive" />
-                    <label class="form-check-label" for="statusActive">
-                        Active
-                    </label>
-                </div>
-
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input"
-                           type="radio"
-                           asp-for="Status"
-                           value="@EntityStatus.Inactive"
-                           id="statusInactive" />
-                    <label class="form-check-label" for="statusInactive">
-                        Inactive
-                    </label>
-                </div>
-
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-
-        </div>
-        
-        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
-    </form>
- </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -87,13 +81,13 @@
 }
 
 <script>
-    document.getElementById("TenantName").addEventListener("input", function () {
-        let text = this.value.toLowerCase()
+    document.getElementById("TenantName")?.addEventListener("input", function () {
+        const slug = this.value.toLowerCase()
             .replace(/[^a-z0-9\s-]/g, "")
+            .trim()
             .replace(/\s+/g, "-")
             .replace(/-+/g, "-");
 
-        document.getElementById("Slug").value = text;
+        document.getElementById("Slug").value = slug;
     });
 </script>
-

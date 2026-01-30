@@ -2,14 +2,14 @@
 @* true = modal, false = page  *@
 
 <div class="d-flex justify-content-end mt-4">
-    <button type="submit" class="btn btn-outline-primary">
+    <button type="submit" class="btn btn-primary">
         Save
     </button>
 
     @if (Model)
     {
         <button type="button"
-                class="btn btn-outline-secondary ms-2"
+                class="btn btn-gray-200 ms-2"
                 data-bs-dismiss="modal">
             Cancel
         </button>
@@ -17,7 +17,7 @@
     else
     {
         <a asp-action="Index"
-           class="btn btn-outline-secondary ms-2">
+           class="btn btn-gray-200 ms-2">
             Cancel
         </a>
     }
