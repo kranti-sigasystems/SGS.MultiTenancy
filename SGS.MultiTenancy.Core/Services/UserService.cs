@@ -112,6 +112,41 @@ namespace SGS.MultiTenancy.Core.Services
             return (true, string.Empty);
         }
 
+        /// <summary>
+        /// Handles forgot password request.
+        /// Generates reset token and sends reset instructions.
+        /// </summary>
+        /// <param name="email">User email</param>
+        /// <returns>Always returns true (prevents user enumeration)</returns>
+        public async Task<bool> ForgotPasswordAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return true;
+
+            User? user = await _userRepositery.FirstOrDefaultAsync(
+                u => u.Email.ToLower() == email.ToLower());
+
+            // SECURITY: do not reveal if user exists
+            if (user == null)
+                return true;
+
+            // 🔐 Generate secure reset token
+            string resetToken = Guid.NewGuid().ToString("N");
+
+            //user.PasswordResetToken = resetToken;
+            //user.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(30);
+
+            await _userRepositery.UpdateAsync(user);
+            await _userRepositery.CompleteAsync();
+
+            // 📧 TODO: Send email (later)
+            // reset link example:
+            // https://yourapp.com/Auth/ResetPassword?token={resetToken}
+
+            return true;
+        }
+
+
         public async Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId)
         {
             HashSet <Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
