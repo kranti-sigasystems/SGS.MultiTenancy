@@ -15,23 +15,21 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="userRepositery">User data repository.</param>
         /// <param name="jwtTokenGenerator">JWT generator.</param>
         /// <param name="passwordHasherService">Password hasher.</param>
-       
+
         private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
         private readonly IGenericRepository<UserRoles> _userRoles;
         private readonly IMemoryCache _cache;
-        public UserService(IUserRepository userRepositery,
-            IJwtTokenGenerator jwtTokenGenerator,
-            IPasswordHasherService passwordHasherService,
-            IGenericRepository<UserRoles> userRoles,
-            IMemoryCache memoryCache)
+        private readonly IGenericRepository<UserRoles> _userRoleRepository;
+        public UserService(IUserRepository userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService, IGenericRepository<UserRoles> userRoles, IMemoryCache memoryCache, IGenericRepository<UserRoles> userRoleRepository)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasherService = passwordHasherService;
             _userRoles = userRoles;
             _cache = memoryCache;
+            _userRoleRepository = userRoleRepository;
         }
         /// <summary>
         /// Validates credentials and returns JWT with roles and permissions.
@@ -39,7 +37,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="loginRequestDto">Login request.</param>
         /// <returns>Login response with user info and token.</returns>
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
-        { 
+        {
             User? user = await _userRepositery.FirstOrDefaultAsync(
             x => x.UserName.ToLower() == loginRequestDto.UserName.ToLower(),
             query => query.Include(u => u.UserRoles));
@@ -78,7 +76,7 @@ namespace SGS.MultiTenancy.Core.Services
                 User = userDTO,
                 Token = token,
                 Roles = userRoles,
-                TenantID = (Guid)user.TenantID
+                TenantID = (Guid)user.TenantID!
             };
             return LoginResponse;
         }
@@ -93,12 +91,12 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
         {
             User? user = await _userRepositery.FirstOrDefaultAsync(u => u.ID == userId);
-           
+
             if (user == null)
             {
                 return (false, Constants.UserNotFound);
             }
-            
+
             if (!_passwordHasherService.VerifyPassword(currentPassword, user.PasswordHash))
             {
                 return (false, Constants.CurrentPasswordIncorrect);
@@ -149,13 +147,17 @@ namespace SGS.MultiTenancy.Core.Services
 
         public async Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId)
         {
-            HashSet <Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
+            HashSet<Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
             return permissionIds.Contains(permissionId);
         }
 
-        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(
-            Guid userId,
-            Guid tenantId)
+        /// <summary>
+        /// Gets all permission IDs for user in tenant.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(Guid userId, Guid tenantId)
         {
             string cacheKey = $"perm:{tenantId}:{userId}";
 
@@ -179,7 +181,142 @@ namespace SGS.MultiTenancy.Core.Services
                 TimeSpan.FromMinutes(30));
 
             return result;
-          
+        }
+
+        /// <summary>
+        /// Registers a new user.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Return message string</returns>
+        public async Task<string> Register(UserDto model)
+        {
+
+            var user = await _userRepositery.FirstOrDefaultAsync(
+                    u => u.UserName == model.UserName &&
+                    u.TenantID == model.TenantId);
+
+            if (user != null)
+            {
+                return "User already exists.";
+            }
+            else
+            {
+                User u = await _userRepositery.AddAsync(new User
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    PasswordHash = _passwordHasherService.HashPassword(model.Password),
+                    TenantID = model.TenantId
+                });
+                await _userRepositery.CompleteAsync();
+
+                await _userRoleRepository.AddAsync(new UserRoles
+                {
+                    UserID = u!.ID,
+                    RoleID = Guid.Parse("93FBE01C-1826-437C-8B9A-58DBF0696DD9"),
+                    TenantID = model.TenantId
+                });
+                await _userRoleRepository.CompleteAsync();
+                return "User Registered Sucessfully";
+            }
+        }
+
+        /// <summary>
+        /// Gets users by tenant ID.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns>Returns list of user dto</returns>
+        public async Task<List<UserDto>> GetUsersByTenantId(Guid tenantId)
+        {
+
+            var query = _userRepositery.Query();
+
+            // Log the generated SQL query for debugging purposes
+            var sqlQuery = query.ToQueryString();
+            //Console.WriteLine($"Generated SQL Query: {sqlQuery}");
+            var users = await _userRepositery.Query()
+                .ToListAsync();
+
+            var usersList = users.Select(u => new UserDto
+            {
+                ID = u.ID,
+                UserName = u.UserName,
+                Email = u.Email,
+                TenantId = u.TenantID
+            }).ToList();
+
+            return usersList;
+        }
+
+        /// <summary>
+        /// Gets user by ID.
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns>User dto</returns>
+        public async Task<UserDto> GetUsersById(Guid Id)
+        {
+            User user = (User)_userRepositery.Query().Where(u => u.ID == Id).First();
+            if (user == null)
+                return null;
+            return new UserDto
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                ID = user.ID,
+                AvtarUrl = user.AvatarUrl
+            };
+        }
+
+        /// <summary>
+        /// Updates user.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="usermodel"></param>
+        public async Task<UserDto?> UpdateUser(Guid id, UserDto usermodel)
+        {
+            User user = await _userRepositery.Query()
+                .FirstOrDefaultAsync(t => t.ID == usermodel.ID)
+                ?? throw new Exception("User not found");
+
+            bool userNameExists = await _userRepositery.AnyAsync(t =>
+                t.UserName == usermodel.UserName && t.ID != usermodel.ID);
+
+            if (userNameExists)
+                throw new Exception("User Name already exists");
+
+            user.UserName = usermodel.UserName;
+            user.Email = usermodel.Email.ToLower();
+            user.AvatarUrl = usermodel.AvtarUrl;
+
+            await _userRepositery.UpdateAsync(user);
+            await _userRepositery.CompleteAsync();
+            return usermodel;
+        }
+
+        /// <summary>
+        /// Deletes user by ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<UserDto?> DeleteUser(Guid id)
+        {
+            UserDto? user = await GetUsersById(id);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            User user1 = new User
+            {
+                ID = id,
+                UserName = user.UserName,
+                Email = user.Email,
+                AvatarUrl = user.AvtarUrl
+            };
+            await _userRepositery.HardDeleteAsync(id);
+            await _userRepositery.CompleteAsync();
+            return user;
         }
     }
-}                                             
+}

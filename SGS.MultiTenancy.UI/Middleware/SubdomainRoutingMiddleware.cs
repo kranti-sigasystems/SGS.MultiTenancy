@@ -50,6 +50,11 @@ public class SubdomainRoutingMiddleware
                 return;
             }
         }
+        if (subdomain == "www" || subdomain == "localhost" || string.IsNullOrWhiteSpace(subdomain))
+        {
+            context.Response.Redirect("/Auth/Login");
+            return;
+        }
         else
         {
             context.Items["Portal"] = "Tenant";
@@ -72,7 +77,6 @@ public class SubdomainRoutingMiddleware
                 return;
             }
         }
-
         await _next(context);
     }
 }
