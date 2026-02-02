@@ -16,7 +16,7 @@ aside {
 }
 
 main {
-    flex: 1 1 auto; /* already handled by flex-fill */
+    flex: 1 1 auto; 
     padding: 2rem;
     background-color: #f8f9fa;
 }
@@ -110,6 +110,10 @@ h6, .h6 {
 p {
     margin-top: 0;
     margin-bottom: 1rem;
+}
+
+.img-fluid {
+    max-height: 80px;
 }
 
 .mb-0 {
@@ -497,6 +501,11 @@ td, tfoot, th, thead, tr {
     border-color: #1f2937;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 1px rgba(17, 24, 39, .075);
 }
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #1f2937;
+        border-color: #1f2937;
+    }
 
 .btn-white {
     color: #1f2937;
@@ -602,10 +611,6 @@ td, tfoot, th, thead, tr {
     max-width: 500px !important;
 }
 
-
-
-/* sidebar*/
-
 #sidebar {
     width: 250px;
     min-height: 100vh;
@@ -618,7 +623,7 @@ td, tfoot, th, thead, tr {
 
     #sidebar.collapsed {
         width: 80px;
-        align-items: center; /* center icons when collapsed */
+        align-items: center; 
     }
 
 .sidebar.collapsed .sidebar-text,
@@ -626,16 +631,13 @@ td, tfoot, th, thead, tr {
     display: none;
 }
 
-
-/* Sidebar Header */
 #sidebar .sidebar-title {
-    color: #a0aec0; /* light gray */
+    color: #a0aec0; 
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 0.8rem;
 }
 
-/* Sidebar Toggle Button */
 #sidebarToggle {
     color: #ffffff;
     border-color: #3b4a60;
@@ -648,7 +650,6 @@ td, tfoot, th, thead, tr {
         border-color: #ffffff;
     }
 
-/* Sidebar Links */
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -664,32 +665,28 @@ td, tfoot, th, thead, tr {
         margin-right: 0.75rem;
         font-size: 1.1rem;
     }
-
-    /* Hover Effect */
+    
     .sidebar-link:hover {
         background-color: #2d3a4b;
         color: #ffffff;
         text-decoration: none;
     }
 
-    /* Active Link */
     .sidebar-link.active {
         background-color: #4f5d73;
         color: #ffffff;
         font-weight: 500;
     }
 
-/* Sidebar Text */
 .sidebar-text {
     flex: 1;
 }
 
-/* Divider / Section Gaps */
+
 .nav.flex-column > li + li {
     margin-top: 0.25rem;
 }
 
-/* Optional: Pro Badge */
 .sidebar-link .badge {
     margin-left: auto;
     font-size: 0.65rem;
@@ -701,7 +698,7 @@ td, tfoot, th, thead, tr {
     font-weight: bold;
 }
 
-/* Scrollbar Styling (optional) */
+
 #sidebar::-webkit-scrollbar {
     width: 6px;
 }
