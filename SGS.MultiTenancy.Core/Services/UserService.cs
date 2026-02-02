@@ -9,6 +9,14 @@ namespace SGS.MultiTenancy.Core.Services
 {
     public class UserService : IUserService
     {
+        
+        private readonly IUserRepository _userRepositery;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IPasswordHasherService _passwordHasherService;
+        private readonly IGenericRepository<UserRoles> _userRoles;
+        private readonly IMemoryCache _cache;
+        private readonly IGenericRepository<UserRoles> _userRoleRepository;
+
         /// <summary>
         /// Creates a new user service instance.
         /// </summary>
@@ -16,12 +24,6 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="jwtTokenGenerator">JWT generator.</param>
         /// <param name="passwordHasherService">Password hasher.</param>
 
-        private readonly IUserRepository _userRepositery;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IPasswordHasherService _passwordHasherService;
-        private readonly IGenericRepository<UserRoles> _userRoles;
-        private readonly IMemoryCache _cache;
-        private readonly IGenericRepository<UserRoles> _userRoleRepository;
         public UserService(IUserRepository userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService, IGenericRepository<UserRoles> userRoles, IMemoryCache memoryCache, IGenericRepository<UserRoles> userRoleRepository)
         {
             _userRepositery = userRepositery;
