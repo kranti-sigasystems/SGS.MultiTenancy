@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -143,7 +142,6 @@ namespace SGS.MultiTenancy.Core.Services
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
         }
-
 
         /// <summary>
         /// Deletes a tenant by its unique identifier.

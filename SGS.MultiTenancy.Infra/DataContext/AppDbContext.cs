@@ -87,7 +87,6 @@ namespace SGS.MultiTenancy.Infra.DataContext
                 .WithMany(a => a.UserAddresses)
                 .HasForeignKey(ua => ua.AddressId);
 
-            // ✅ Apply global tenant filter
             modelBuilder.ApplyTenantFilter(_tenantId);
         }
     }

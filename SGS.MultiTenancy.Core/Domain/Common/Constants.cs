@@ -68,12 +68,12 @@
         /// Gets the minimum length validation error message.
         /// </summary>
         public const string MinErrorMessage = "The {0} field must be at least {1} characters.";
-        
+
         /// <summary>
         /// Authentication failed.
         /// </summary>
         public const string InvalidLogin = "Invalid username or password.";
-        
+
         /// <summary>
         /// Password changed successfully message.
         /// </summary>
@@ -122,12 +122,12 @@
         /// <summary>
         /// Regex to check password strength requires one uppercase and one special char.
         /// </summary>
-        public const string PasswordStrengthRegex =@"^(?=.*[A-Z])(?=.*[\W_]).+$";
+        public const string PasswordStrengthRegex = @"^(?=.*[A-Z])(?=.*[\W_]).+$";
 
         /// <summary>
         /// Error message when password fails strength check.
         /// </summary>
-        public const string PasswordStrengthErrorMessage ="Password must contain at least one uppercase letter and one special character.";
+        public const string PasswordStrengthErrorMessage = "Password must contain at least one uppercase letter and one special character.";
         #endregion
 
         /// <summary>
@@ -140,7 +140,7 @@
         /// </summary>
         public static readonly uint? DefaultPageSize = 10;
 
-        public static readonly string BrandName="SGS";
+        public static readonly string BrandName = "SGS";
 
         public const string PasswordResetLinkSent = "If an account exists with this email, password reset instructions have been sent.";
 

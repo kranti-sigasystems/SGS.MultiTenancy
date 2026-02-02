@@ -1,5 +1,4 @@
-﻿using SGS.MultiTenancy.Core.Domain.Common;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 namespace SGS.MultiTenancy.Core.Application.Interfaces
 {
     /// <summary>

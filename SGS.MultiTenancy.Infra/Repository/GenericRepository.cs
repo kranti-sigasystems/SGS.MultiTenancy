@@ -218,7 +218,6 @@ namespace SGS.MultiTenancy.Infra.Repository
             return await Task.FromResult(entity);
         }
 
-
         /// <summary>
         /// Updates multiple entities and applies audit information.
         /// </summary>
@@ -243,7 +242,6 @@ namespace SGS.MultiTenancy.Infra.Repository
             _dbSet.UpdateRange(entities);
             await Task.CompletedTask;
         }
-
 
         /// <summary>
         /// Soft-deletes an entity by its identifier.
@@ -292,5 +290,6 @@ namespace SGS.MultiTenancy.Infra.Repository
         {
             return _context.SaveChangesAsync();
         }
+
     }
 }

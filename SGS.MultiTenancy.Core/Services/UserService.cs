@@ -9,29 +9,29 @@ namespace SGS.MultiTenancy.Core.Services
 {
     public class UserService : IUserService
     {
+        
+        private readonly IUserRepository _userRepositery;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IPasswordHasherService _passwordHasherService;
+        private readonly IGenericRepository<UserRoles> _userRoles;
+        private readonly IMemoryCache _cache;
+        private readonly IGenericRepository<UserRoles> _userRoleRepository;
+
         /// <summary>
         /// Creates a new user service instance.
         /// </summary>
         /// <param name="userRepositery">User data repository.</param>
         /// <param name="jwtTokenGenerator">JWT generator.</param>
         /// <param name="passwordHasherService">Password hasher.</param>
-       
-        private readonly IUserRepository _userRepositery;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private readonly IPasswordHasherService _passwordHasherService;
-        private readonly IGenericRepository<UserRoles> _userRoles;
-        private readonly IMemoryCache _cache;
-        public UserService(IUserRepository userRepositery,
-            IJwtTokenGenerator jwtTokenGenerator,
-            IPasswordHasherService passwordHasherService,
-            IGenericRepository<UserRoles> userRoles,
-            IMemoryCache memoryCache)
+
+        public UserService(IUserRepository userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService, IGenericRepository<UserRoles> userRoles, IMemoryCache memoryCache, IGenericRepository<UserRoles> userRoleRepository)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasherService = passwordHasherService;
             _userRoles = userRoles;
             _cache = memoryCache;
+            _userRoleRepository = userRoleRepository;
         }
         /// <summary>
         /// Validates credentials and returns JWT with roles and permissions.
@@ -39,7 +39,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="loginRequestDto">Login request.</param>
         /// <returns>Login response with user info and token.</returns>
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
-        { 
+        {
             User? user = await _userRepositery.FirstOrDefaultAsync(
             x => x.UserName.ToLower() == loginRequestDto.UserName.ToLower(),
             query => query.Include(u => u.UserRoles));
@@ -78,7 +78,7 @@ namespace SGS.MultiTenancy.Core.Services
                 User = userDTO,
                 Token = token,
                 Roles = userRoles,
-                TenantID = (Guid)user.TenantID
+                TenantID = (Guid)user.TenantID!
             };
             return LoginResponse;
         }
@@ -93,12 +93,12 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<(bool Success, string ErrorMessage)> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword)
         {
             User? user = await _userRepositery.FirstOrDefaultAsync(u => u.ID == userId);
-           
+
             if (user == null)
             {
                 return (false, Constants.UserNotFound);
             }
-            
+
             if (!_passwordHasherService.VerifyPassword(currentPassword, user.PasswordHash))
             {
                 return (false, Constants.CurrentPasswordIncorrect);
@@ -149,13 +149,17 @@ namespace SGS.MultiTenancy.Core.Services
 
         public async Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId)
         {
-            HashSet <Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
+            HashSet<Guid> permissionIds = await GetUserPermissionIdsAsync(userId, tenantId);
             return permissionIds.Contains(permissionId);
         }
 
-        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(
-            Guid userId,
-            Guid tenantId)
+        /// <summary>
+        /// Gets all permission identifiers for user in tenant.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        private async Task<HashSet<Guid>> GetUserPermissionIdsAsync(Guid userId, Guid tenantId)
         {
             string cacheKey = $"perm:{tenantId}:{userId}";
 
@@ -171,15 +175,13 @@ namespace SGS.MultiTenancy.Core.Services
                 .Distinct()
                 .ToListAsync();
 
-            var result = permissionIds.ToHashSet();
+            HashSet<Guid> result = permissionIds.ToHashSet();
 
             _cache.Set(
                 cacheKey,
                 result,
                 TimeSpan.FromMinutes(30));
-
             return result;
-          
         }
     }
-}                                             
+}

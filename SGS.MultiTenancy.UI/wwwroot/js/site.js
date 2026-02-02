@@ -30,9 +30,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    /* =======================
-       ADDRESS MODAL
-    ======================= */
+    /*ADDRESS MODAL */
     const addressModal = document.getElementById('addressModal');
 
     if (addressModal) {
@@ -48,9 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* =======================
-       EDIT TENANT MODAL
-    ======================= */
+    /*  EDIT TENANT MODAL*/
     const editModal = document.getElementById('editTenantModal');
     const editBody = document.getElementById('editTenantBody');
 
@@ -75,16 +71,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* =======================
-       DELETE TENANT MODAL
-    ======================= */
+    /*DELETE TENANT MODAL*/
     const deleteModal = document.getElementById('deleteTenantModal');
 
     if (deleteModal) {
         deleteModal.addEventListener('show.bs.modal', function (event) {
 
             const button = event.relatedTarget;
-
             document.getElementById('tenantId').value = button.dataset.tenantId;
             document.getElementById('tenantName').textContent = button.dataset.tenantName;
         });
