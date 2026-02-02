@@ -96,7 +96,7 @@ namespace SGS.MultiTenancy.UI.Controllers
                 return View(model);
             }
 
-            bool result = await _userService.ForgotPasswordAsync(model.Email);
+            //bool result = await _userService.ForgotPasswordAsync(model.Email);
 
             // IMPORTANT: do NOT reveal if email exists (security best practice)
             TempData["SuccessMessage"] = Constants.PasswordResetLinkSent;

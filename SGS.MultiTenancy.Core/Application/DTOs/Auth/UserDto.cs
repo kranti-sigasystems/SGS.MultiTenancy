@@ -1,10 +1,45 @@
-﻿namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
+﻿using SGS.MultiTenancy.Core.Domain.Common;
+using System.ComponentModel.DataAnnotations;
+namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
 {
     public class UserDto
     {
-        public Guid ID { get; set; }
-        public string Email { get; set; }
+        /// <summary>
+        /// Gets or set user unique identifier.
+        /// </summary>
+        public Guid? ID { get; set; }
+
+        /// <summary>
+        /// Gets or set user name.
+        /// </summary>
+
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        [Display(Name = "User Name")]
         public string UserName { get; set; }
-        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Gets or set user email address.
+        /// </summary>
+
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        [EmailAddress(ErrorMessage = Constants.EmailErrorMessage)]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Gets or set user password.
+        /// </summary>
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Gets or set user avtar url.
+        /// </summary>
+        public string? AvtarUrl { get; set; }
+
+        /// <summary>
+        /// Gets or set user tenant id.
+        /// </summary>
+        public Guid? TenantId { get; set; }
+
     }
 }
