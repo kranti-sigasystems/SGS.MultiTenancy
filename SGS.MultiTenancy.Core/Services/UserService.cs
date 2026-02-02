@@ -152,7 +152,7 @@ namespace SGS.MultiTenancy.Core.Services
         }
 
         /// <summary>
-        /// Gets all permission IDs for user in tenant.
+        /// Gets all permission identifiers for user in tenant.
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="tenantId"></param>
@@ -173,15 +173,13 @@ namespace SGS.MultiTenancy.Core.Services
                 .Distinct()
                 .ToListAsync();
 
-            var result = permissionIds.ToHashSet();
+            HashSet<Guid> result = permissionIds.ToHashSet();
 
             _cache.Set(
                 cacheKey,
                 result,
                 TimeSpan.FromMinutes(30));
-
             return result;
         }
-
     }
 }

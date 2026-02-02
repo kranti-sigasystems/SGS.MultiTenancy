@@ -142,10 +142,5 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces
         /// </summary>
         /// <returns>The number of affected records.</returns>
         Task<int> CompleteAsync();
-        /// <summary>
-        /// Deletes an entity permanently from the data store using its identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        Task HardDeleteAsync(Guid id);
     }
 }

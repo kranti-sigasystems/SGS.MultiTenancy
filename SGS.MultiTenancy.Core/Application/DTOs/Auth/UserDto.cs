@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SGS.MultiTenancy.Core.Domain.Common;
+using System.ComponentModel.DataAnnotations;
 namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
 {
     public class UserDto
@@ -12,7 +13,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// Gets or set user name.
         /// </summary>
 
-        [Required(ErrorMessage = "User name is required")]
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
         [Display(Name = "User Name")]
         public string UserName { get; set; }
 
@@ -20,14 +21,14 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// Gets or set user email address.
         /// </summary>
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid Email Address")]
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        [EmailAddress(ErrorMessage = Constants.EmailErrorMessage)]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or set user password.
         /// </summary>
-        [Required(ErrorMessage = "Password is required")]
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
         public string Password { get; set; }
 
         /// <summary>

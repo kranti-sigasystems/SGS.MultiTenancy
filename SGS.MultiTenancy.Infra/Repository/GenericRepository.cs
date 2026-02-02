@@ -291,18 +291,5 @@ namespace SGS.MultiTenancy.Infra.Repository
             return _context.SaveChangesAsync();
         }
 
-        /// <summary>
-        /// Perminently deletes an entity by its identifier.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task HardDeleteAsync(Guid id)
-        {
-            var entity = await _context.FindAsync(typeof(TEntity), id);
-
-            if (entity == null)
-                return;
-            _context.Remove(entity);
-        }
     }
 }
