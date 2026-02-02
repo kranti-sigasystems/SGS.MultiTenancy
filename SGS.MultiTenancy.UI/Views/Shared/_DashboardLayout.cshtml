@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="~/css/Style.css" asp-append-version="true" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
 </head>
 <body>
     <header>
@@ -20,7 +19,6 @@
                 <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-layers me-2"></i> SGS
                 </a>
-
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -35,7 +33,6 @@
                      id="mainNavbar">
                 </div>
                 @if (User.Identity.IsAuthenticated)
-
                 {
                     <div class="user-menu dropdown">
                         <button class="btn btn-white d-flex align-items-center gap-2 dropdown-toggle"
@@ -82,21 +79,21 @@
             <!-- Navigation -->
             <ul class="nav flex-column gap-1">
                 <li class="nav-item">
-                    <a class="nav-link sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Tenant" ? "active" : "")" asp-controller="Tenant" asp-action="Index">
+                    <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Tenant" ? "active" : "")" asp-controller="Tenant" asp-action="Index">
                         <i class="bi bi-buildings"></i>
                         <span class="sidebar-text">Tenants</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "User" ? "active" : "")" asp-controller="User" asp-action="Index">
+                    <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "User" ? "active" : "")" asp-controller="User" asp-action="Index">
                         <i class="bi bi-people"></i>
                         <span class="sidebar-text">Users</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link sidebar-link @(ViewContext.RouteData.Values["controller"].ToString() == "Permission" ? "active" : "")" asp-controller="Permission" asp-action="Index">
+                    <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Permission" ? "active" : "")" asp-controller="Permission" asp-action="Index">
                         <i class="bi bi-shield-lock"></i>
                         <span class="sidebar-text">Permissions</span>
                     </a>
@@ -114,41 +111,41 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+    <script>     
+         document.addEventListener("DOMContentLoaded", function () {
             const sidebar = document.getElementById("sidebar");
             const toggleBtn = document.getElementById("sidebarToggle");
 
             if (!sidebar || !toggleBtn) return;
 
-            // Restore state
+            // Prevent transition flicker on load
+            sidebar.classList.add("no-transition");
+            setTimeout(() => sidebar.classList.remove("no-transition"), 50);
+
+            // Restore sidebar state
             if (localStorage.getItem("sidebar-collapsed") === "true") {
                 sidebar.classList.add("collapsed");
-
             }
 
             toggleBtn.addEventListener("click", function () {
                 sidebar.classList.toggle("collapsed");
                 localStorage.setItem("sidebar-collapsed", sidebar.classList.contains("collapsed"));
             });
-
-            // Optional: sidebar navigation for partial views
-            const links = document.querySelectorAll(".sidebar-link");
-            const views = document.querySelectorAll(".dashboard-view");
-
-            links.forEach(function (link) {
-                link.addEventListener("click", function () {
-                    const target = this.getAttribute("data-target");
-
-                    // Active state
-                    links.forEach(l => l.classList.remove("active"));
-                    this.classList.add("active");
-
-                    // Switch views
-                    views.forEach(v => v.classList.add("d-none"));
-                    const targetView = document.getElementById("view-" + target);
-                    if (targetView) targetView.classList.remove("d-none");
+                      // Reset to expanded on page load
+                window.addEventListener("DOMContentLoaded", () => {
+                  sidebar.classList.remove("collapsed"); // ensures expanded state
                 });
+
+            // Fix active state instantly
+            const currentUrl = window.location.pathname.toLowerCase();
+
+            document.querySelectorAll(".sidebar-link").forEach(link => {
+
+                const href = link.getAttribute("href")?.toLowerCase();
+
+                if (href && currentUrl.startsWith(href)) {
+                    link.classList.add("active");
+                }
             });
         });
     </script>

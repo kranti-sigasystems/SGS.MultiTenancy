@@ -28,38 +28,5 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <returns>True or false</returns>
         Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId);
 
-        /// <summary>
-        /// Registers a new user and.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns>returns a confirmation message</returns>
-        Task<string> Register(UserDto user);
-
-        /// <summary>
-        /// Gets all users by tenant id.
-        /// </summary>
-        /// <param name="tenantid"></param>
-        /// <returns>Return list</returns>
-        Task<List<UserDto>> GetUsersByTenantId(Guid tenantid);
-
-        /// <summary>
-        /// Gets user by id.
-        /// </summary>
-        /// <param name="tenantId"></param>
-        Task<UserDto?> GetUsersById(Guid tenantId);
-
-        /// <summary>
-        /// Updates user information.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="usermodel"></param>
-        Task<UserDto?> UpdateUser(Guid id, UserDto usermodel);
-
-        /// <summary>
-        /// Deletes a user by id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        Task<UserDto?> DeleteUser(Guid id);
     }
 }

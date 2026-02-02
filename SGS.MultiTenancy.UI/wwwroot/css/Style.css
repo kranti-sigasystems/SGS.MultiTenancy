@@ -1,6 +1,9 @@
 ﻿/*google font cdn for the roboto font table*/
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+html, body {
+    overflow: hidden;
+}
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f9fafb;
@@ -706,4 +709,8 @@ td, tfoot, th, thead, tr {
 #sidebar::-webkit-scrollbar-thumb {
     background-color: #3b4a60;
     border-radius: 3px;
+}
+.main-content {
+    min-height: 100vh;
+    overflow-y: auto;
 }

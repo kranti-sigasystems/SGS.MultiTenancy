@@ -218,7 +218,6 @@ namespace SGS.MultiTenancy.Infra.Repository
             return await Task.FromResult(entity);
         }
 
-
         /// <summary>
         /// Updates multiple entities and applies audit information.
         /// </summary>
