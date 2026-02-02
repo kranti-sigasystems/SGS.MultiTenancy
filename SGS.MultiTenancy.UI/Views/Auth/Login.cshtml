@@ -3,17 +3,18 @@
     ViewData["Title"] = "Sign In";
     Layout = "_Layout";
 }
-
     <section class="vh-lg-100 bg-soft d-flex align-items-center pt-5">
         <div class="container mt-5">
 
             <div class="col-12 d-flex align-items-center justify-content-center">
                 <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mt-4">
 
-                    <div class="text-center mb-4 mt-md-0">
-                        <h1 class="mb-0 h3">Login</h1>
-                    </div>
-
+                <div class="text-center mb-4 mt-md-0">
+                    <img src="~/images/SGSM.png"
+                         alt="Login"
+                         class="img-fluid mb-2"/>
+                </div>
+               
                     @if (TempData["SuccessMessage"] is string successMessage && !string.IsNullOrWhiteSpace(successMessage))
                     {
                         <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -112,6 +112,10 @@ p {
     margin-bottom: 1rem;
 }
 
+.img-fluid {
+    max-height: 80px;
+}
+
 .mb-0 {
     margin-bottom: 0 !important;
 }
