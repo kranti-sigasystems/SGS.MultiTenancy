@@ -131,6 +131,16 @@
         #endregion
 
         /// <summary>
+        /// Error message when slug is invalid.
+        /// </summary>
+        public const string SlugInvalid = "Slug must contain only lowercase letters, numbers, and hyphens.";
+
+        /// <summary>
+        /// Error message when logo url is invalid.
+        /// </summary>
+        public const string InvalidLogoUrl = "Invalid logo URL format.";
+
+        /// <summary>
         /// The default table page number.
         /// </summary>
         public static readonly uint? DefaultPageNumber = 1;

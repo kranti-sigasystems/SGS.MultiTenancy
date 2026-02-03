@@ -45,41 +45,4 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('modalPostal').textContent = button.dataset.postal || '-';
         });
     }
-
-    /*  EDIT TENANT MODAL*/
-    const editModal = document.getElementById('editTenantModal');
-    const editBody = document.getElementById('editTenantBody');
-
-    if (editModal && editBody) {
-        editModal.addEventListener('show.bs.modal', function (event) {
-
-            const button = event.relatedTarget;
-            const tenantId = button.dataset.id;
-
-            editBody.innerHTML = `
-                <div class="text-center p-4">
-                    <div class="spinner-border text-primary"></div>
-                </div>`;
-
-            fetch(`/Tenant/UpdateTenant?id=${tenantId}`)
-                .then(response => response.text())
-                .then(html => editBody.innerHTML = html)
-                .catch(() => {
-                    editBody.innerHTML =
-                        '<div class="alert alert-danger">Unable to load tenant</div>';
-                });
-        });
-    }
-
-    /*DELETE TENANT MODAL*/
-    const deleteModal = document.getElementById('deleteTenantModal');
-
-    if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-
-            const button = event.relatedTarget;
-            document.getElementById('tenantId').value = button.dataset.tenantId;
-            document.getElementById('tenantName').textContent = button.dataset.tenantName;
-        });
-    }
 });

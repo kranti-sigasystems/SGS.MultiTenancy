@@ -1,5 +1,7 @@
-﻿using SGS.MultiTenancy.Core.Domain.Enums;
+﻿using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
 
 namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
 {
@@ -22,7 +24,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// </summary>
         [Required]
         [MaxLength(100)]
-        [RegularExpression(@"^[a-z0-9\-]+$", ErrorMessage = "Slug must contain only lowercase letters, numbers, and hyphens.")]
+        [RegularExpression(@"^[a-z0-9\-]+$", ErrorMessage = Constants.SlugInvalid)]
         public string Slug { get; set; }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// Logo URL of the tenant.
         /// </summary>
         [MaxLength(500)]
-        [Url(ErrorMessage = "Invalid logo URL format.")]
+        [Url(ErrorMessage = Constants.InvalidLogoUrl)]
         public string? LogoUrl { get; set; }
     }
 }

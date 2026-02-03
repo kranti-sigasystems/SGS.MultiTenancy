@@ -1,14 +1,17 @@
 ﻿@model List<SGS.MultiTenancy.Core.Application.DTOs.Tenants.TenantDto>
 
+@using SGS.MultiTenancy.Core.Domain.Common
+@using SGS.MultiTenancy.Core.Domain.Enums
+@using System.ComponentModel
+
 @{
     ViewData["Title"] = "Tenants";
 }
 
 <div class="container-fluid px-4">
+
     <div class="d-flex justify-content-between align-items-center my-4">
-        <div>
-            <h4 class="fw-semibold mb-0">Tenant List</h4>
-        </div>
+        <h4 class="fw-semibold mb-0">Tenants List</h4>
 
         <a asp-action="AddTenant"
            class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
@@ -16,8 +19,6 @@
         </a>
     </div>
 
-
-    <!-- Analytics-style Card -->
     <div class="card border-0 shadow mb-4">
         <div class="card-body">
             <div class="table-responsive">
@@ -40,15 +41,11 @@
                             {
                                 <tr>
                                     <td class="fw-bold">@t.Name</td>
-
                                     <td class="text-muted">@t.Slug</td>
-
                                     <td>@t.Domain</td>
 
                                     <td>
-                                        <span class="status-badge @(t.Status == SGS.MultiTenancy.Core.Domain.Enums.EntityStatus.Active
-                                                                                                                                                                                                                                                                      ? "status-active"
-                                                                                                                                                                                                                                                                      : "status-inactive")">
+                                        <span class="status-badge @(t.Status == EntityStatus.Active ? "status-active" : "status-inactive")">
                                             @t.Status
                                         </span>
                                     </td>
@@ -56,25 +53,27 @@
                                     <td>
                                         @if (!string.IsNullOrWhiteSpace(t.LogoUrl))
                                         {
-                                            <img src="@t.LogoUrl" alt="Tenant Logo" />
+                                            <img src="@t.LogoUrl" alt="Tenant Logo" height="30" />
                                         }
                                         else
                                         {
                                             <span class="text-muted">—</span>
                                         }
                                     </td>
+
                                     <td>
-                                        <button class="bg-light text-muted p-0 me-4"
+                                        <button class="bg-light text-muted p-0 me-3"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#editTenantModal"
+                                                data-bs-target="#editTenantModal-@t.ID"
                                                 data-id="@t.ID"
-                                                title="Edit" style="border:none;">
+                                                title="Edit"
+                                                style="border:none;">
                                             <i class="bi bi-pencil-square fs-5"></i>
                                         </button>
 
-                                        <button class="bg-light text-muted btn-sm"
+                                        <button class="bg-light text-muted p-0"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#deleteTenantModal"
+                                                data-bs-target="#deleteTenantModal-@t.ID"
                                                 data-tenant-id="@t.ID"
                                                 data-tenant-name="@t.Name"
                                                 style="border:none;">
@@ -82,6 +81,8 @@
                                         </button>
                                     </td>
                                 </tr>
+                                @await Html.PartialAsync("_EditTenantPartial", t)
+                                @await Html.PartialAsync("_DeleteTenantModal", t)
                             }
                         }
                         else
@@ -94,55 +95,7 @@
                         }
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
 </div>
-
-<!-- Address Modal -->
-<div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content shadow-sm">
-
-            <div class="modal-header text-white" style="background-color:#00305f;">
-                <h6 class="modal-title mb-0">
-                    <i class="bi bi-geo-alt-fill me-1"></i>
-                    Tenant Address
-                </h6>
-                <button type="button" class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body py-2">
-                <dl class="row mb-0 small">
-                    <dt class="col-5 text-muted">Address</dt>
-                    <dd class="col-7" id="modalLine1"></dd>
-
-                    <dt class="col-5 text-muted">City</dt>
-                    <dd class="col-7" id="modalCity"></dd>
-
-                    <dt class="col-5 text-muted">State</dt>
-                    <dd class="col-7" id="modalState"></dd>
-
-                    <dt class="col-5 text-muted">Country</dt>
-                    <dd class="col-7" id="modalCountry"></dd>
-
-                    <dt class="col-5 text-muted">Postal</dt>
-                    <dd class="col-7" id="modalPostal"></dd>
-                </dl>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Partials -->
-@await Html.PartialAsync("_EditTenantModal")
-@await Html.PartialAsync("_DeleteTenantModal")

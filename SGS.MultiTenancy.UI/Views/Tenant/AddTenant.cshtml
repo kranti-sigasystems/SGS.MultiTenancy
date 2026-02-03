@@ -7,15 +7,12 @@
 }
 
 <div class="container-fluid mt-4">
-
     <div class="mb-4">
-        <h4 class="fw-bold">Add Tenant</h4>
+        <h4 class="fw-semibold">Add Tenant</h4>
     </div>
-
     <div class="card shadow-sm">
         <div class="card-body">
             <form asp-action="AddTenant" method="post" novalidate>
-                @Html.AntiForgeryToken()
 
                 <div class="row g-3">
 
