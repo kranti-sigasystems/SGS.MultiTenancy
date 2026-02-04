@@ -1,9 +1,12 @@
-﻿@using SGS.MultiTenancy.Core.Domain.Common
+﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
+@using SGS.MultiTenancy.Core.Domain.Common
+@model TenantDto;
 
 @{
     Layout = null;
 }
-<div class="modal fade" id="deleteTenantModal" tabindex="-1">
+
+<div class="modal fade" id="deleteTenantModal-@Model.ID" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             
@@ -11,27 +14,26 @@
             new ModalHeaderViewModel("ConfirmDelete", "bi bi-exclamation-triangle-fill"))
   
             <div class="modal-body">
-                Are you sure you want to delete
-                <strong id="tenantName"></strong>?
+                @Constants.DeleteQuestion
+                <strong>@Model.Name</strong>?
                 <br />
                 <small class="text-muted">
-                    This will perform a soft delete.
+                    @Constants.SoftDeleteHint
                 </small>
             </div>
 
             <div class="modal-footer">
                 <form asp-action="DeleteTenant" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" id="tenantId" />
+                    <input type="hidden" name="id" value="@Model.ID" />
 
                     <button type="submit" class="btn btn-primary">
-                        Yes
+                        @Constants.Yes
                     </button>
 
                     <button type="button"
                             class="btn btn-gray-200"
                             data-bs-dismiss="modal">
-                        Cancel
+                       @Constants.Cancel
                     </button>
                 </form>
             </div>
