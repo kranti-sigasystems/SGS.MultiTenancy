@@ -14,11 +14,11 @@
             new ModalHeaderViewModel("ConfirmDelete", "bi bi-exclamation-triangle-fill"))
   
             <div class="modal-body">
-                Are you sure you want to delete
+                @Constants.DeleteQuestion
                 <strong>@Model.Name</strong>?
                 <br />
                 <small class="text-muted">
-                    This will perform a soft delete.
+                    @Constants.SoftDeleteHint
                 </small>
             </div>
 
@@ -27,13 +27,13 @@
                     <input type="hidden" name="id" value="@Model.ID" />
 
                     <button type="submit" class="btn btn-primary">
-                        Yes
+                        @Constants.Yes
                     </button>
 
                     <button type="button"
                             class="btn btn-gray-200"
                             data-bs-dismiss="modal">
-                        Cancel
+                       @Constants.Cancel
                     </button>
                 </form>
             </div>

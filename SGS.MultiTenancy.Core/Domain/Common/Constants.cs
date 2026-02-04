@@ -150,9 +150,40 @@
         /// </summary>
         public static readonly uint? DefaultPageSize = 10;
 
+        /// <summary>
+        /// Brand display name.
+        /// </summary>
         public static readonly string BrandName = "SGS";
 
+        /// <summary>
+        /// Password reset link sent message.
+        /// </summary>
         public const string PasswordResetLinkSent = "If an account exists with this email, password reset instructions have been sent.";
+
+        /// <summary>
+        /// Delete confirmation message.
+        /// </summary>
+        public const string DeleteQuestion = "Are you sure you want to delete";
+
+        /// <summary>
+        /// Confirmation pop up message.
+        /// </summary>
+        public const string ConfirmDeleteTitle = "Confirm Delete";
+
+        /// <summary>
+        /// Soft delete hint message. 
+        /// </summary>
+        public const string SoftDeleteHint = "This will perform a soft delete.";
+
+        /// <summary>
+        /// Gets the yes action button label.
+        /// </summary>
+        public const string Yes = "Yes";
+
+        /// <summary>
+        /// Gets the cancel action button label.
+        /// </summary>
+        public const string Cancel = "Cancel";
 
     }
 }
