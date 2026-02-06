@@ -12,8 +12,8 @@ using SGS.MultiTenancy.Infra.DataContext;
 namespace SGS.MultiTenancy.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260203080247_SeedCountriesAndStates")]
-    partial class SeedCountriesAndStates
+    [Migration("20260205112253_seedAdmin")]
+    partial class seedAdmin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -152,7 +152,7 @@ namespace SGS.MultiTenancy.Infra.Migrations
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("RoleID", "PermissionID", "TenantID");
+                    b.HasKey("RoleID", "PermissionID");
 
                     b.HasIndex("PermissionID");
 
@@ -200,6 +200,9 @@ namespace SGS.MultiTenancy.Infra.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
                     b.ToTable("Tenants");
                 });
 
@@ -246,6 +249,9 @@ namespace SGS.MultiTenancy.Infra.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
@@ -260,7 +266,7 @@ namespace SGS.MultiTenancy.Infra.Migrations
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("UserID", "AddressId", "TenantID");
+                    b.HasKey("UserID", "AddressId");
 
                     b.HasIndex("AddressId");
 
@@ -278,7 +284,7 @@ namespace SGS.MultiTenancy.Infra.Migrations
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("UserID", "RoleID", "TenantID");
+                    b.HasKey("UserID", "RoleID");
 
                     b.HasIndex("RoleID");
 
