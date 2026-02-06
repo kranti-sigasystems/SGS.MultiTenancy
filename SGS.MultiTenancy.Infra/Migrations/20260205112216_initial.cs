@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SGS.MultiTenancy.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class initialcreate : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -215,11 +215,11 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 {
                     RoleID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     PermissionID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    TenantID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    TenantID = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleID, x.PermissionID, x.TenantID });
+                    table.PrimaryKey("PK_RolePermissions", x => new { x.RoleID, x.PermissionID });
                     table.ForeignKey(
                         name: "FK_RolePermissions_Permissions_PermissionID",
                         column: x => x.PermissionID,
@@ -241,11 +241,11 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 {
                     UserID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     AddressId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    TenantID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    TenantID = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserAddresses", x => new { x.UserID, x.AddressId, x.TenantID });
+                    table.PrimaryKey("PK_UserAddresses", x => new { x.UserID, x.AddressId });
                     table.ForeignKey(
                         name: "FK_UserAddresses_Address_AddressId",
                         column: x => x.AddressId,
@@ -267,11 +267,11 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 {
                     UserID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     RoleID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    TenantID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    TenantID = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.UserID, x.RoleID, x.TenantID });
+                    table.PrimaryKey("PK_UserRoles", x => new { x.UserID, x.RoleID });
                     table.ForeignKey(
                         name: "FK_UserRoles_Roles_RoleID",
                         column: x => x.RoleID,
@@ -298,6 +298,12 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 column: "CountryID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tenants_Slug",
+                table: "Tenants",
+                column: "Slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserAddresses_AddressId",
                 table: "UserAddresses",
                 column: "AddressId");
@@ -306,6 +312,12 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 name: "IX_UserRoles_RoleID",
                 table: "UserRoles",
                 column: "RoleID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_UserName",
+                table: "Users",
+                column: "UserName",
+                unique: true);
         }
 
         /// <inheritdoc />

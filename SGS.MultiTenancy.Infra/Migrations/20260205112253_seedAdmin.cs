@@ -5,7 +5,7 @@
 namespace SGS.MultiTenancy.Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedSuperAdmin : Migration
+    public partial class seedAdmin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -116,6 +116,8 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 });
         }
 
+
+        /// <inheritdoc />
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -150,5 +152,6 @@ namespace SGS.MultiTenancy.Infra.Migrations
                 keyColumn: "ID",
                 keyValue: Guid.Parse("AE52E52B-0451-4229-AF95-98B332386AB4"));
         }
+
     }
 }

@@ -149,7 +149,7 @@ namespace SGS.MultiTenancy.Infra.Migrations
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("RoleID", "PermissionID", "TenantID");
+                    b.HasKey("RoleID", "PermissionID");
 
                     b.HasIndex("PermissionID");
 
@@ -197,6 +197,9 @@ namespace SGS.MultiTenancy.Infra.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
                     b.ToTable("Tenants");
                 });
 
@@ -243,6 +246,9 @@ namespace SGS.MultiTenancy.Infra.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("UserName")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
@@ -257,7 +263,7 @@ namespace SGS.MultiTenancy.Infra.Migrations
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("UserID", "AddressId", "TenantID");
+                    b.HasKey("UserID", "AddressId");
 
                     b.HasIndex("AddressId");
 
@@ -275,7 +281,7 @@ namespace SGS.MultiTenancy.Infra.Migrations
                     b.Property<Guid?>("TenantID")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("UserID", "RoleID", "TenantID");
+                    b.HasKey("UserID", "RoleID");
 
                     b.HasIndex("RoleID");
 
