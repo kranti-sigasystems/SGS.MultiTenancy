@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -13,13 +15,17 @@ namespace SGS.MultiTenancy.Core.Services
     public class TenantService : ITenantService
     {
         private readonly IGenericRepository<Tenant> _tenantRepo;
+        private readonly IGenericRepository<UserRoles> _userRolesRepo;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TenantService"/> class.
         /// </summary>
-        public TenantService(IGenericRepository<Tenant> tenantRepo)
+        public TenantService(IGenericRepository<Tenant> tenantRepo, IUserService userService, IGenericRepository<UserRoles> userRolesRepo)
         {
             _tenantRepo = tenantRepo;
+            _userService = userService;
+            _userRolesRepo = userRolesRepo;
         }
 
         /// <summary>
@@ -61,25 +67,33 @@ namespace SGS.MultiTenancy.Core.Services
             if (slugExists)
                 throw new Exception("Slug already exists");
 
-            if (!string.IsNullOrEmpty(model.Domain))
-            {
-                bool domainExists = await _tenantRepo.AnyAsync(t => t.Domain == model.Domain);
-                if (domainExists)
-                    throw new Exception("Domain already mapped to another tenant");
-            }
-
             Tenant tenant = new Tenant
             {
                 ID = Guid.NewGuid(),
                 Name = model.Name,
                 Slug = model.Slug.ToLower(),
                 Domain = model.Domain,
-                Status = model.Status,
-                LogoUrl = model.LogoUrl
+                Status = EntityStatus.Active,
+                LogoUrl = model.LogoUrl,
+                CreateOn = DateTime.UtcNow
             };
 
             await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
+
+            model.UserDto.TenantId = tenant.ID;
+
+            UserDto userResult = await _userService.AddUserAsync(model.UserDto); 
+           
+            UserRoles userRole = new UserRoles
+            {
+                RoleID = Guid.Parse(Constants.TenantRoleId),
+                TenantID = tenant.ID,
+                UserID = userResult.ID.Value
+            };
+
+            await _userRolesRepo.AddAsync(userRole);
+            await _userRolesRepo.CompleteAsync();
         }
 
         /// <summary>

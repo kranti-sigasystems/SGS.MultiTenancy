@@ -190,6 +190,9 @@
         /// </summary>
         public const string SubDomainError = "Subdomain is required";
 
-
+        /// <summary>
+        /// Default tenant role id.
+        /// </summary>
+        public const string TenantRoleId = "30dec8bc-2b22-4b3b-b721-8eb28c5d39c9";
     }
 }

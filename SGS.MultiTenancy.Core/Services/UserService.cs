@@ -125,23 +125,13 @@ namespace SGS.MultiTenancy.Core.Services
 
             User? user = await _userRepositery.FirstOrDefaultAsync(
                 u => u.Email.ToLower() == email.ToLower());
-
-            // SECURITY: do not reveal if user exists
+           
             if (user == null)
                 return true;
 
-            // 🔐 Generate secure reset token
             string resetToken = Guid.NewGuid().ToString("N");
-
-            //user.PasswordResetToken = resetToken;
-            //user.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(30);
-
             await _userRepositery.UpdateAsync(user);
             await _userRepositery.CompleteAsync();
-
-            // 📧 TODO: Send email (later)
-            // reset link example:
-            // https://yourapp.com/Auth/ResetPassword?token={resetToken}
 
             return true;
         }
@@ -183,5 +173,29 @@ namespace SGS.MultiTenancy.Core.Services
                 TimeSpan.FromMinutes(30));
             return result;
         }
+
+        /// <summary>
+        /// Add new user.
+        /// </summary>
+        /// <param name="userDto"></param>
+        public async Task<UserDto> AddUserAsync(UserDto userDto)
+        {
+            User user = _userRepositery.Query(u => u.UserName.ToLower() == userDto.UserName.ToLower()).FirstOrDefault()!;
+
+            user = await _userRepositery.AddAsync(new User()
+            {
+                ID = Guid.NewGuid(),
+                Email = userDto.Email,
+                UserName = userDto.UserName,
+                TenantID = userDto.TenantId,
+                PasswordHash = _passwordHasherService.HashPassword(userDto.Password)
+            });
+
+            await _userRepositery.CompleteAsync();
+            userDto.ID = user.ID;
+
+            return userDto;
+        }
+
     }
 }

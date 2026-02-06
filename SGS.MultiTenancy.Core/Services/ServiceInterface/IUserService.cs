@@ -28,5 +28,11 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <returns>True or false</returns>
         Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId);
 
+        /// <summary>
+        /// Add user.
+        /// </summary>
+        /// <param name="userDto"></param>
+        /// <returns></returns>
+        public Task<UserDto> AddUserAsync(UserDto userDto);
     }
 }

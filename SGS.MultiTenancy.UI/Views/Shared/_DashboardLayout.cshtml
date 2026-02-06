@@ -77,13 +77,16 @@
             </div>
 
             <!-- Navigation -->
-            <ul class="nav flex-column gap-1">
-                <li class="nav-item">
-                    <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Tenant" ? "active" : "")" asp-controller="Tenant" asp-action="Index">
-                        <i class="bi bi-buildings"></i>
-                        <span class="sidebar-text">Tenants</span>
-                    </a>
-                </li>
+            <ul class="nav flex-column gap-1"> 
+                @if (User.IsInRole("SGS_SuperHost"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Tenant" ? "active" : "")" asp-controller="Tenant" asp-action="Index">
+                            <i class="bi bi-buildings"></i>
+                            <span class="sidebar-text">Tenants</span>
+                        </a>
+                    </li>
+                }
 
                 <li class="nav-item">
                     <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "User" ? "active" : "")" asp-controller="User" asp-action="Index">
