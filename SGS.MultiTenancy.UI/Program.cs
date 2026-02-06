@@ -22,6 +22,8 @@ namespace SGS.MultiTenancy.UI
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseMySql(
@@ -31,8 +33,6 @@ namespace SGS.MultiTenancy.UI
                 ),
                 b => b.MigrationsAssembly("SGS.MultiTenancy.Infra")
             ));
-
-            builder.Services.AddHttpContextAccessor();
 
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
             builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

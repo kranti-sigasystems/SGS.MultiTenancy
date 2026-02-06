@@ -17,12 +17,15 @@ namespace SGS.MultiTenancy.Infra.DataContext
                 .AddJsonFile("appsettings.json", optional: false)
                 .Build();
 
-            string? connectionString = configuration.GetConnectionString("DefaultConnection");
+            string? connectionString =
+                configuration.GetConnectionString("DefaultConnection");
 
-            DbContextOptionsBuilder<AppDbContext> optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            DbContextOptionsBuilder<AppDbContext> optionsBuilder =
+                new DbContextOptionsBuilder<AppDbContext>();
+
             optionsBuilder.UseMySql(
                 connectionString,
-                new MySqlServerVersion(new Version(8,0,44))
+                new MySqlServerVersion(new Version(8, 0, 44))
             );
 
             return new AppDbContext(
@@ -37,9 +40,8 @@ namespace SGS.MultiTenancy.Infra.DataContext
     /// </summary>
     internal sealed class DesignTimeTenantProvider : ITenantProvider
     {
-        /// <summary>
-        /// Returns an empty tenant identifier to disable tenant filtering.
-        /// </summary>
-        public Guid TenantId => Guid.Empty;
+        public Guid? TenantId => null;
+
+        public bool IsHostAdmin => true;
     }
 }

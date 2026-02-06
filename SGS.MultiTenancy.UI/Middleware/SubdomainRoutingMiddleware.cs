@@ -16,67 +16,101 @@ public class SubdomainRoutingMiddleware
     {
         string path = context.Request.Path.Value?.TrimEnd('/').ToLower() ?? "/";
 
-        if (path.StartsWith("/css") || path.StartsWith("/js") || path.StartsWith("/images") || path.StartsWith("/favicon.ico"))
+        if (path.StartsWith("/css") ||
+            path.StartsWith("/js") ||
+            path.StartsWith("/images") ||
+            path.StartsWith("/favicon.ico"))
         {
             await _next(context);
             return;
         }
 
-        if (path.StartsWith("/auth/login") || path.StartsWith("/auth/register"))
+        if (path.StartsWith("/auth/login"))
         {
             await _next(context);
             return;
         }
 
-        if (context.User?.Identity?.IsAuthenticated == true)
+        if (context.User?.Identity?.IsAuthenticated != true)
         {
-            await _next(context);
+            // Do NOT interrupt POST login processing
+            if (context.Request.Method == HttpMethods.Post)
+            {
+                await _next(context);
+                return;
+            }
+
+            context.Response.Redirect("/Auth/Login");
             return;
         }
+
 
         string host = context.Request.Host.Host.ToLower();
-        string subdomain = host.Split('.')[0];
 
+        // ===== IMPORTANT FIX =====
+        // Bypass for localhost or non-subdomain environments
+        if (host == "localhost" || host == "127.0.0.1")
+        {
+            await _next(context);
+            return;
+        }
+
+        string[] hostParts = host.Split('.');
+
+        // No subdomain → not tenant portal
+        if (hostParts.Length < 3)
+        {
+            await _next(context);
+            return;
+        }
+
+        string subdomain = hostParts[0];
         using IServiceScope scope = context.RequestServices.CreateScope();
         AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        if (subdomain == "sgs")
+        // ===== SYSTEM ADMIN =====
+        if (context.User?.Identity?.IsAuthenticated != true)
         {
-            context.Items["Portal"] = "SystemAdmin";
-
-            if (path == "/" && context.User?.Identity?.IsAuthenticated != true)
+            // Allow POST login to execute
+            if (context.Request.Method == HttpMethods.Post)
             {
-                context.Response.Redirect("/Auth/Login");
+                await _next(context);
                 return;
             }
+
+            context.Response.Redirect("/Auth/Login");
+            return;
         }
-        if (subdomain == "www" || subdomain == "localhost" || string.IsNullOrWhiteSpace(subdomain))
+
+        // ===== INVALID HOST =====
+        if (subdomain == "www" || string.IsNullOrWhiteSpace(subdomain))
         {
             context.Response.Redirect("/Auth/Login");
             return;
         }
-        else
+
+        // ===== TENANT PORTAL =====
+        context.Items["Portal"] = "Tenant";
+
+        Tenant? tenant = await db.Tenants.FirstOrDefaultAsync(
+            t => t.Slug == subdomain && t.Status == EntityStatus.Active);
+
+        if (tenant == null)
         {
-            context.Items["Portal"] = "Tenant";
-
-            Tenant? tenant = await db.Tenants.FirstOrDefaultAsync(
-                t => t.Slug == subdomain && t.Status == EntityStatus.Active);
-
-            if (tenant == null)
-            {
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync("Tenant not found");
-                return;
-            }
-
-            context.Items["Tenant"] = tenant;
-
-            if (path == "/" && context.User?.Identity?.IsAuthenticated != true)
-            {
-                context.Response.Redirect("/Home/Index");
-                return;
-            }
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsync("Tenant not found");
+            return;
         }
+
+        context.Items["Tenant"] = tenant;
+
+        if (path == "/" && context.User?.Identity?.IsAuthenticated != true)
+        {
+            context.Response.Redirect("/Home/Index");
+            return;
+        }
+
         await _next(context);
     }
+
 }

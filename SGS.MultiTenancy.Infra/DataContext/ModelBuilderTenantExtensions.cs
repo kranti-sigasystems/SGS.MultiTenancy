@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
 using System.Reflection;
 
@@ -20,8 +21,8 @@ namespace SGS.MultiTenancy.Infra.DataContext
         /// The current tenant identifier.
         /// </param>
         public static void ApplyTenantFilter(
-            this ModelBuilder modelBuilder,
-            Guid tenantId)
+           this ModelBuilder modelBuilder,
+           ITenantProvider tenantProvider)
         {
             foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -38,11 +39,10 @@ namespace SGS.MultiTenancy.Infra.DataContext
                             BindingFlags.NonPublic | BindingFlags.Static)!
                         .MakeGenericMethod(entityType.ClrType);
 
-                    method.Invoke(null, new object[] { modelBuilder, tenantId });
+                    method.Invoke(null, new object[] { modelBuilder, tenantProvider });
                 }
             }
         }
-
         /// <summary>
         /// Applies a tenant filter to the given entity type.
         /// </summary>
@@ -54,13 +54,13 @@ namespace SGS.MultiTenancy.Infra.DataContext
         /// </param>
         private static void SetTenantFilter<TEntity>(
             ModelBuilder modelBuilder,
-            Guid tenantId)
+            ITenantProvider tenantProvider)
             where TEntity : class
         {
             modelBuilder.Entity<TEntity>()
                 .HasQueryFilter(e =>
-                    tenantId == Guid.Empty ||
-                    EF.Property<Guid>(e, Constants.TenantID) == tenantId);
+                    tenantProvider.IsHostAdmin ||
+                    EF.Property<Guid>(e, Constants.TenantID) == tenantProvider.TenantId);
         }
     }
 }

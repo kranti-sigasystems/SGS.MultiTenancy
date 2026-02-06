@@ -20,7 +20,6 @@ namespace SGS.MultiTenancy.Infa.Extension
             // Register Generic Repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<ITenantService, TenantService>();
-            services.AddScoped<ITenantProvider, TenantProvider>();
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IUserRepository, UserRepository>();
 
