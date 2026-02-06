@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
-using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Attribute;
 
@@ -13,10 +11,14 @@ namespace SGS.MultiTenancy.UI.Controllers
     public class TenantController : Controller
     {
         private readonly ITenantService _tenantService;
+        private readonly IImageService _imageService;
+        private readonly IWebHostEnvironment _env;
 
-        public TenantController(ITenantService tenantService)
+        public TenantController(ITenantService tenantService, IImageService imageService, IWebHostEnvironment env)
         {
             _tenantService = tenantService;
+            _imageService = imageService;
+            _env = env;
         }
 
         /// <summary>
@@ -27,12 +29,11 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HasPermission(permissionId:Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
         {
-            List<TenantDto> list = (await _tenantService.GetAllAsync())
-                        .Where(t => t.Status == EntityStatus.Active)
-                        .ToList();
+            List<TenantDto> list = (await _tenantService.GetAllAsync());
+                       
 
             return View(list);
-        }
+        }//move filter to service method .
 
         /// <summary>
         /// Displays the form to add a new tenant.
@@ -41,7 +42,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTenant()
         {
-            return View(new TenantDto());
+            return View();
         }
 
         /// <summary>
@@ -55,10 +56,14 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-
-            await _tenantService.CreateAsync(model);
+           Guid Tenantid= await _tenantService.CreateAsync(model);
+            string logopath=await _imageService.SaveAsync(model.LogoFile tenant.ID);
+            model.LogoUrl = logopath;
+                        
+            
             return RedirectToAction(nameof(Index));
         }
+
 
         /// <summary>
         /// Displays the form to update an existing tenant.
@@ -69,6 +74,9 @@ namespace SGS.MultiTenancy.UI.Controllers
         public async Task<IActionResult> UpdateTenant(Guid id)
         {
             TenantDto tenant = await _tenantService.GetEditModelAsync(id);
+
+            var fullPath = Path.Combine(_env.WebRootPath, tenant.LogoUrl);
+
             if (tenant == null)
                 return NotFound();
 

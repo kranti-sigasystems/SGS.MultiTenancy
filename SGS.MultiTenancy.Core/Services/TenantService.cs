@@ -29,6 +29,7 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<List<TenantDto>> GetAllAsync()
         {
             return await _tenantRepo.Query()
+                .Where(t=>t.Status==EntityStatus.Active)
                 .Select(t => new TenantDto
                 {
                     ID = t.ID,
@@ -55,7 +56,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// Creates a new tenant based on the provided form data.
         /// </summary>
         /// <param name="model">The tenant form view model.</param>
-        public async Task CreateAsync(TenantDto model)
+        public async Task<Guid?> CreateAsync(TenantDto model)
         {
             bool slugExists = await _tenantRepo.AnyAsync(t => t.Slug == model.Slug);
             if (slugExists)
@@ -67,10 +68,10 @@ namespace SGS.MultiTenancy.Core.Services
                 if (domainExists)
                     throw new Exception("Domain already mapped to another tenant");
             }
-
+            Guid tenantId = Guid.NewGuid();
             Tenant tenant = new Tenant
             {
-                ID = Guid.NewGuid(),
+                ID = tenantId,
                 Name = model.Name,
                 Slug = model.Slug.ToLower(),
                 Domain = model.Domain,
@@ -78,8 +79,11 @@ namespace SGS.MultiTenancy.Core.Services
                 LogoUrl = model.LogoUrl
             };
 
-            await _tenantRepo.AddAsync(tenant);
+
+            var results= await _tenantRepo.AddAsync(tenant);
+
             await _tenantRepo.CompleteAsync();
+            return tenantId;
         }
 
         /// <summary>

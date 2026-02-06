@@ -1,4 +1,5 @@
-﻿using SGS.MultiTenancy.Core.Domain.Common;
+﻿using Microsoft.AspNetCore.Http;
+using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata;
@@ -45,6 +46,10 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         [MaxLength(500)]
         [Url(ErrorMessage = Constants.InvalidLogoUrl)]
         public string? LogoUrl { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public IFormFile? LogoFile { get; set; }
     }
 }
 

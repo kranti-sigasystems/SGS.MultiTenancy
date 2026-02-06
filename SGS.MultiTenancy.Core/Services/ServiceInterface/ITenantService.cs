@@ -21,7 +21,7 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// Creates a new tenant with address details.
         /// Typically called from the add tenant form.
         /// </summary>
-        Task CreateAsync(TenantDto model);
+        Task<Guid?> CreateAsync(TenantDto model);
 
         /// <summary>
         /// Gets tenant data for editing.

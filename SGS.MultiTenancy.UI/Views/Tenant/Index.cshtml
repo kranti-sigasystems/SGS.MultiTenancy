@@ -29,7 +29,6 @@
                             <th class="border-0">Slug</th>
                             <th class="border-0">Domain</th>
                             <th class="border-0">Status</th>
-                            <th class="border-0">Logo</th>
                             <th class="border-0 rounded-end">Action</th>
                         </tr>
                     </thead>
@@ -49,18 +48,6 @@
                                             @t.Status
                                         </span>
                                     </td>
-
-                                    <td>
-                                        @if (!string.IsNullOrWhiteSpace(t.LogoUrl))
-                                        {
-                                            <img src="@t.LogoUrl" alt="Tenant Logo" height="30" />
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">—</span>
-                                        }
-                                    </td>
-
                                     <td>
                                         <button class="bg-light text-muted p-0 me-3"
                                                 data-bs-toggle="modal"

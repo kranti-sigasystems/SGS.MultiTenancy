@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Extension;
+using SGS.MultiTenancy.Core.Services;
+using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
 using SGS.MultiTenancy.Infra.Repository;
@@ -38,6 +40,14 @@ namespace SGS.MultiTenancy.UI
             builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
             builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+            builder.Services.AddScoped<IImageService>(sp =>
+            {
+                var env = sp.GetRequiredService<IWebHostEnvironment>();
+                var basePath = Path.Combine(env.WebRootPath, "uploads");
+
+                return new ImageService(basePath);
+            });
+
 
             builder.Services.AddAuthorization(options =>
             {
