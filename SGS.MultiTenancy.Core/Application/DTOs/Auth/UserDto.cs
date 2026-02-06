@@ -29,6 +29,11 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// Gets or set user password.
         /// </summary>
         [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        [MinLength(Constants.PasswordMinLength, ErrorMessage = Constants.MinErrorMessage)]
+        [MaxLength(25, ErrorMessage = Constants.MaxErrorMessage)]
+        [RegularExpression(
+        Constants.PasswordStrengthRegex,
+        ErrorMessage = Constants.PasswordStrengthErrorMessage)]
         public string Password { get; set; }
 
         /// <summary>
