@@ -185,5 +185,11 @@
         /// </summary>
         public const string Cancel = "Cancel";
 
+        /// <summary>
+        /// Subdomain error message .
+        /// </summary>
+        public const string SubDomainError = "Subdomain is required";
+
+
     }
 }

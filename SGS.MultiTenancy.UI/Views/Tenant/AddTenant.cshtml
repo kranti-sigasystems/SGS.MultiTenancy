@@ -1,5 +1,4 @@
 ﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
-@using SGS.MultiTenancy.Core.Domain.Enums
 @model TenantDto
 
 @{
@@ -7,76 +6,112 @@
 }
 
 <div class="container-fluid mt-4">
+
     <div class="mb-4">
         <h4 class="fw-semibold">Add Tenant</h4>
     </div>
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <form asp-action="AddTenant" method="post" novalidate>
 
+    <form asp-action="AddTenant"
+          method="post"
+          enctype="multipart/form-data"
+          novalidate>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <strong>Business Details</strong>
+            </div>
+
+            <div class="card-body">
                 <div class="row g-3">
 
                     <div class="col-md-4">
                         <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name" class="form-control" id="TenantName" />
+                        <input asp-for="Name"
+                               class="form-control"
+                               id="TenantName"
+                               placeholder="Enter business name" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
                         <label asp-for="Slug" class="form-label">Subdomain</label>
-                        <input asp-for="Slug" class="form-control" id="Slug" />
+                        <input asp-for="Slug"
+                               class="form-control"
+                               id="Slug"
+                               placeholder="Enter subdomain" />
                         <span asp-validation-for="Slug" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
                         <label asp-for="Domain" class="form-label"></label>
-                        <input asp-for="Domain" class="form-control" />
+                        <input asp-for="Domain"
+                               class="form-control"
+                               placeholder="Enter domain" />
                         <span asp-validation-for="Domain" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="LogoUrl" class="form-label">Logo URL</label>
-                        <input asp-for="LogoUrl" class="form-control" />
-                        <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                        <label class="form-label">Business Logo</label>
+                        <input type="file"
+                               name="LogoFile"
+                               class="form-control"
+                               accept="image/*" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <strong>User Details</strong>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label asp-for="UserDto.UserName" class="form-label"></label>
+                        <input asp-for="UserDto.UserName"
+                               class="form-control"
+                               placeholder="Enter username" />
+                        <span asp-validation-for="UserDto.UserName" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label d-block">Status</label>
+                        <label asp-for="UserDto.Email" class="form-label"></label>
+                        <input asp-for="UserDto.Email"
+                               class="form-control"
+                               placeholder="Enter email address" />
+                        <span asp-validation-for="UserDto.Email" class="text-danger"></span>
+                    </div>
 
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   asp-for="Status"
-                                   value="@EntityStatus.Active"
-                                   id="statusActive"
-                                   checked />
-                            <label class="form-check-label" for="statusActive">Active</label>
-                        </div>
+                    <div class="col-md-4">
+                        <label asp-for="UserDto.Password" class="form-label"></label>
+                        <input asp-for="UserDto.Password"
+                               class="form-control"
+                               placeholder="Enter password" />
+                        <span asp-validation-for="UserDto.Password" class="text-danger"></span>
+                    </div>
 
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   asp-for="Status"
-                                   value="@EntityStatus.Inactive"
-                                   id="statusInactive" />
-                            <label class="form-check-label" for="statusInactive">Inactive</label>
-                        </div>
-
-                        <span asp-validation-for="Status" class="text-danger d-block"></span>
+                    <div class="col-md-4">
+                        <label class="form-label">Avatar</label>
+                        <input type="file"
+                               name="AvatarFile"
+                               class="form-control"
+                               accept="image/*" />
                     </div>
                 </div>
-
-                @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
-            </form>
+            </div>
         </div>
-    </div>
+        @await Html.PartialAsync(
+        "~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml",
+                false
+                )
+    </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/tenant-management.js"></script>
 }
-
 <script>
     document.getElementById("TenantName")?.addEventListener("input", function () {
         const slug = this.value.toLowerCase()
