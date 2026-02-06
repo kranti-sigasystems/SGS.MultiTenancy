@@ -69,6 +69,11 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
 
             await CreateMvcSessionAsync(loginResponse);
+
+            if (loginResponse.TenantID != Guid.Empty)
+            {
+                return RedirectToAction(nameof(UserController.Index), Utility.PrepareControllerName(nameof(UserController)));
+            }
             return RedirectToAction(nameof(TenantController.Index), Utility.PrepareControllerName(nameof(TenantController)));
         }
 

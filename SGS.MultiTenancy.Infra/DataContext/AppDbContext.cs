@@ -8,20 +8,14 @@ namespace SGS.MultiTenancy.Infra.DataContext
 {
     public class AppDbContext : DbContext
     {
-        private readonly Guid _tenantId;
-
-        protected AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options)
-        {
-            _tenantId = Guid.Empty;
-        }
+        private readonly ITenantProvider _tenantProvider;
 
         public AppDbContext(
             DbContextOptions<AppDbContext> options,
             ITenantProvider tenantProvider)
             : base(options)
         {
-            _tenantId = tenantProvider?.TenantId ?? Guid.Empty;
+            _tenantProvider = tenantProvider;
         }
 
         public DbSet<Tenant> Tenants { get; set; }
@@ -40,54 +34,73 @@ namespace SGS.MultiTenancy.Infra.DataContext
         {
             base.OnModelCreating(modelBuilder);
 
-            // Apply all IEntityTypeConfiguration<T>
-            modelBuilder.ApplyConfigurationsFromAssembly(
-                typeof(AppDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-            // UserRoles composite key
-            modelBuilder.Entity<UserRoles>()
-                .HasKey(ur => new { ur.UserID, ur.RoleID, ur.TenantID });
+            modelBuilder.Entity<Tenant>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasIndex(e => e.Slug).IsUnique();
+            });
 
-            modelBuilder.Entity<UserRoles>()
-                .HasOne(ur => ur.User)
-                .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserID);
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+                entity.HasIndex(e => e.UserName).IsUnique();
+            });
 
-            modelBuilder.Entity<UserRoles>()
-                .HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleID);
+            modelBuilder.Entity<Role>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
 
-            // RolePermission composite key
-            modelBuilder.Entity<RolePermission>()
-                .HasKey(rp => new { rp.RoleID, rp.PermissionID, rp.TenantID });
+            modelBuilder.Entity<Permission>(entity =>
+            {
+                entity.HasKey(e => e.ID);
+            });
 
-            modelBuilder.Entity<RolePermission>()
-                .HasOne(rp => rp.Role)
-                .WithMany(r => r.RolePermissions)
-                .HasForeignKey(rp => rp.RoleID);
+            // ----- RELATIONSHIP TABLES -----
 
-            modelBuilder.Entity<RolePermission>()
-                .HasOne(rp => rp.Permission)
-                .WithMany(p => p.RolePermissions)
-                .HasForeignKey(rp => rp.PermissionID);
+            modelBuilder.Entity<RolePermission>(entity =>
+            {
+                entity.HasKey(rp => new { rp.RoleID, rp.PermissionID });
 
-            // UserAddress composite key
-            modelBuilder.Entity<UserAddress>()
-                .HasKey(ua => new { ua.UserID, ua.AddressId, ua.TenantID });
+                entity.HasOne(rp => rp.Role)
+                      .WithMany(r => r.RolePermissions)
+                      .HasForeignKey(rp => rp.RoleID);
 
-            // Relationships
-            modelBuilder.Entity<UserAddress>()
-                .HasOne(ua => ua.User)
-                .WithMany(u => u.UserAddresses)
-                .HasForeignKey(ua => ua.UserID);
+                entity.HasOne(rp => rp.Permission)
+                      .WithMany(p => p.RolePermissions)
+                      .HasForeignKey(rp => rp.PermissionID);
+            });
 
-            modelBuilder.Entity<UserAddress>()
-                .HasOne(ua => ua.Address)
-                .WithMany(a => a.UserAddresses)
-                .HasForeignKey(ua => ua.AddressId);
+            modelBuilder.Entity<UserRoles>(entity =>
+            {
+                entity.HasKey(ur => new { ur.UserID, ur.RoleID });
 
-            modelBuilder.ApplyTenantFilter(_tenantId);
+                entity.HasOne(ur => ur.User)
+                      .WithMany(u => u.UserRoles)
+                      .HasForeignKey(ur => ur.UserID);
+
+                entity.HasOne(ur => ur.Role)
+                      .WithMany(r => r.UserRoles)
+                      .HasForeignKey(ur => ur.RoleID);
+            });
+
+            modelBuilder.Entity<UserAddress>(entity =>
+            {
+                entity.HasKey(ua => new { ua.UserID, ua.AddressId });
+
+                entity.HasOne(ua => ua.User)
+                      .WithMany(u => u.UserAddresses)
+                      .HasForeignKey(ua => ua.UserID);
+
+                entity.HasOne(ua => ua.Address)
+                      .WithMany(a => a.UserAddresses)
+                      .HasForeignKey(ua => ua.AddressId);
+            });
+
+            modelBuilder.ApplyTenantFilter(_tenantProvider);
         }
+
     }
 }
