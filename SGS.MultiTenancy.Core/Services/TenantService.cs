@@ -71,7 +71,7 @@ namespace SGS.MultiTenancy.Core.Services
                 throw new Exception("Slug already exists");
 
             Guid tenantId = Guid.NewGuid();
-            var bussinessLogoPath = await _fileStorageRepository.SaveAsync(model.BusinessLogo, tenantId.ToString());
+            string bussinessLogoPath = await _fileStorageRepository.SaveAsync(model.BusinessLogo, tenantId.ToString());
             Tenant tenant = new Tenant
             {
                 ID = tenantId,
@@ -88,7 +88,7 @@ namespace SGS.MultiTenancy.Core.Services
 
             Guid userID = Guid.NewGuid();
             model.UserDto.ID = userID;
-            var profileLogoPath = await _fileStorageRepository.SaveAsync(model.UserDto.ProfileImage, userID.ToString());
+            string profileLogoPath = await _fileStorageRepository.SaveAsync(model.UserDto.ProfileImage, userID.ToString());
             model.UserDto.TenantId = tenant.ID;
             model.UserDto.AvtarUrl = profileLogoPath;
             UserDto userResult = await _userService.AddUserAsync(model.UserDto);
