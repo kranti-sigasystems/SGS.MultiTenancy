@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
@@ -17,15 +18,17 @@ namespace SGS.MultiTenancy.Core.Services
         private readonly IGenericRepository<Tenant> _tenantRepo;
         private readonly IGenericRepository<UserRoles> _userRolesRepo;
         private readonly IUserService _userService;
+        private readonly IFileStorageRepository _fileStorageRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TenantService"/> class.
         /// </summary>
-        public TenantService(IGenericRepository<Tenant> tenantRepo, IUserService userService, IGenericRepository<UserRoles> userRolesRepo)
+        public TenantService(IGenericRepository<Tenant> tenantRepo, IUserService userService, IGenericRepository<UserRoles> userRolesRepo, IFileStorageRepository fileStorageRepository)
         {
             _tenantRepo = tenantRepo;
             _userService = userService;
             _userRolesRepo = userRolesRepo;
+            _fileStorageRepository = fileStorageRepository;
         }
 
         /// <summary>
@@ -67,24 +70,29 @@ namespace SGS.MultiTenancy.Core.Services
             if (slugExists)
                 throw new Exception("Slug already exists");
 
+            Guid tenantId = Guid.NewGuid();
+            var bussinessLogoPath = await _fileStorageRepository.SaveAsync(model.BusinessLogo, tenantId.ToString());
             Tenant tenant = new Tenant
             {
-                ID = Guid.NewGuid(),
+                ID = tenantId,
                 Name = model.Name,
                 Slug = model.Slug.ToLower(),
                 Domain = model.Domain,
                 Status = EntityStatus.Active,
-                LogoUrl = model.LogoUrl,
+                LogoUrl = bussinessLogoPath,
                 CreateOn = DateTime.UtcNow
             };
 
-            await _tenantRepo.AddAsync(tenant);
+            Tenant tenantResult = await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
 
+            Guid userID = Guid.NewGuid();
+            model.UserDto.ID = userID;
+            var profileLogoPath = await _fileStorageRepository.SaveAsync(model.UserDto.ProfileImage, userID.ToString());
             model.UserDto.TenantId = tenant.ID;
+            model.UserDto.AvtarUrl = profileLogoPath;
+            UserDto userResult = await _userService.AddUserAsync(model.UserDto);
 
-            UserDto userResult = await _userService.AddUserAsync(model.UserDto); 
-           
             UserRoles userRole = new UserRoles
             {
                 RoleID = Guid.Parse(Constants.TenantRoleId),

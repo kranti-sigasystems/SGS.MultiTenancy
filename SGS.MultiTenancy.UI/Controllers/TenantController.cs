@@ -52,9 +52,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTenant(TenantDto model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
+           
             await _tenantService.CreateAsync(model);
             return RedirectToAction(nameof(Index));
         }

@@ -1,4 +1,5 @@
-﻿using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+﻿using Microsoft.AspNetCore.Http;
+using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
@@ -48,6 +49,10 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         [Url(ErrorMessage = Constants.InvalidLogoUrl)]
         public string? LogoUrl { get; set; }
 
+        /// <summary>
+        /// Gets or set business logo.
+        /// </summary>
+        public IFormFile? BusinessLogo { get; set; }
         /// <summary>
         /// Get or set user information related to the tenant. 
         /// </summary>
