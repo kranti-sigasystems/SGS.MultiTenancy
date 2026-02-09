@@ -194,5 +194,20 @@
         /// Default tenant role id.
         /// </summary>
         public const string TenantRoleId = "30dec8bc-2b22-4b3b-b721-8eb28c5d39c9";
+
+        /// <summary>
+        /// Image size 3mb.
+        /// </summary>
+        public const long MaxImageSize = 3 * 1024 * 1024;
+
+        /// <summary>
+        /// Image size error message.
+        /// </summary>
+        public const string ImageSizeErrorMessage = "Image size must be 3 MB or less.";
+
+        /// <summary>
+        /// Image format error message.
+        /// </summary>
+        public const string ImageFormatErrorMessage = "Only image files are allowed.";
     }
 }

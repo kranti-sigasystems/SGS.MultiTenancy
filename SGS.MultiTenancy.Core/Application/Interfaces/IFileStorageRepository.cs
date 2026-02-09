@@ -17,7 +17,6 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces
         /// </summary>
         /// <param name="relativePath"></param>
         /// <returns></returns>
-        Task<bool> DeleteAsync(string? relativePath);
+        bool DeleteAsync(string? relativePath);
     }
-
 }
