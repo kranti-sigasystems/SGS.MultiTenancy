@@ -52,9 +52,10 @@
                     <div class="col-md-4">
                         <label class="form-label">Business Logo</label>
                         <input type="file"
-                               name="LogoFile"
+                               name="BusinessLogo"
                                class="form-control"
                                accept="image/*" />
+                        <span asp-validation-for="BusinessLogo" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -94,23 +95,20 @@
                     <div class="col-md-4">
                         <label class="form-label">Avatar</label>
                         <input type="file"
-                               name="AvatarFile"
+                               name="UserDto.ProfileImage"
                                class="form-control"
                                accept="image/*" />
+                        <span asp-validation-for="UserDto.ProfileImage" class="text-danger"></span>
                     </div>
                 </div>
             </div>
         </div>
-        @await Html.PartialAsync(
-        "~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml",
-                false
-                )
+        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml",false)
     </form>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/tenant-management.js"></script>
 }
 <script>
     document.getElementById("TenantName")?.addEventListener("input", function () {

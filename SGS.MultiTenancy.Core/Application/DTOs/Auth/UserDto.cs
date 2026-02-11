@@ -1,4 +1,5 @@
-﻿using SGS.MultiTenancy.Core.Domain.Common;
+﻿using Microsoft.AspNetCore.Http;
+using SGS.MultiTenancy.Core.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
 {
@@ -40,6 +41,11 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// Gets or set user avtar url.
         /// </summary>
         public string? AvtarUrl { get; set; }
+
+        /// <summary>
+        /// Get or set user profile image file.
+        /// </summary>
+        public IFormFile? ProfileImage { get; set; }
 
         /// <summary>
         /// Gets or set user tenant id.
