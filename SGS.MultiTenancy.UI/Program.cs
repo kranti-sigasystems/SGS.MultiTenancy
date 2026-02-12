@@ -10,6 +10,7 @@ using SGS.MultiTenancy.Infa.Extension;
 using SGS.MultiTenancy.Infra.DataContext;
 using SGS.MultiTenancy.Infra.Repository;
 using SGS.MultiTenancy.UI.Attribute;
+using SGS.MultiTenancy.UI.Infrastructure.Logging;
 using System.Text;
 
 namespace SGS.MultiTenancy.UI
@@ -18,100 +19,101 @@ namespace SGS.MultiTenancy.UI
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+                var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<ITenantProvider, TenantProvider>();
+                builder.AddSerilogLogging();
+                builder.Services.AddControllersWithViews();
+                builder.Services.AddHttpContextAccessor();
+                builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseMySql(
-                builder.Configuration.GetConnectionString("DefaultConnection"),
-                ServerVersion.AutoDetect(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
-                ),
-                b => b.MigrationsAssembly("SGS.MultiTenancy.Infra")
-            ));
+                builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    ServerVersion.AutoDetect(
+                        builder.Configuration.GetConnectionString("DefaultConnection")
+                    ),
+                    b => b.MigrationsAssembly("SGS.MultiTenancy.Infra")
+                ));
 
-            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
-            builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-            builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
-            builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+                builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+                builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+                builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+                builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Permission",
-                    policy => policy.AddRequirements(new PermissionRequirement()));
-            });
-            builder.Services.AddCoreDependencies();
-            builder.Services.AddInfrastructureDependencies();
-
-            JwtOptions? jwtOptions = builder.Configuration
-                   .GetSection("ApiSettings:JwtOptions")
-                   .Get<JwtOptions>();
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-            {
-                options.LoginPath = "/Auth/Login";
-                options.LogoutPath = "/Auth/Logout";
-                options.Cookie.Name = "SGS_MultiTenancyAuth";
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.SameSite = SameSiteMode.Strict;
-                options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(jwtOptions.ExpiryMinutes);
-            })
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                builder.Services.AddAuthorization(options =>
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtOptions.Issuer,
-                    ValidAudience = jwtOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtOptions.Secret)
-                    )
-                };
-                options.Events = new JwtBearerEvents
+                    options.AddPolicy("Permission",
+                        policy => policy.AddRequirements(new PermissionRequirement()));
+                });
+                builder.Services.AddCoreDependencies();
+                builder.Services.AddInfrastructureDependencies();
+
+                JwtOptions? jwtOptions = builder.Configuration
+                       .GetSection("ApiSettings:JwtOptions")
+                       .Get<JwtOptions>();
+                builder.Services.AddAuthentication(options =>
                 {
-                    OnMessageReceived = context =>
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.LoginPath = "/Auth/Login";
+                    options.LogoutPath = "/Auth/Logout";
+                    options.Cookie.Name = "SGS_MultiTenancyAuth";
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(jwtOptions.ExpiryMinutes);
+                })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        context.Token = context.Request.Cookies["SGS_AuthToken"];
-                        return Task.CompletedTask;
-                    }
-                };
-            });
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtOptions.Secret)
+                        )
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["SGS_AuthToken"];
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
-            var app = builder.Build();
+                var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+                // Configure the HTTP request pipeline.
+                if (!app.Environment.IsDevelopment())
+                {
+                    app.UseExceptionHandler("/Home/Error");
+                    app.UseHsts();
+                }
+                app.UseHttpsRedirection();
+                app.UseStaticFiles();
 
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseMiddleware<SubdomainRoutingMiddleware>();
-            app.UseAuthorization();
+                app.UseRouting();
+                app.UseAuthentication();
+                app.UseMiddleware<SubdomainRoutingMiddleware>();
+                app.UseAuthorization();
 
-            app.MapControllerRoute(
-                name: "default",
+                app.MapControllerRoute(
+                    name: "default",
                 pattern: "{controller=Auth}/{action=Login}/{id?}");
 
-            app.Run();
+                app.Run();
         }
     }
 }
