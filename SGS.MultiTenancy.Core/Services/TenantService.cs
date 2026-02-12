@@ -89,7 +89,6 @@ namespace SGS.MultiTenancy.Core.Services
             model.UserDto.TenantId = tenant.ID;
             model.UserDto.RoleIds.Add(Guid.Parse(Constants.TenantRoleId));
             UserDto userResult = await _userService.AddUserAsync(model.UserDto);
-
         }
 
         /// <summary>
@@ -142,12 +141,16 @@ namespace SGS.MultiTenancy.Core.Services
                 if (domainExists)
                     throw new Exception("Domain already mapped to another tenant");
             }
+            bool fileDeteled= _fileStorageRepository.DeleteAsync(tenant.LogoUrl!);
+            if(fileDeteled)
+                model.LogoUrl = await _fileStorageRepository.SaveAsync(model.BusinessLogo, model.ID.ToString());
 
             tenant.Name = model.Name;
             tenant.Slug = model.Slug.ToLower();
             tenant.Domain = model.Domain;
             tenant.Status = model.Status;
             tenant.LogoUrl = model.LogoUrl;
+            tenant.LastUpdateOn = DateTime.UtcNow;
 
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
