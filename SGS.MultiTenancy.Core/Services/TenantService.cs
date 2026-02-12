@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
@@ -87,21 +86,10 @@ namespace SGS.MultiTenancy.Core.Services
             await _tenantRepo.CompleteAsync();
 
             Guid userID = Guid.NewGuid();
-            model.UserDto.ID = userID;
-            string profileLogoPath = await _fileStorageRepository.SaveAsync(model.UserDto.ProfileImage, userID.ToString());
             model.UserDto.TenantId = tenant.ID;
-            model.UserDto.AvtarUrl = profileLogoPath;
+            model.UserDto.RoleIds.Add(Guid.Parse(Constants.TenantRoleId));
             UserDto userResult = await _userService.AddUserAsync(model.UserDto);
 
-            UserRoles userRole = new UserRoles
-            {
-                RoleID = Guid.Parse(Constants.TenantRoleId),
-                TenantID = tenant.ID,
-                UserID = userResult.ID.Value
-            };
-
-            await _userRolesRepo.AddAsync(userRole);
-            await _userRolesRepo.CompleteAsync();
         }
 
         /// <summary>

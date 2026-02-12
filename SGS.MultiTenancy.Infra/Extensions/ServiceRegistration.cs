@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Services;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.Infra.Repository;
@@ -23,6 +24,8 @@ namespace SGS.MultiTenancy.Infa.Extension
             services.AddScoped<ILocationService, LocationService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IFileStorageRepository, FileStorageRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IUserAddressRepository, UserAddressRepository>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             return services;
         }

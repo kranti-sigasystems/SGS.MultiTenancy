@@ -2,20 +2,24 @@
 using Microsoft.Extensions.Caching.Memory;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Entities.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 namespace SGS.MultiTenancy.Core.Services
 {
     public class UserService : IUserService
     {
-        
+
         private readonly IUserRepository _userRepositery;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IPasswordHasherService _passwordHasherService;
         private readonly IGenericRepository<UserRoles> _userRoles;
         private readonly IMemoryCache _cache;
-        private readonly IGenericRepository<UserRoles> _userRoleRepository;
+        private readonly IAddressRepository _addressRepository;
+        private readonly IUserAddressRepository _userAddressRepository;
+        private readonly IFileStorageRepository _fileStorageRepository;
 
         /// <summary>
         /// Creates a new user service instance.
@@ -24,14 +28,24 @@ namespace SGS.MultiTenancy.Core.Services
         /// <param name="jwtTokenGenerator">JWT generator.</param>
         /// <param name="passwordHasherService">Password hasher.</param>
 
-        public UserService(IUserRepository userRepositery, IJwtTokenGenerator jwtTokenGenerator, IPasswordHasherService passwordHasherService, IGenericRepository<UserRoles> userRoles, IMemoryCache memoryCache, IGenericRepository<UserRoles> userRoleRepository)
+        public UserService(
+            IUserRepository userRepositery,
+            IJwtTokenGenerator jwtTokenGenerator,
+            IPasswordHasherService passwordHasherService,
+            IGenericRepository<UserRoles> userRoles,
+            IMemoryCache memoryCache,
+            IAddressRepository addressRepository,
+            IUserAddressRepository userAddressRepository,
+            IFileStorageRepository fileStorageRepository)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
             _passwordHasherService = passwordHasherService;
             _userRoles = userRoles;
             _cache = memoryCache;
-            _userRoleRepository = userRoleRepository;
+            _addressRepository = addressRepository;
+            _userAddressRepository = userAddressRepository;
+            _fileStorageRepository = fileStorageRepository;
         }
         /// <summary>
         /// Validates credentials and returns JWT with roles and permissions.
@@ -125,7 +139,7 @@ namespace SGS.MultiTenancy.Core.Services
 
             User? user = await _userRepositery.FirstOrDefaultAsync(
                 u => u.Email.ToLower() == email.ToLower());
-           
+
             if (user == null)
                 return true;
 
@@ -135,7 +149,6 @@ namespace SGS.MultiTenancy.Core.Services
 
             return true;
         }
-
 
         public async Task<bool> UserHasPermissionAsync(Guid userId, Guid tenantId, Guid permissionId)
         {
@@ -179,23 +192,76 @@ namespace SGS.MultiTenancy.Core.Services
         /// </summary>
         /// <param name="userDto"></param>
         public async Task<UserDto> AddUserAsync(UserDto userDto)
-        {
-            User user = _userRepositery.Query(u => u.UserName.ToLower() == userDto.UserName.ToLower()).FirstOrDefault()!;
+        { 
+            Guid userId = Guid.NewGuid();
+
+            User? user = _userRepositery.Query(u => u.UserName.ToUpper() == userDto.UserName!.ToUpper() && u.TenantID == userDto.TenantId).FirstOrDefault();
+            if (user != null)
+            {
+                return new UserDto
+                {
+                    UserName = user.UserName,
+                    TenantId = userDto.TenantId,
+                };
+            }
+            userDto.AvtarUrl = await _fileStorageRepository.SaveAsync(userDto.ProfileImage, userId.ToString());
 
             user = await _userRepositery.AddAsync(new User()
             {
-                ID = Guid.NewGuid(),
+                ID = userId,
                 Email = userDto.Email,
                 UserName = userDto.UserName,
                 TenantID = userDto.TenantId,
-                PasswordHash = _passwordHasherService.HashPassword(userDto.Password)
+                PasswordHash = _passwordHasherService.HashPassword(userDto.Password),
+                AvatarUrl = userDto.AvtarUrl,
+                CreateBy = (Guid)userDto.TenantId!,
+                CreateOn = DateTime.UtcNow,
             });
 
-            await _userRepositery.CompleteAsync();
-            userDto.ID = user.ID;
+            if (userDto.Addresses != null && userDto.Addresses.Any())
+            {
+                foreach (var addressDto in userDto.Addresses)
+                {
+                    var address = new Address
+                    {
+                        ID = Guid.NewGuid(),
+                        PhoneNumber = addressDto.PhoneNumber,
+                        AddressLine = addressDto.AddressLine,
+                        PostalCode = addressDto.PostalCode,
+                        City = addressDto.City,
+                        State = addressDto.State,
+                        Country = addressDto.Country,
+                        TenantID = userDto.TenantId,
+                        IsDefault = addressDto.IsDefault
+                    };
 
+                    await _addressRepository.AddAsync(address);
+                    await _addressRepository.CompleteAsync();
+
+                    await _userAddressRepository.AddAsync(new UserAddress
+                    {
+                        UserID = user.ID,
+                        AddressId = address.ID,
+                        TenantID = userDto.TenantId
+                    });
+                    await _userAddressRepository.CompleteAsync();
+                }
+            }
+
+            if (userDto.RoleIds != null && userDto.RoleIds.Any())
+            {
+                foreach (var roleId in userDto.RoleIds)
+                {
+                    await _userRoles.AddAsync(new UserRoles
+                    {
+                        UserID = user.ID,
+                        RoleID =roleId,
+                        TenantID = userDto.TenantId
+                    });
+                }
+            }
+            userDto.ID = user.ID;
             return userDto;
         }
-
     }
 }

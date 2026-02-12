@@ -9,6 +9,6 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces
         /// </summary>
         /// <param name="RoleId"></param>
         /// <returns>Returns all the UserRoles</returns>
-        public Task<List<Role>> GetRolesWithPermissionsAsync(IEnumerable<Guid> roleIds);
+       public Task<List<Role>> GetRolesWithPermissionsAsync(IEnumerable<Guid> roleIds);
     }
 }

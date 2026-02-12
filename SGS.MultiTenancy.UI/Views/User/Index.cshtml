@@ -1,1 +1,8 @@
-﻿<h2>Well come to User Table</h2>
+﻿@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0">Users</h1>
+    <a asp-controller="User" asp-action="Create" class="btn btn-sm btn-primary">Add User</a>
+</div>
