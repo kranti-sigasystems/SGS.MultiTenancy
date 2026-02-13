@@ -196,6 +196,10 @@
         public const string TenantRoleId = "30dec8bc-2b22-4b3b-b721-8eb28c5d39c9";
 
         /// <summary>
+        /// Default user role id.
+        /// </summary>
+        public const string UserRoleId = "3b64e297-1cc8-47a0-bd80-b0bb46cf87f6";
+        /// <summary>
         /// Image size 3mb.
         /// </summary>
         public const long MaxImageSize = 3 * 1024 * 1024;

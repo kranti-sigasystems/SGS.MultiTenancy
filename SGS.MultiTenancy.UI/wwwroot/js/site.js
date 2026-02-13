@@ -30,7 +30,6 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    /*ADDRESS MODAL */
     const addressModal = document.getElementById('addressModal');
 
     if (addressModal) {
@@ -44,5 +43,29 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('modalCountry').textContent = button.dataset.country || '-';
             document.getElementById('modalPostal').textContent = button.dataset.postal || '-';
         });
+    }
+});
+document.addEventListener("change", function (e) {
+
+    if (e.target.classList.contains("countryDropdown")) {
+
+        var countryId = e.target.value;
+        var stateDropdown = document.querySelector(".stateDropdown");
+
+        stateDropdown.innerHTML = '<option value="">-- Select State --</option>';
+
+        if (countryId) {
+            fetch('/User/GetStatesByCountry?countryId=' + countryId)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(function (state) {
+
+                        var option = document.createElement("option");
+                        option.value = state.value;
+                        option.textContent = state.name;
+                        stateDropdown.appendChild(option);
+                    });
+                });
+        }
     }
 });

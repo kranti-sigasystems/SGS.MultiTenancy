@@ -52,5 +52,14 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// </summary>
         public Guid? TenantId { get; set; }
 
+        /// <summary>
+        /// Gets or set role ids.
+        /// </summary>
+        public List<Guid>? RoleIds { get; set; }= new List<Guid>();
+
+        /// <summary>
+        /// Gets or sets the list of addresses associated with the user.
+        /// </summary>
+        public List<CreateUserAddressDto>? Addresses { get; set; }
     }
 }

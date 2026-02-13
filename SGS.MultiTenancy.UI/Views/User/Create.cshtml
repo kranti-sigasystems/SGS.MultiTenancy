@@ -1,0 +1,139 @@
+@model SGS.MultiTenancy.UI.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Add User";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="mb-4">
+        <h4 class="fw-semibold">Add User</h4>
+    </div>
+
+    <form asp-action="Create"
+          method="post"
+          enctype="multipart/form-data"
+          novalidate>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <strong>User Details</strong>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label asp-for="User.UserName" class="form-label"></label>
+                        <input asp-for="User.UserName"
+                               class="form-control"
+                               placeholder="Enter username" />
+                        <span asp-validation-for="User.UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="User.Email" class="form-label"></label>
+                        <input asp-for="User.Email"
+                               class="form-control"
+                               placeholder="Enter email address" />
+                        <span asp-validation-for="User.Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Phone Number</label>
+                        <input name="User.Addresses[0].PhoneNumber"
+                               class="form-control"
+                               placeholder="Enter phone number" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="User.Password" class="form-label"></label>
+                        <input asp-for="User.Password"
+                               type="password"
+                               class="form-control"
+                               placeholder="Enter password" />
+                        <span asp-validation-for="User.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Avatar</label>
+                        <input type="file"
+                               asp-for="User.ProfileImage"
+                               class="form-control"
+                               accept="image/*" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <strong>Address Details</strong>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3 address-item">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Address Line</label>
+                        <input name="User.Addresses[0].AddressLine"
+                               class="form-control"
+                               placeholder="Enter address line" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Postal Code</label>
+                        <input name="User.Addresses[0].PostalCode"
+                               class="form-control"
+                               placeholder="Enter postal code" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">City</label>
+                        <input name="User.Addresses[0].City"
+                               class="form-control"
+                               placeholder="Enter city" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Country</label>
+                        <select asp-for="User.Addresses[0].Country"
+                                asp-items="Model.Countries"
+                                class="form-select countryDropdown"
+                                data-index="0">
+                        </select>
+                    </div>
+
+                    <!-- State Dropdown -->
+                    <div class="col-md-4">
+                        <label class="form-label">State</label>
+                        <select asp-for="User.Addresses[0].State"
+                                asp-items="Model.States"
+                                class="form-select stateDropdown">
+                            <option value="">-- Select State --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="form-check mt-3">
+                            <input type="checkbox"
+                                   name="User.Addresses[0].IsDefault"
+                                   class="form-check-input"
+                                   value="true" />
+                            <label class="form-check-label">
+                                Default Address
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

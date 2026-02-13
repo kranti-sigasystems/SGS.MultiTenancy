@@ -1,9 +1,9 @@
-﻿using SGS.MultiTenancy.Core.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace SGS.MultiTenancy.Core.Services
 {
@@ -20,6 +20,9 @@ namespace SGS.MultiTenancy.Core.Services
             _stateRepo = stateRepo;
         }
 
+        /// <summary>
+        /// Retrieves a list of active countries formatted for use in selection controls.
+        /// </summary>
         public async Task<IEnumerable<SelectListItem>> GetCountriesAsync()
         {
             return await _countryRepo.Query()
@@ -32,7 +35,11 @@ namespace SGS.MultiTenancy.Core.Services
                 })
                 .ToListAsync();
         }
-        
+
+        /// <summary>
+        /// Retrieves a list of active states based on the country identifier formatted for use in selection controls.
+        /// </summary>
+        /// <param name="countryId"></param>
         public async Task<IEnumerable<SelectListItem>> GetStatesByCountryAsync(Guid countryId)
         {
             return await _stateRepo.Query()
@@ -47,5 +54,21 @@ namespace SGS.MultiTenancy.Core.Services
                 .ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Retrieves the name of a country based on its unique identifier.
+        /// </summary>
+        /// <param name="countryId"></param>
+        public async Task<string> GetCountryNameByIdAsync(string countryId)
+        {
+            return await _countryRepo.Query().Where(c => c.ID.ToString() == countryId).Select(c => c.Name).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Retrieves the name of a country based on its unique identifier.
+        /// </summary>
+        public async Task<string> GetStateNameByIdAsync(string stateId)
+        {
+            return await _stateRepo.Query().Where(s => s.ID.ToString() == stateId).Select(s => s.Name).FirstOrDefaultAsync().ConfigureAwait(false);
+        }
     }
 }
