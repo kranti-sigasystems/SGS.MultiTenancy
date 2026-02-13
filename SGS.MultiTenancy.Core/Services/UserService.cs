@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
@@ -220,7 +221,7 @@ namespace SGS.MultiTenancy.Core.Services
 
             if (userDto.Addresses != null && userDto.Addresses.Any())
             {
-                foreach (var addressDto in userDto.Addresses)
+                foreach ( CreateUserAddressDto addressDto in userDto.Addresses)
                 {
                     var address = new Address
                     {
@@ -250,7 +251,7 @@ namespace SGS.MultiTenancy.Core.Services
 
             if (userDto.RoleIds != null && userDto.RoleIds.Any())
             {
-                foreach (var roleId in userDto.RoleIds)
+                foreach (Guid roleId in userDto.RoleIds)
                 {
                     await _userRoles.AddAsync(new UserRoles
                     {

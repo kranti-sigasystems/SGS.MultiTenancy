@@ -40,7 +40,6 @@ namespace SGS.MultiTenancy.UI.Controllers
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
 
             model.Countries = (List<SelectListItem>)countries;
-            // Ensure address[0] exists
             model.User = new UserDto
             {
                 Addresses = new List<CreateUserAddressDto>
@@ -65,12 +64,12 @@ namespace SGS.MultiTenancy.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel dto)
         {
-            foreach (var address in dto.User.Addresses)
+            foreach (CreateUserAddressDto address in dto.User.Addresses)
             {
                 address.Country = await _locationService.GetCountryNameByIdAsync(address.Country);
                 address.State = await _locationService.GetStateNameByIdAsync(address.State);
             }
-            Guid tenantId = (Guid)_tenantProvider.TenantId;
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
             dto.User.TenantId = tenantId;
             dto.User.RoleIds.Add(Guid.Parse(Constants.UserRoleId));
             await _userService.AddUserAsync(dto.User);

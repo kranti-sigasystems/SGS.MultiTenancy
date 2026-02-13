@@ -84,7 +84,6 @@ namespace SGS.MultiTenancy.Core.Services
 
             Tenant tenantResult = await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
-
             Guid userID = Guid.NewGuid();
             model.UserDto.TenantId = tenant.ID;
             model.UserDto.RoleIds.Add(Guid.Parse(Constants.TenantRoleId));
@@ -99,7 +98,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// <returns>A populated tenant form view model.</returns>
         public async Task<TenantDto> GetEditModelAsync(Guid tenantId)
         {
-            var tenant = await _tenantRepo.Query()
+            TenantDto? tenant = await _tenantRepo.Query()
                 .Where(t => t.ID == tenantId)
                 .Select(t => new TenantDto
                 {
@@ -111,7 +110,6 @@ namespace SGS.MultiTenancy.Core.Services
                     LogoUrl = t.LogoUrl
                 })
                 .FirstOrDefaultAsync();
-
             if (tenant == null)
                 throw new Exception("Tenant not found");
 
