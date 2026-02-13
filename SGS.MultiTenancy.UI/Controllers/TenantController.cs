@@ -68,23 +68,22 @@ namespace SGS.MultiTenancy.UI.Controllers
                         Constants.ImageFormatErrorMessage
                     );
                 }
-            }
-
-            if (model.UserDto?.ProfileImage != null)
-            {
-                if (model.UserDto.ProfileImage.Length > Constants.MaxImageSize)
+                if (model.UserDto?.ProfileImage != null)
                 {
-                    ModelState.AddModelError(
-                        "UserDto.ProfileImage",
-                        Constants.ImageSizeErrorMessage
-                    );
-                }
-                else if (!model.UserDto.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
-                {
-                    ModelState.AddModelError(
-                        "UserDto.ProfileImage",
-                        Constants.ImageFormatErrorMessage
-                    );
+                    if (model.UserDto.ProfileImage.Length > Constants.MaxImageSize)
+                    {
+                        ModelState.AddModelError(
+                            "UserDto.ProfileImage",
+                            Constants.ImageSizeErrorMessage
+                        );
+                    }
+                    else if (!model.UserDto.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        ModelState.AddModelError(
+                            "UserDto.ProfileImage",
+                            Constants.ImageFormatErrorMessage
+                        );
+                    }
                 }
             }
 
@@ -118,6 +117,25 @@ namespace SGS.MultiTenancy.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateTenant(TenantDto model)
         {
+
+            if (model.BusinessLogo != null)
+            {
+                if (model.BusinessLogo.Length > Constants.MaxImageSize)
+                {
+                    ModelState.AddModelError(
+                        "BusinessLogo",
+                        Constants.ImageSizeErrorMessage
+                    );
+                }
+                else if (!model.BusinessLogo.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(
+                        "BusinessLogo",
+                        Constants.ImageFormatErrorMessage
+                    );
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 return PartialView("_EditTenantPartial", model);

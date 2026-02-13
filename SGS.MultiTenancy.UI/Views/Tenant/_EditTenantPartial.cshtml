@@ -26,7 +26,8 @@
 
                         <div class="card-body">
                             <div class="row g-3">
-
+                                <input asp-for="ID" hidden readonly/>
+                                <input asp-for="LogoUrl" hidden readonly/>
                                 <div class="col-md-4">
                                     <label asp-for="Name" class="form-label"></label>
                                     <input asp-for="Name"
@@ -53,59 +54,53 @@
                                     <span asp-validation-for="Domain" class="text-danger"></span>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label class="form-label">Business Logo</label>
-                                    <input type="file"
-                                           name="BusinessLogo"
-                                           class="form-control"
-                                           accept="image/*" />
+                                    <div class="logo-upload-wrapper">
+                                        <img src="/@Model.LogoUrl"
+                                             alt="No Logo"
+                                             class="logo-preview " />
+
+                                        <div class="logo-overlay">
+                                            <span>Upload Logo</span>
+                                        </div>
+                                        <input type="file"
+                                               asp-for="BusinessLogo"
+                                               accept="image/*"
+                                               class="logo-input" />
+                                    </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-block">Tenant Status</label>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               asp-for="Status"
+                                               id="statusActive"
+                                               value="Active"
+                                               checked>
+                                        <label class="form-check-label" for="statusActive">
+                                            Active
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               asp-for="Status"
+                                               id="statusInactive"
+                                               value="Inactive">
+                                        <label class="form-check-label" for="statusInactive">
+                                            Inactive
+                                        </label>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-light">
-                            <strong>User Details</strong>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-
-                                <div class="col-md-4">
-                                    <label asp-for="UserDto.UserName" class="form-label"></label>
-                                    <input asp-for="UserDto.UserName"
-                                           class="form-control"
-                                           placeholder="Enter username" />
-                                    <span asp-validation-for="UserDto.UserName" class="text-danger"></span>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label asp-for="UserDto.Email" class="form-label"></label>
-                                    <input asp-for="UserDto.Email"
-                                           class="form-control"
-                                           placeholder="Enter email address" />
-                                    <span asp-validation-for="UserDto.Email" class="text-danger"></span>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label asp-for="UserDto.Password" class="form-label"></label>
-                                    <input asp-for="UserDto.Password" type="password"
-                                           class="form-control"
-                                           placeholder="Enter password" />
-                                    <span asp-validation-for="UserDto.Password" class="text-danger"></span>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Avatar</label>
-                                    <input type="file"
-                                           name="UserDto.ProfileImage"
-                                           class="form-control"
-                                           accept="image/*" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml",false)
+                    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
                 </form>
             </div>
         </div>

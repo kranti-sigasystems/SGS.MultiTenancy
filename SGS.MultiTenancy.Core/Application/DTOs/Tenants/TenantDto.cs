@@ -45,7 +45,6 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// Logo URL of the tenant.
         /// </summary>
         [MaxLength(500)]
-        [Url(ErrorMessage = Constants.InvalidLogoUrl)]
         public string? LogoUrl { get; set; }
 
         /// <summary>
