@@ -56,7 +56,7 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
             User? user = await _userRepositery.FirstOrDefaultAsync(
-            x => x.UserName.ToLower() == loginRequestDto.UserName.ToLower(),
+            x => x.UserName.ToLower() == loginRequestDto.UserName.ToLower() && x.TenantID==loginRequestDto.TenantId || x.TenantID == Guid.Parse("00000000-0000-0000-0000-000000000000"),
             query => query.Include(u => u.UserRoles));
 
             if (user == null || !user.UserRoles.Any()

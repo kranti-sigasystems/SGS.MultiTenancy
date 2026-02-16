@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -22,13 +23,14 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// </summary>
         /// <param name="userService">Service for user authentication.</param>
         /// <param name="jwtOptions">JWT configuration options.</param>
-
+        private readonly ITenantProvider _tenantProvider;
         private readonly IUserService _userService;
         private readonly JwtOptions _jwtOptions;
-        public AuthController(IUserService userService, IOptions<JwtOptions> jwtOptions)
+        public AuthController(IUserService userService, IOptions<JwtOptions> jwtOptions, ITenantProvider tenantProvider)
         {
             _userService = userService;
             _jwtOptions = jwtOptions.Value;
+            _tenantProvider = tenantProvider;
         }
 
         /// <summary>
@@ -38,6 +40,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            var tenantId = _tenantProvider.TenantId;
             return View();
         }
 
@@ -50,6 +53,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
+          
             if (!ModelState.IsValid)
             {
                 return View(loginViewModel);
@@ -59,6 +63,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             {
                 Password = loginViewModel.Password,
                 UserName = loginViewModel.UserName,
+                TenantId = _tenantProvider.TenantId,
             };
             LoginResponseDto loginResponse = await _userService.Login(loginRequestDto);
 
@@ -136,7 +141,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
 
             string? userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
             if (string.IsNullOrWhiteSpace(userIdValue) || !Guid.TryParse(userIdValue, out Guid userId))
             {
                 return RedirectToAction(nameof(Login), Utility.PrepareControllerName(nameof(AuthController)));

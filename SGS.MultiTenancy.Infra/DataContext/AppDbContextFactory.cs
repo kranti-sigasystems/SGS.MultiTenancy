@@ -40,8 +40,20 @@ namespace SGS.MultiTenancy.Infra.DataContext
     /// </summary>
     internal sealed class DesignTimeTenantProvider : ITenantProvider
     {
-        public Guid? TenantId => null;
+        /// <summary>
+        /// Gets the tenant identifier.
+        /// </summary>
+        public Guid? TenantId => null; // No tenant during migrations/tooling
 
-        public bool IsHostAdmin => true;
+        /// <summary>
+        /// Gets a is host admin.
+        /// </summary>
+        public bool IsHostAdmin => true; // Always host context for design-time
+
+        /// <summary>
+        /// Gets a placeholder tenant slug.
+        /// </summary>
+        public string TenantSlug => "design-time";
+
     }
 }
