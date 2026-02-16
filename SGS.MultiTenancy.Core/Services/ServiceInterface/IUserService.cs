@@ -36,7 +36,7 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <returns></returns>
         public Task<UserDto> AddUserAsync(UserDto userDto);
         /// <summary>
-        /// 
+        /// Fetch users associated with tenants.
         /// </summary>
         /// <param name="tenantId"></param>
         /// <returns></returns>
