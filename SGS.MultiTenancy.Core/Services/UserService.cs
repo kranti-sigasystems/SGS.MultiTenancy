@@ -267,7 +267,11 @@ namespace SGS.MultiTenancy.Core.Services
             userDto.ID = user.ID;
             return userDto;
         }
-
+        /// <summary>
+        /// Fetch users related to specific tenant.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
         public Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId)
         {
             return _userRepositery
