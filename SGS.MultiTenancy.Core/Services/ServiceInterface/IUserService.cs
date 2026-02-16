@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
     public interface IUserService
@@ -34,5 +35,12 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="userDto"></param>
         /// <returns></returns>
         public Task<UserDto> AddUserAsync(UserDto userDto);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId);
+
     }
 }

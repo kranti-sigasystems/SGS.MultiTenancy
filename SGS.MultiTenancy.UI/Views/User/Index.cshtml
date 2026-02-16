@@ -1,8 +1,130 @@
-﻿@{
+﻿@model List<SGS.MultiTenancy.Core.Application.DTOs.Auth.UserDto>
+
+@{
     ViewData["Title"] = "Users";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h4 mb-0">Users</h1>
-    <a asp-controller="User" asp-action="Create" class="btn btn-sm btn-primary">Add User</a>
+    <a asp-controller="User" asp-action="Create" class="btn btn-sm btn-primary">
+        Add User
+    </a>
 </div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Addresses</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary rounded-circle"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addressModal-@user.ID"
+                            title="View Addresses">
+
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </button>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade"
+                         id="addressModal-@user.ID"
+                         tabindex="-1">
+
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        Addresses - @user.UserName
+                                    </h5>
+                                    <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal">
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    @if (user.Addresses != null && user.Addresses.Any())
+                                    {
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Phone</th>
+                                                        <th>Address</th>
+                                                        <th>City</th>
+                                                        <th>State</th>
+                                                        <th>Country</th>
+                                                        <th>Postal</th>
+                                                        <th>Default</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var address in user.Addresses)
+                                                    {
+                                                        <tr>
+                                                            <td>@address.PhoneNumber</td>
+                                                            <td>@address.AddressLine</td>
+                                                            <td>@address.City</td>
+                                                            <td>@address.State</td>
+                                                            <td>@address.Country</td>
+                                                            <td>@address.PostalCode</td>
+                                                            <td>
+                                                                @if (address.IsDefault)
+                                                                {
+                                                                    <span class="badge bg-success">
+                                                                        Yes
+                                                                    </span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="badge bg-secondary">
+                                                                        No
+                                                                    </span>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">
+                                            No addresses available.
+                                        </p>
+                                    }
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button"
+                                            class="btn btn-secondary"
+                                            data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

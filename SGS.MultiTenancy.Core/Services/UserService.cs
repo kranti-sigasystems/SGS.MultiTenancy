@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
@@ -218,6 +219,7 @@ namespace SGS.MultiTenancy.Core.Services
                 CreateBy = (Guid)userDto.TenantId!,
                 CreateOn = DateTime.UtcNow,
             });
+            await _userRepositery.CompleteAsync();
 
             if (userDto.Addresses != null && userDto.Addresses.Any())
             {
@@ -259,10 +261,39 @@ namespace SGS.MultiTenancy.Core.Services
                         RoleID =roleId,
                         TenantID = userDto.TenantId
                     });
+                    await _userRoles.CompleteAsync();
                 }
             }
             userDto.ID = user.ID;
             return userDto;
         }
+
+        public Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId)
+        {
+            return _userRepositery
+                .Query(u => u.TenantID == tenantId)
+                .AsNoTracking()
+                .OrderBy(u => u.UserName)
+                .Select(u => new UserDto
+                {
+                    ID = u.ID,
+                    UserName = u.UserName,
+                    Email = u.Email,
+
+                    Addresses = u.UserAddresses
+                        .Select(ua => new CreateUserAddressDto
+                        {
+                            PhoneNumber = ua.Address.PhoneNumber,
+                            AddressLine = ua.Address.AddressLine,
+                            PostalCode = ua.Address.PostalCode,
+                            City = ua.Address.City,
+                            State = ua.Address.State,
+                            Country = ua.Address.Country,
+                            IsDefault = ua.Address.IsDefault
+                        }).ToList()
+                })
+                .ToListAsync();
+        }
+
     }
 }

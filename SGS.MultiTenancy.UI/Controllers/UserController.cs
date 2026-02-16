@@ -4,6 +4,7 @@ using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -24,9 +25,13 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <summary>
         /// Returns the default view for the Index page.
         /// </summary>
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
+
+            var users = await _userService.GetUsersByTenantAsync(tenantId);
+
+            return View(users);
         }
 
         /// <summary>
