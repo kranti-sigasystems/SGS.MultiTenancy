@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Entities.Common;
 using System.ComponentModel.DataAnnotations;
 
@@ -57,5 +58,11 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         /// Gets or sets the address associated with this user.
         /// </summary>
         public ICollection<UserAddress> UserAddresses { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets status of user.
+        /// </summary>
+        public EntityStatus Status { get; set; }
     }
 }

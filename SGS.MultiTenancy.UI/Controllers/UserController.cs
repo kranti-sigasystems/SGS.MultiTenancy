@@ -4,6 +4,7 @@ using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -50,6 +51,13 @@ namespace SGS.MultiTenancy.UI.Controllers
             IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
             model.UserList = users;
             model.States = (List<SelectListItem>)states;
+            model.StatusOptions = Enum.GetValues<EntityStatus>()
+           .Select(s => new SelectListItem
+           {
+               Value = ((int)s).ToString(),
+               Text = s.ToString(),
+               Selected = s == model.User.Status
+           });
             return View(model);
         }
 
@@ -117,8 +125,22 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
             dto.User.TenantId = tenantId;
+            dto.User.Status = EntityStatus.Active;
             dto.User.RoleIds.Add(Guid.Parse(Constants.UserRoleId));
             await _userService.AddUserAsync(dto.User);
+            return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// Softdelete user.
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
+            bool isDelete = await _userService.DeleteUserAsync(id, tenantId);
             return RedirectToAction(nameof(Index));
         }
 
@@ -133,6 +155,9 @@ namespace SGS.MultiTenancy.UI.Controllers
             return Json(result);
         }
 
+        /// <summary>
+        /// Update user info.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> UpdateUser(UserViewModel model)
         {
@@ -161,9 +186,10 @@ namespace SGS.MultiTenancy.UI.Controllers
                         return PartialView("_EditUserPartial", model);
                     }
                 }
-            }       
+            }
             await _userService.UpdateUserAsync(model.User);
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

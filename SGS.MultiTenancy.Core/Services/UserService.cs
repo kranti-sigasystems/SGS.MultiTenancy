@@ -6,6 +6,7 @@ using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Entities.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 namespace SGS.MultiTenancy.Core.Services
@@ -277,7 +278,7 @@ namespace SGS.MultiTenancy.Core.Services
         public Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId)
         {
             return _userRepositery
-                .Query(u => u.TenantID == tenantId)
+                .Query(u => u.TenantID == tenantId && u.Status == EntityStatus.Active)
                 .AsNoTracking()
                 .OrderBy(u => u.UserName)
                 .Select(u => new UserDto
@@ -285,8 +286,9 @@ namespace SGS.MultiTenancy.Core.Services
                     ID = u.ID,
                     UserName = u.UserName,
                     Email = u.Email,
-                    AvtarUrl=u.AvatarUrl,
-                    TenantId=u.TenantID,
+                    AvtarUrl = u.AvatarUrl,
+                    TenantId = u.TenantID,
+                    Status = u.Status,
                     Addresses = u.UserAddresses
                         .Select(ua => new CreateUserAddressDto
                         {
@@ -345,12 +347,12 @@ namespace SGS.MultiTenancy.Core.Services
                         PostalCode = a.PostalCode,
                         City = a.City,
                         State = await _locationService.GetStateNameByIdAsync(a.State),
-                        Country =await _locationService.GetCountryNameByIdAsync(a.Country),
+                        Country = await _locationService.GetCountryNameByIdAsync(a.Country),
                         TenantID = userDto.TenantId,
                         IsDefault = a.IsDefault
                     }).ToList();
 
-                   Address[]? addresses = await Task.WhenAll(newAddresses);
+                    Address[]? addresses = await Task.WhenAll(newAddresses);
                     await _addressRepository.AddRangeAsync(addresses);
                     await _addressRepository.CompleteAsync();
 
@@ -403,6 +405,22 @@ namespace SGS.MultiTenancy.Core.Services
             }
             await _userRepositery.UpdateAsync(user);
             return userDto;
+        }
+        public async Task<bool> DeleteUserAsync(Guid userId, Guid tenantId)
+        {
+
+            User? user = _userRepositery.Query(u => u.ID == userId && u.TenantID == tenantId).FirstOrDefault();
+
+            if (user == null)
+            {
+                return false;
+            }
+            user.Status = EntityStatus.Deleted;
+            user.LastUpdateOn = DateTime.UtcNow;
+            user.LastUpdateBy = tenantId;
+            await _userRepositery.UpdateAsync(user);
+            await _userRepositery.CompleteAsync();
+            return true;
         }
     }
 }

@@ -47,5 +47,10 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="userDto"></param>
         /// <returns>UserDto</returns>
          Task<UserDto> UpdateUserAsync(UserDto userDto);
+        
+        /// <summary>
+        /// Deletes the user that is associated with the specified unique identifier.
+        /// </summary>
+        Task<bool> DeleteUserAsync(Guid userId, Guid tenantId);
     }
 }
