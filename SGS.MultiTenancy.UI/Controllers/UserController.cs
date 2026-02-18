@@ -28,14 +28,14 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
 
-            var users = await _userService.GetUsersByTenantAsync(tenantId);
+            List<UserDto> users = await _userService.GetUsersByTenantAsync(tenantId);
             UserViewModel model = new UserViewModel();
 
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
 
             model.Countries = (List<SelectListItem>)countries;
 
-            foreach (var user in users)
+            foreach (UserDto user in users)
             {
                 if (user.Addresses == null || !user.Addresses.Any())
                 {
@@ -47,7 +47,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
 
             string firstCountryId = countries.First().Value;
-            var states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
+            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
             model.UserList = users;
             model.States = (List<SelectListItem>)states;
             return View(model);
@@ -74,7 +74,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             string firstCountryId = countries.First().Value;
             model.User.Addresses[0].Country = firstCountryId;
 
-            var states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
+            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
 
             model.States = (List<SelectListItem>)states;
             return View(model);
@@ -128,8 +128,8 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStatesByCountry(Guid countryId)
         {
-            var states = await _locationService.GetStatesByCountryAsync(countryId);
-            var result = states;
+            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(countryId);
+            IEnumerable<SelectListItem> result = states;
             return Json(result);
         }
 

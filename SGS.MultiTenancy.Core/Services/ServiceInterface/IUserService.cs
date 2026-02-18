@@ -41,7 +41,6 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <returns></returns>
         Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId);
 
-
         /// <summary>
         /// Updates user.
         /// </summary>
