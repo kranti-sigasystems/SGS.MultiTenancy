@@ -13,7 +13,7 @@ namespace SGS.MultiTenancy.UI.Models
         /// <summary>
         /// Gets or sets user list.
         /// </summary>
-        public List<UserDto> UserList { get; set; } = new();
+        public List<UserDto>? UserList { get; set; } = new();
 
         /// <summary>
         /// Selected Country Id (for dropdown binding)
