@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+using SGS.MultiTenancy.Core.Domain.Enums;
 
 namespace SGS.MultiTenancy.UI.Models
 {
@@ -13,7 +14,7 @@ namespace SGS.MultiTenancy.UI.Models
         /// <summary>
         /// Gets or sets user list.
         /// </summary>
-        public List<UserDto> UserList { get; set; } = new();
+        public List<UserDto>? UserList { get; set; } = new();
 
         /// <summary>
         /// Selected Country Id (for dropdown binding)
@@ -34,5 +35,10 @@ namespace SGS.MultiTenancy.UI.Models
         /// Gets or sets states list.
         /// </summary>
         public List<SelectListItem> States { get; set; } = new();
+
+        /// <summary>
+        /// Gets or set list of the entities status.
+        /// </summary>
+        public IEnumerable<SelectListItem>? StatusOptions { get; set; }
     }
 }

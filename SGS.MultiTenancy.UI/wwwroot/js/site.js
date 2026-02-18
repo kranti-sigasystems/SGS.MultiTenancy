@@ -34,9 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (addressModal) {
         addressModal.addEventListener('show.bs.modal', function (event) {
-
             const button = event.relatedTarget;
-
             document.getElementById('modalLine1').textContent = button.dataset.line1 || '-';
             document.getElementById('modalCity').textContent = button.dataset.city || '-';
             document.getElementById('modalState').textContent = button.dataset.state || '-';
@@ -57,12 +55,12 @@ document.addEventListener("change", function (e) {
         if (countryId) {
             fetch('/User/GetStatesByCountry?countryId=' + countryId)
                 .then(response => response.json())
-                .then(data => {
+                .then(data => {     
                     data.forEach(function (state) {
 
                         var option = document.createElement("option");
                         option.value = state.value;
-                        option.textContent = state.name;
+                        option.textContent = state.text;
                         stateDropdown.appendChild(option);
                     });
                 });

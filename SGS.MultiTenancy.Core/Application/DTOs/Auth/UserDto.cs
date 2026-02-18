@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography.Pkcs;
 namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
 {
     public class UserDto
@@ -61,5 +63,10 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// Gets or sets the list of addresses associated with the user.
         /// </summary>
         public List<CreateUserAddressDto>? Addresses { get; set; }
+
+        /// <summary>
+        /// Gets or set status.
+        /// </summary>
+        public EntityStatus Status { get; set; }
     }
 }
