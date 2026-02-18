@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
@@ -22,6 +21,7 @@ namespace SGS.MultiTenancy.Core.Services
         private readonly IAddressRepository _addressRepository;
         private readonly IUserAddressRepository _userAddressRepository;
         private readonly IFileStorageRepository _fileStorageRepository;
+        private readonly ILocationService _locationService;
 
         /// <summary>
         /// Creates a new user service instance.
@@ -38,7 +38,8 @@ namespace SGS.MultiTenancy.Core.Services
             IMemoryCache memoryCache,
             IAddressRepository addressRepository,
             IUserAddressRepository userAddressRepository,
-            IFileStorageRepository fileStorageRepository)
+            IFileStorageRepository fileStorageRepository,
+            ILocationService locationService)
         {
             _userRepositery = userRepositery;
             _jwtTokenGenerator = jwtTokenGenerator;
@@ -48,6 +49,7 @@ namespace SGS.MultiTenancy.Core.Services
             _addressRepository = addressRepository;
             _userAddressRepository = userAddressRepository;
             _fileStorageRepository = fileStorageRepository;
+            _locationService = locationService;
         }
         /// <summary>
         /// Validates credentials and returns JWT with roles and permissions.
@@ -194,7 +196,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// </summary>
         /// <param name="userDto"></param>
         public async Task<UserDto> AddUserAsync(UserDto userDto)
-        { 
+        {
             Guid userId = Guid.NewGuid();
 
             User? user = _userRepositery.Query(u => u.UserName.ToUpper() == userDto.UserName!.ToUpper() && u.TenantID == userDto.TenantId).FirstOrDefault();
@@ -223,9 +225,9 @@ namespace SGS.MultiTenancy.Core.Services
 
             if (userDto.Addresses != null && userDto.Addresses.Any())
             {
-                foreach ( CreateUserAddressDto addressDto in userDto.Addresses)
+                foreach (CreateUserAddressDto addressDto in userDto.Addresses)
                 {
-                    var address = new Address
+                    Address address = new Address
                     {
                         ID = Guid.NewGuid(),
                         PhoneNumber = addressDto.PhoneNumber,
@@ -258,7 +260,7 @@ namespace SGS.MultiTenancy.Core.Services
                     await _userRoles.AddAsync(new UserRoles
                     {
                         UserID = user.ID,
-                        RoleID =roleId,
+                        RoleID = roleId,
                         TenantID = userDto.TenantId
                     });
                     await _userRoles.CompleteAsync();
@@ -283,7 +285,8 @@ namespace SGS.MultiTenancy.Core.Services
                     ID = u.ID,
                     UserName = u.UserName,
                     Email = u.Email,
-
+                    AvtarUrl=u.AvatarUrl,
+                    TenantId=u.TenantID,
                     Addresses = u.UserAddresses
                         .Select(ua => new CreateUserAddressDto
                         {
@@ -299,5 +302,107 @@ namespace SGS.MultiTenancy.Core.Services
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Update user.
+        /// </summary>
+        /// <param name="userDto"></param>
+
+        public async Task<UserDto> UpdateUserAsync(UserDto userDto)
+        {
+            if (userDto == null)
+                throw new ArgumentNullException(nameof(userDto));
+
+            User? user = await _userRepositery
+                .Query(u => u.UserName.ToUpper() == userDto.UserName!.ToUpper()
+                            && u.TenantID == userDto.TenantId)
+                .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return userDto;
+            }
+            user.Email = userDto.Email;
+            user.UserName = userDto.UserName;
+            if (userDto.ProfileImage is not null)
+            {
+                if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
+                {
+                    _fileStorageRepository.DeleteAsync(user.AvatarUrl);
+                }
+                user.AvatarUrl = await _fileStorageRepository.SaveAsync(userDto.ProfileImage, user.ID.ToString());
+            }
+
+            if (userDto.Addresses != null && userDto.Addresses.Any())
+            {
+                List<UserAddress>? userAddresses = await _userAddressRepository.Query(ua => ua.UserID == user.ID).ToListAsync();
+                if (!userAddresses.Any())
+                {
+
+                    List<Task<Address>> newAddresses = userDto.Addresses.Select(async a => new Address
+                    {
+                        ID = Guid.NewGuid(),
+                        PhoneNumber = a.PhoneNumber,
+                        AddressLine = a.AddressLine,
+                        PostalCode = a.PostalCode,
+                        City = a.City,
+                        State = await _locationService.GetStateNameByIdAsync(a.State),
+                        Country =await _locationService.GetCountryNameByIdAsync(a.Country),
+                        TenantID = userDto.TenantId,
+                        IsDefault = a.IsDefault
+                    }).ToList();
+
+                   Address[]? addresses = await Task.WhenAll(newAddresses);
+                    await _addressRepository.AddRangeAsync(addresses);
+                    await _addressRepository.CompleteAsync();
+
+                    List<UserAddress>? userAddressRelations = addresses.Select(addr => new UserAddress
+                    {
+                        TenantID = userDto.TenantId,
+                        UserID = user.ID,
+                        AddressId = addr.ID
+                    }).ToList();
+
+                    await _userAddressRepository.AddRangeAsync(userAddressRelations);
+                    await _userAddressRepository.CompleteAsync();
+                }
+                else
+                {
+                    foreach (var userAddress in userAddresses)
+                    {
+                        Address? address = await _addressRepository.Query(a => a.ID == userAddress.AddressId).FirstOrDefaultAsync();
+
+                        if (address != null)
+                        {
+                            CreateUserAddressDto? dtoAddress = userDto.Addresses.FirstOrDefault();
+
+                            if (dtoAddress != null)
+                            {
+                                if (!string.IsNullOrWhiteSpace(dtoAddress.PhoneNumber))
+                                    address.PhoneNumber = dtoAddress.PhoneNumber;
+
+                                if (!string.IsNullOrWhiteSpace(dtoAddress.AddressLine))
+                                    address.AddressLine = dtoAddress.AddressLine;
+
+                                if (!string.IsNullOrWhiteSpace(dtoAddress.City))
+                                    address.City = dtoAddress.City;
+
+                                if (!string.IsNullOrWhiteSpace(dtoAddress.State))
+                                    address.State = await _locationService.GetStateNameByIdAsync(dtoAddress.State);
+
+                                if (!string.IsNullOrWhiteSpace(dtoAddress.PostalCode))
+                                    address.PostalCode = dtoAddress.PostalCode;
+
+                                if (!string.IsNullOrWhiteSpace(dtoAddress.Country))
+                                    address.Country = await _locationService.GetCountryNameByIdAsync(dtoAddress.Country);
+
+                                await _addressRepository.UpdateAsync(address);
+                                await _addressRepository.CompleteAsync();
+                            }
+                        }
+                    }
+                }
+            }
+            await _userRepositery.UpdateAsync(user);
+            return userDto;
+        }
     }
 }

@@ -5,6 +5,11 @@ namespace SGS.MultiTenancy.Core.Application.DTOs
     public class CreateUserAddressDto
     {
         /// <summary>
+        /// Gets or set Id.
+        /// </summary>
+        public Guid? Id { get; set; }
+
+        /// <summary>
         /// Gets or sets the phone number associated with the entity.
         /// </summary>
         [Required]

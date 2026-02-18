@@ -4,7 +4,6 @@ using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
-using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -30,8 +29,28 @@ namespace SGS.MultiTenancy.UI.Controllers
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
 
             var users = await _userService.GetUsersByTenantAsync(tenantId);
+            UserViewModel model = new UserViewModel();
 
-            return View(users);
+            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
+
+            model.Countries = (List<SelectListItem>)countries;
+
+            foreach (var user in users)
+            {
+                if (user.Addresses == null || !user.Addresses.Any())
+                {
+                    user.Addresses = new List<CreateUserAddressDto>
+                    {
+                        new CreateUserAddressDto()
+                    };
+                }
+            }
+
+            string firstCountryId = countries.First().Value;
+            var states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
+            model.UserList = users;
+            model.States = (List<SelectListItem>)states;
+            return View(model);
         }
 
         /// <summary>
@@ -43,7 +62,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             UserViewModel model = new UserViewModel();
 
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
-
+            model.User.TenantId = (Guid)_tenantProvider.TenantId!;
             model.Countries = (List<SelectListItem>)countries;
             model.User = new UserDto
             {
@@ -64,11 +83,33 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <summary>
         /// Handles HTTP POST requests to create a new user.
         /// </summary>
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel dto)
         {
+            if (dto?.User.ProfileImage != null)
+            {
+                if (dto?.User.ProfileImage.Length > Constants.MaxImageSize)
+                {
+                    ModelState.AddModelError(
+                        "User.ProfileImage",
+                        Constants.ImageSizeErrorMessage
+                    );
+                }
+                else if (!dto.User.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(
+                        "User.ProfileImage",
+                        Constants.ImageFormatErrorMessage
+                    );
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(dto);
+            }
             foreach (CreateUserAddressDto address in dto.User.Addresses)
             {
                 address.Country = await _locationService.GetCountryNameByIdAsync(address.Country);
@@ -85,11 +126,44 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// Retrieves a list of states with the specified country identifier.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetStatesByCountryId(Guid countryId)
+        public async Task<IActionResult> GetStatesByCountry(Guid countryId)
         {
             var states = await _locationService.GetStatesByCountryAsync(countryId);
             var result = states;
             return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UserViewModel model)
+        {
+            model.User.TenantId = (Guid)_tenantProvider.TenantId!;
+            if (model?.User.ProfileImage != null)
+            {
+                if (model?.User.ProfileImage.Length > Constants.MaxImageSize)
+                {
+                    ModelState.AddModelError(
+                        "User.ProfileImage",
+                        Constants.ImageSizeErrorMessage
+                    );
+                    if (!ModelState.IsValid)
+                    {
+                        return PartialView("_EditUserPartial", model);
+                    }
+                }
+                if (!model.User.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError(
+                        "User.ProfileImage",
+                        Constants.ImageFormatErrorMessage
+                    );
+                    if (!ModelState.IsValid)
+                    {
+                        return PartialView("_EditUserPartial", model);
+                    }
+                }
+            }       
+            await _userService.UpdateUserAsync(model.User);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
