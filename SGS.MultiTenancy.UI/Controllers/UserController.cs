@@ -64,7 +64,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <summary>
         /// Handles HTTP POST requests to create a new user.
         /// </summary>
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel dto)
@@ -79,6 +79,15 @@ namespace SGS.MultiTenancy.UI.Controllers
             dto.User.RoleIds.Add(Guid.Parse(Constants.UserRoleId));
             await _userService.AddUserAsync(dto.User);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTenant(Guid id)
+        {
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
+           bool isDelete= await _userService.DeleteUserAsync(id, tenantId);
+           return RedirectToAction(nameof(Index));
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SGS.MultiTenancy.Core.Application.DTOs;
@@ -7,6 +7,7 @@ using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Entities.Common;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 namespace SGS.MultiTenancy.Core.Services
@@ -194,7 +195,7 @@ namespace SGS.MultiTenancy.Core.Services
         /// </summary>
         /// <param name="userDto"></param>
         public async Task<UserDto> AddUserAsync(UserDto userDto)
-        { 
+        {
             Guid userId = Guid.NewGuid();
 
             User? user = _userRepositery.Query(u => u.UserName.ToUpper() == userDto.UserName!.ToUpper() && u.TenantID == userDto.TenantId).FirstOrDefault();
@@ -223,7 +224,7 @@ namespace SGS.MultiTenancy.Core.Services
 
             if (userDto.Addresses != null && userDto.Addresses.Any())
             {
-                foreach ( CreateUserAddressDto addressDto in userDto.Addresses)
+                foreach (CreateUserAddressDto addressDto in userDto.Addresses)
                 {
                     var address = new Address
                     {
@@ -258,7 +259,7 @@ namespace SGS.MultiTenancy.Core.Services
                     await _userRoles.AddAsync(new UserRoles
                     {
                         UserID = user.ID,
-                        RoleID =roleId,
+                        RoleID = roleId,
                         TenantID = userDto.TenantId
                     });
                     await _userRoles.CompleteAsync();
@@ -299,5 +300,23 @@ namespace SGS.MultiTenancy.Core.Services
                 .ToListAsync();
         }
 
+        public async Task<bool> DeleteUserAsync(Guid userId, Guid tenantId)
+        {
+
+            User? user = _userRepositery.Query(u => u.ID == userId && u.TenantID == tenantId).FirstOrDefault();
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Status = EntityStatus.Inactive;
+            user.LastUpdateOn = DateTime.UtcNow;
+            user.LastUpdateBy = tenantId;
+
+            await _userRepositery.UpdateAsync(user);
+            await _userRepositery.CompleteAsync();
+            return true;
+        }
     }
 }
