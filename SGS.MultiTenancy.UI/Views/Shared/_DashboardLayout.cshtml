@@ -97,6 +97,12 @@
                         <span class="sidebar-text">Roles</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link sidebar-link @(ViewContext?.RouteData?.Values["controller"]?.ToString() == "Role" ? "active" : "")" asp-controller="Role" asp-action="Index">
+                        <i class="bi bi-people-fill"></i>
+                        <span class="sidebar-text">Roles</span>
+                    </a>
+                </li>
             </ul>
         </aside>
 
