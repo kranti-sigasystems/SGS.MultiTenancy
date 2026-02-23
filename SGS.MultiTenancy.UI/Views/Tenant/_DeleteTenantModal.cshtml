@@ -9,10 +9,9 @@
 <div class="modal fade" id="deleteTenantModal-@Model.ID" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            
-            @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml",
-            new ModalHeaderViewModel("ConfirmDelete", "bi bi-exclamation-triangle-fill"))
-  
+
+            @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel($"Delete Tenant"))
+
             <div class="modal-body">
                 @Constants.DeleteQuestion
                 <strong>@Model.Name</strong>?
@@ -33,7 +32,7 @@
                     <button type="button"
                             class="btn btn-gray-200"
                             data-bs-dismiss="modal">
-                       @Constants.Cancel
+                        @Constants.Cancel
                     </button>
                 </form>
             </div>

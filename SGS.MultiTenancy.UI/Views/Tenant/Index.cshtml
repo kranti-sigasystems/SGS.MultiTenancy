@@ -24,11 +24,11 @@
                 <table class="table table-centered table-nowrap mb-0 rounded">
                     <thead class="thead-light">
                         <tr>
-                            <th class="border-0 rounded-start">Name</th>
-                            <th class="border-0">Slug</th>
-                            <th class="border-0">Domain</th>
-                            <th class="border-0">Status</th>
-                            <th class="border-0 rounded-end">Action</th>
+                            <th class="border-0 rounded-start ps-sm-2">Name</th>
+                            <th class="border-0 ps-sm-2">Slug</th>
+                            <th class="border-0 ps-sm-2">Domain</th>
+                            <th class="border-0 ps-sm-2">Status</th>
+                            <th class="border-0 rounded-end ps-sm-3">Action</th>
                         </tr>
                     </thead>
 
@@ -39,8 +39,8 @@
                             {
                                 <tr>
                                     <td class="fw-bold">@t.Name</td>
-                                    <td class="text-muted">@t.Slug</td>
-                                    <td>@t.Domain</td>
+                                    <td class="text-muted">@(string.IsNullOrWhiteSpace(t.Slug) ? "-" : t.Slug)</td>
+                                    <td>@(string.IsNullOrWhiteSpace(t.Domain) ? "-" : t.Domain)</td>
 
                                     <td>
                                         <span class="status-badge @(t.Status == EntityStatus.Active ? "status-active" : "status-inactive")">
