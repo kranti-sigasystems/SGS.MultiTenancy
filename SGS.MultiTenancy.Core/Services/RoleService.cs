@@ -6,12 +6,18 @@ using SGS.MultiTenancy.UI.Models;
 
 namespace SGS.MultiTenancy.Core.Services
 {
+    /// <summary>
+    /// Provides role and permission management operations for a multi-tenant system.
+    /// </summary>
     public class RoleService : IRoleService
     {
         private readonly IGenericRepository<Role> _roleRepository;
         private readonly IGenericRepository<Permission> _permissionRepository;
         private readonly IGenericRepository<RolePermission> _rolePermissionRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RoleService"/> class.
+        /// </summary>
         public RoleService(
             IGenericRepository<Role> roleRepository,
             IGenericRepository<Permission> permissionRepository,
@@ -22,6 +28,9 @@ namespace SGS.MultiTenancy.Core.Services
             _rolePermissionRepository = rolePermissionRepository;
         }
 
+        /// <summary>
+        /// Retrieves all system-level permissions that can be assigned to roles.
+        /// </summary>
         public async Task<List<Permission>> GetAllPermissionsAsync()
         {
             return await _permissionRepository
@@ -30,6 +39,10 @@ namespace SGS.MultiTenancy.Core.Services
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Creates a new role for the specified tenant and assigns
+        /// the selected permissions to the role.
+        /// </summary>
         public async Task CreateRoleAsync(CreateRoleViewModel model, Guid tenantId)
         {
             Role role = new Role
@@ -60,6 +73,9 @@ namespace SGS.MultiTenancy.Core.Services
                 }
             }
         }
+        /// <summary>
+        /// Retrieves all roles associated with a specific tenant.
+        /// </summary>
         public async Task<List<Role>> GetRolesByTenantAsync(Guid tenantId)
         {
             return await _roleRepository
