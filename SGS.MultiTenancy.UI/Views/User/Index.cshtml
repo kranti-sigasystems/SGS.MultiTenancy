@@ -1,113 +1,153 @@
-﻿@model SGS.MultiTenancy.UI.Models.UserViewModel
-
+﻿@using SGS.MultiTenancy.Core.Domain.Common
+@model SGS.MultiTenancy.UI.Models.UserViewModel
 @{
     ViewData["Title"] = "Users";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h4 mb-0">Users</h1>
-    <a asp-controller="User" asp-action="Create" class="btn btn-sm btn-primary">
-        Add User
-    </a>
-</div>
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h4 class="fw-semibold mb-0">Users List</h4>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>User Name</th>
-            <th>Email</th>
-            <th>Addresses</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.UserList != null && Model.UserList.Any())
-        {
-            @foreach (var user in Model.UserList)
-            {
-                <tr>
-                    <td>@user.UserName</td>
-                    <td>@user.Email</td>
-                    <td>
-                        <button type="button"
-                                class="btn btn-sm btn-outline-primary rounded-circle"
-                                data-bs-toggle="modal"
-                                data-bs-target="#addressModal-@user.ID"
-                                title="View Addresses">
-                            <i class="bi bi-geo-alt-fill"></i>
-                        </button>
-                        <div class="modal fade"
-                             id="addressModal-@user.ID"
-                             tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Addresses - @user.UserName</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        @if (user.Addresses != null && user.Addresses.Any())
-                                        {
-                                            @foreach (var address in user.Addresses)
-                                            {
-                                                <div class="mb-4 p-3 border rounded">
-                                                    <div class="mb-2 d-flex justify-content-between"><strong>Phone:</strong> @address.PhoneNumber</div>
-                                                    <div class="mb-2 d-flex justify-content-between"><strong>Address:</strong> @address.AddressLine</div>
-                                                    <div class="mb-2 d-flex justify-content-between"><strong>City:</strong> @address.City</div>
-                                                    <div class="mb-2 d-flex justify-content-between"><strong>State:</strong> @address.State</div>
-                                                    <div class="mb-2 d-flex justify-content-between"><strong>Country:</strong> @address.Country</div>
-                                                    <div class="mb-2 d-flex justify-content-between"><strong>Postal:</strong> @address.PostalCode</div>
-                                                    <div class="mb-2 d-flex justify-content-between">
-                                                        <strong>Default:</strong>
-                                                        @if (address.IsDefault)
+        <a asp-controller="User"
+           asp-action="Create"
+           class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i> Create User
+        </a>
+    </div>
+
+    <!-- Card Wrapper -->
+    <div class="card border-0 shadow mb-4">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="border-0 rounded-start ps-sm-2">User Name</th>
+                            <th class="border-0 ps-sm-2">Email</th>
+                            <th class="border-0 ps-sm-2">Addresses</th>
+                            <th class="border-0 rounded-end ps-sm-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.UserList != null && Model.UserList.Any())
+                        {
+                            @foreach (var user in Model.UserList)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@user.UserName</td>
+                                    <td class="text-muted">@user.Email</td>
+
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary "
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#addressModal-@user.ID"
+                                                title="View Addresses">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </button>
+                                        <div class="modal fade"
+                                             id="addressModal-@user.ID"
+                                             tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel($"Addresses - {@user.UserName}"))
+                                                        
+                                                    <div class="modal-body">
+                                                        @if (user.Addresses != null && user.Addresses.Any())
                                                         {
-                                                            <span class="badge bg-success">Yes</span>
+                                                            @foreach (var address in user.Addresses)
+                                                            {
+                                                                <div class="mb-4 p-3 border rounded">
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>Phone:</strong> @address.PhoneNumber
+                                                                    </div>
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>Address:</strong> @address.AddressLine
+                                                                    </div>
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>City:</strong> @address.City
+                                                                    </div>
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>State:</strong> @address.State
+                                                                    </div>
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>Country:</strong> @address.Country
+                                                                    </div>
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>Postal:</strong> @address.PostalCode
+                                                                    </div>
+                                                                    <div class="mb-2 d-flex justify-content-between">
+                                                                        <strong>Default:</strong>
+                                                                        @if (address.IsDefault)
+                                                                        {
+                                                                            <span class="badge bg-success">Yes</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge bg-secondary">No</span>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            }
                                                         }
                                                         else
                                                         {
-                                                            <span class="badge bg-secondary">No</span>
+                                                            <p class="text-muted">No addresses available.</p>
                                                         }
                                                     </div>
                                                 </div>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <p class="text-muted">No addresses available.</p>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                    <td>
-                        <button class="bg-light text-muted p-0 me-3"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editUserModal-@user.ID"
-                                title="Edit"
-                                style="border:none;">
-                            <i class="bi bi-pencil-square fs-5"></i>
-                        </button>
+                                    <td>
+                                        <button class="bg-light text-muted p-0 border-0 me-3"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editUserModal-@user.ID"
+                                                title="Edit">
+                                            <i class="bi bi-pencil-square fs-5"></i>
+                                        </button>
 
-                        <button class="bg-light text-muted p-0"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteUserModal-@user.ID"
-                                title="Delete"
-                                style="border:none;">
-                            <i class="bi bi-trash fs-5"></i>
-                        </button>
-                    </td>
-                    @await Html.PartialAsync("_EditUserPartial", new UserViewModel { User = user, States = Model.States, Countries = Model.Countries, StatusOptions = Model.StatusOptions })
-                    @await Html.PartialAsync("_DeleteUserModal", new UserViewModel { User = user, States = Model.States, Countries = Model.Countries })
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center text-muted">No users found</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                                        <button class="bg-light text-muted p-0 border-0"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteUserModal-@user.ID"
+                                                title="Delete">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </button>
+                                    </td>
+
+                                    @await Html.PartialAsync("_EditUserPartial",
+                                    new UserViewModel
+                                    {
+                                        User = user,
+                                        States = Model.States,
+                                        Countries = Model.Countries,
+                                        StatusOptions = Model.StatusOptions
+                                    })
+
+                            @await Html.PartialAsync("_DeleteUserModal",
+                                                        new UserViewModel
+                                                        {
+                                                            User = user,
+                                                            States = Model.States,
+                                                            Countries = Model.Countries
+                                                        })
+                        </tr>
+                                                }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    No users found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

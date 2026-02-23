@@ -38,6 +38,14 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("SGS_SuperHost"))
+                {
+                    return RedirectToAction(nameof(TenantController.Index), Utility.PrepareControllerName(nameof(TenantController)));
+                }
+                return RedirectToAction(nameof(UserController.Index), Utility.PrepareControllerName(nameof(UserController)));
+            }
             return View();
         }
 
@@ -136,7 +144,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             }
 
             string? userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
             if (string.IsNullOrWhiteSpace(userIdValue) || !Guid.TryParse(userIdValue, out Guid userId))
             {
                 return RedirectToAction(nameof(Login), Utility.PrepareControllerName(nameof(AuthController)));

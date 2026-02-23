@@ -16,7 +16,7 @@ aside {
 }
 
 main {
-    flex: 1 1 auto; 
+    flex: 1 1 auto;
     padding: 2rem;
     background-color: #f8f9fa;
 }
@@ -624,7 +624,7 @@ td, tfoot, th, thead, tr {
 
     #sidebar.collapsed {
         width: 80px;
-        align-items: center; 
+        align-items: center;
     }
 
 .sidebar.collapsed .sidebar-text,
@@ -633,7 +633,7 @@ td, tfoot, th, thead, tr {
 }
 
 #sidebar .sidebar-title {
-    color: #a0aec0; 
+    color: #a0aec0;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 0.8rem;
@@ -666,7 +666,7 @@ td, tfoot, th, thead, tr {
         margin-right: 0.75rem;
         font-size: 1.1rem;
     }
-    
+
     .sidebar-link:hover {
         background-color: #2d3a4b;
         color: #ffffff;

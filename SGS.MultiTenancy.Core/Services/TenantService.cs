@@ -139,10 +139,16 @@ namespace SGS.MultiTenancy.Core.Services
                 if (domainExists)
                     throw new Exception("Domain already mapped to another tenant");
             }
-            bool fileDeteled= _fileStorageRepository.DeleteAsync(tenant.LogoUrl!);
-            if(fileDeteled)
+            if (tenant.LogoUrl == null)
+            {
                 model.LogoUrl = await _fileStorageRepository.SaveAsync(model.BusinessLogo, model.ID.ToString());
-
+            }
+            else 
+            {
+                bool fileDeteled = _fileStorageRepository.DeleteAsync(tenant.LogoUrl!);
+                if (fileDeteled)
+                    model.LogoUrl = await _fileStorageRepository.SaveAsync(model.BusinessLogo, model.ID.ToString());
+            }
             tenant.Name = model.Name;
             tenant.Slug = model.Slug.ToLower();
             tenant.Domain = model.Domain;
@@ -162,14 +168,10 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<bool> DeleteAsync(Guid id)
         {
             Tenant? tenant = await _tenantRepo.GetByIdAsync(id);
-
             if (tenant == null) return false;
-
             tenant.Status = EntityStatus.Inactive;
-
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
-
             return true;
         }
     }
