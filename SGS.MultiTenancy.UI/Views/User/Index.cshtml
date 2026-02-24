@@ -52,8 +52,8 @@
                                              tabindex="-1">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
-                                                        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel($"Addresses - {@user.UserName}"))
-                                                        
+                                                    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel($"Addresses - {@user.UserName}"))
+
                                                     <div class="modal-body">
                                                         @if (user.Addresses != null && user.Addresses.Any())
                                                         {
@@ -103,19 +103,28 @@
                                     </td>
 
                                     <td>
-                                        <button class="bg-light text-muted p-0 border-0 me-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editUserModal-@user.ID"
-                                                title="Edit">
-                                            <i class="bi bi-pencil-square fs-5"></i>
-                                        </button>
+                                        @if (user.TenantId == Guid.Parse("00000000-0000-0000-0000-000000000000") == true)
+                                        {
+                                            <i class="bi bi-ban"></i>
+                                        }
+                                        else
+                                        {
+                                            <button class="bg-light text-muted p-0 border-0 me-3"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editUserModal-@user.ID"
+                                                    title="Edit">
+                                                <i class="bi bi-pencil-square fs-5"></i>
+                                            </button>
 
-                                        <button class="bg-light text-muted p-0 border-0"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteUserModal-@user.ID"
-                                                title="Delete">
-                                            <i class="bi bi-trash fs-5"></i>
-                                        </button>
+                                            <button class="bg-light text-muted p-0 border-0"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteUserModal-@user.ID"
+                                                    title="Delete">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                            <a asp-action="Details" asp-controller="User" asp-route-id="@user.ID" class="bg-light text-muted p-0 m-2 border-0"><i class="bi bi-three-dots-vertical fs-5"></i></a>
+                                        }
+
                                     </td>
 
                                     @await Html.PartialAsync("_EditUserPartial",
@@ -127,13 +136,7 @@
                                         StatusOptions = Model.StatusOptions
                                     })
 
-                            @await Html.PartialAsync("_DeleteUserModal",
-                                                        new UserViewModel
-                                                        {
-                                                            User = user,
-                                                            States = Model.States,
-                                                            Countries = Model.Countries
-                                                        })
+                            @await Html.PartialAsync("_DeleteUserModal", new UserViewModel { User = user, States = Model.States, Countries = Model.Countries })
                         </tr>
                                                 }
                         }

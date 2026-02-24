@@ -2,7 +2,6 @@
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.Pkcs;
 namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
 {
     public class UserDto

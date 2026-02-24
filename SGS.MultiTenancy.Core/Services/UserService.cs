@@ -406,6 +406,12 @@ namespace SGS.MultiTenancy.Core.Services
             await _userRepositery.UpdateAsync(user);
             return userDto;
         }
+
+        /// <summary>
+        /// Marks the specified user as deleted within the given tenant context.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="tenantId"></param>
         public async Task<bool> DeleteUserAsync(Guid userId, Guid tenantId)
         {
 
@@ -421,6 +427,51 @@ namespace SGS.MultiTenancy.Core.Services
             await _userRepositery.UpdateAsync(user);
             await _userRepositery.CompleteAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Gets user details by user ID and tenant ID.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="tenantId"></param>
+        /// <returns>UserDto</returns>
+        public async Task<UserDto> GetUserByIdAsync(Guid userId, Guid tenantId)
+        {
+            User? user = await _userRepositery
+                .Query(u => u.ID == userId && u.TenantID == tenantId && u.Status == EntityStatus.Active)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return null;
+            }
+            List<UserAddress> addresses = await _userAddressRepository.Query(ua => ua.UserID == user.ID)
+                  .Include(ua => ua.Address).ToListAsync();
+
+            List<CreateUserAddressDto>? addressList = addresses?
+            .Select(address => new CreateUserAddressDto
+               {
+                   Id = address.Address.ID,
+                   PhoneNumber = address.Address.PhoneNumber,
+                   AddressLine = address.Address.AddressLine,
+                   PostalCode = address.Address.PostalCode,
+                   City = address.Address.City,
+                   State = address.Address.State,
+                   Country = address.Address.Country,
+                   IsDefault = address.Address.IsDefault
+               })
+               .ToList();
+            UserDto userDto = new UserDto
+            {
+                ID = user.ID,
+                UserName = user.UserName,
+                Email = user.Email, 
+                AvtarUrl = user.AvatarUrl,
+                TenantId = user.TenantID,
+                Status = user.Status,
+                Addresses = addressList
+            };
+            return userDto;
         }
     }
 }
