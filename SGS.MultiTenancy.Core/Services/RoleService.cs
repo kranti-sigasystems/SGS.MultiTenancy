@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -31,12 +32,18 @@ namespace SGS.MultiTenancy.Core.Services
         /// <summary>
         /// Retrieves all system-level permissions that can be assigned to roles.
         /// </summary>
-        public async Task<List<Permission>> GetAllPermissionsAsync()
+        public async Task<List<PermissionDto>> GetAllPermissionsAsync()
         {
             return await _permissionRepository
                 .Query()
-                 .Where(p => p.TenantID == Guid.Empty)
-                .ToListAsync();
+                .Where(p => p.TenantID == Guid.Empty)
+                .Select(p => new PermissionDto
+                {
+                    ID = p.ID,
+                    Code = p.Code,
+                    Description = p.Description,
+                    TenantID = p.TenantID
+                }).ToListAsync();
         }
 
         /// <summary>
@@ -76,12 +83,19 @@ namespace SGS.MultiTenancy.Core.Services
         /// <summary>
         /// Retrieves all roles associated with a specific tenant.
         /// </summary>
-        public async Task<List<Role>> GetRolesByTenantAsync(Guid tenantId)
+        public async Task<List<RoleDto>> GetRolesByTenantAsync(Guid tenantId)
         {
             return await _roleRepository
                 .Query()
                 .Where(r => r.TenantID == tenantId)
-                .ToListAsync();
+                .Select(r => new RoleDto
+                {
+                    ID = r.ID,
+                    Name = r.Name,
+                    Description = r.Description,
+                    TenantID = r.TenantID,
+                    IsDefault = r.IsDefault
+                }) .ToListAsync();
         }
     }
 }

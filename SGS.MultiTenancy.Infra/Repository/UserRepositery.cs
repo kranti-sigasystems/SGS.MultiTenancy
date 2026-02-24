@@ -35,5 +35,19 @@ namespace SGS.MultiTenancy.Infra.Repository
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// Asynchronously retrieves a user by their unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the user to retrieve. Must be a valid GUID.</param>
+        Task<User?> IUserRepository.GetUserByIdAsync(Guid id)
+        {
+            return _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                        .ThenInclude(r => r.RolePermissions)
+                            .ThenInclude(rp => rp.Permission)
+                .FirstOrDefaultAsync(u => u.ID == id);
+        }
     }
 }

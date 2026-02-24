@@ -191,5 +191,16 @@ namespace SGS.MultiTenancy.UI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Displays the details of a user with the specified identifier.
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
+            UserDto user = await _userService.GetUserByIdAsync(id, tenantId);
+            return View(user);
+        }
     }
 }

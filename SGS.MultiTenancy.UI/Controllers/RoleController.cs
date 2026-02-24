@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.Interfaces;
-using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -17,7 +17,7 @@ namespace SGS.MultiTenancy.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="RoleController"/> class.
         /// </summary>
-        public RoleController(IRoleService roleService , ITenantProvider tenantProvider)
+        public RoleController(IRoleService roleService, ITenantProvider tenantProvider)
         {
             _roleService = roleService;
             _tenantProvider = tenantProvider;
@@ -31,13 +31,15 @@ namespace SGS.MultiTenancy.Web.Controllers
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
 
-            List<Permission> permissions = await _roleService.GetAllPermissionsAsync();
-            List<Role> roles = await _roleService.GetRolesByTenantAsync(tenantId);
-
-            ViewBag.Permissions = permissions;
-            ViewBag.Roles = roles;
-
-            return View(new CreateRoleViewModel());
+            List<PermissionDto> permissions = await _roleService.GetAllPermissionsAsync();
+            List<RoleDto> roles = await _roleService.GetRolesByTenantAsync(tenantId);
+          
+            CreateRoleViewModel model = new CreateRoleViewModel
+            {
+                RolesList = roles,
+                PermissionList = permissions
+            };
+            return View(model);
         }
 
         /// <summary>
@@ -48,15 +50,12 @@ namespace SGS.MultiTenancy.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                List<Permission> permissions = await _roleService.GetAllPermissionsAsync();
-                ViewBag.Permissions = permissions;
+                List<PermissionDto> permissions = await _roleService.GetAllPermissionsAsync();
+                model.PermissionList= permissions;
                 return View("Index", model);
             }
-
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
-
             await _roleService.CreateRoleAsync(model, tenantId);
-
             return RedirectToAction("Index");
         }
     }

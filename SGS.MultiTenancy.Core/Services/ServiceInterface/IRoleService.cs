@@ -1,4 +1,4 @@
-﻿using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+﻿using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.UI.Models;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
@@ -12,14 +12,13 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <summary>
         ///  Retrieves all available permissions that can be assigned to roles.
         /// </summary>
-        /// <returns>The task result contains a list of all permissions.</returns>
-        Task<List<Permission>> GetAllPermissionsAsync();
+        /// <returns>Permission dto.</returns>
+        Task<List<PermissionDto>> GetAllPermissionsAsync();
 
         /// <summary>
         /// Creates a new role for the specified tenant and assigns
         /// the selected permissions to that role.
         /// </summary>
-     
         Task CreateRoleAsync(CreateRoleViewModel model, Guid tenantId);
 
         /// <summary>
@@ -27,6 +26,6 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// </summary>
         /// <param name="tenantId"></param>
         /// <returns>List of roles.</returns>
-        Task<List<Role>> GetRolesByTenantAsync(Guid tenantId);
+        Task<List<RoleDto>> GetRolesByTenantAsync(Guid tenantId);
     }
 }

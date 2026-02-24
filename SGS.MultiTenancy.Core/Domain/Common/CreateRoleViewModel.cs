@@ -1,4 +1,5 @@
-﻿namespace SGS.MultiTenancy.UI.Models
+﻿using SGS.MultiTenancy.Core.Application.DTOs;
+namespace SGS.MultiTenancy.UI.Models
 {
     /// <summary>
     ///  View model used to capture data required for creating a new role.
@@ -19,5 +20,15 @@
         /// Gets or sets the list of permission identifiers selected.
         /// </summary>
         public List<Guid> SelectedPermissions { get; set; }
+
+        /// <summary>
+        /// Gets or set a list of roles.
+        /// </summary>
+        public List<RoleDto> RolesList { get; set; }
+
+        /// <summary>
+        /// Gets or set a list of Permissions.
+        /// </summary>
+        public List<PermissionDto> PermissionList { get; set; }
     }
 }

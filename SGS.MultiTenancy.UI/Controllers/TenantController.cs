@@ -146,6 +146,9 @@ namespace SGS.MultiTenancy.UI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Deletes the tenant identified by the specified unique identifier.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTenant(Guid id)
