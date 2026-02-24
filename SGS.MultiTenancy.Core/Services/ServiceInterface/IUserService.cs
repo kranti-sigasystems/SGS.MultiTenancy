@@ -34,6 +34,7 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="userDto"></param>
         /// <returns></returns>
          Task<UserDto> AddUserAsync(UserDto userDto);
+
         /// <summary>
         /// Fetch users associated with tenants.
         /// </summary>
@@ -42,11 +43,19 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId);
 
         /// <summary>
+        /// Fetch user associated with tenant.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        Task<UserDto?> GetUserByTenantIDAndUserIDAsync(Guid tenantId, Guid userID);
+
+        /// <summary>
         /// Updates user.
         /// </summary>
         /// <param name="userDto"></param>
         /// <returns>UserDto</returns>
-         Task<UserDto> UpdateUserAsync(UserDto userDto);
+        Task<UserDto> UpdateUserAsync(UserDto userDto);
         
         /// <summary>
         /// Deletes the user that is associated with the specified unique identifier.

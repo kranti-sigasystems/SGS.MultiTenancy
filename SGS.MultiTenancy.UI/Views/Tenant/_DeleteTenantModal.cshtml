@@ -23,7 +23,7 @@
 
             <div class="modal-footer">
                 <form asp-action="DeleteTenant" method="post">
-                    <input type="hidden" name="id" value="@Model.ID" />
+                    <input type="hidden" name="id" asp-for="@Model.ID" />
 
                     <button type="submit" class="btn btn-primary">
                         @Constants.Yes

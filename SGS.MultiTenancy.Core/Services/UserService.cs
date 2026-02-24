@@ -278,7 +278,7 @@ namespace SGS.MultiTenancy.Core.Services
         public Task<List<UserDto>> GetUsersByTenantAsync(Guid tenantId)
         {
             return _userRepositery
-                .Query(u => u.TenantID == tenantId && u.Status == EntityStatus.Active)
+                .Query(u => u.TenantID == tenantId)
                 .AsNoTracking()
                 .OrderBy(u => u.UserName)
                 .Select(u => new UserDto
@@ -324,6 +324,7 @@ namespace SGS.MultiTenancy.Core.Services
             }
             user.Email = userDto.Email;
             user.UserName = userDto.UserName;
+            user.Status = userDto.Status;
             if (userDto.ProfileImage is not null)
             {
                 if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
@@ -421,6 +422,38 @@ namespace SGS.MultiTenancy.Core.Services
             await _userRepositery.UpdateAsync(user);
             await _userRepositery.CompleteAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Retrieves user details by tenant and user identifiers.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="userID"></param>
+        /// <returns>UserDto</returns>
+        public async Task<UserDto?> GetUserByTenantIDAndUserIDAsync(Guid tenantId, Guid userID)
+        {
+            UserDto? user = await _userRepositery.Query(u => u.ID == userID && u.TenantID == tenantId).Select(u => new UserDto
+            {
+                ID = u.ID,
+                UserName = u.UserName,
+                Email = u.Email,
+                AvtarUrl = u.AvatarUrl,
+                TenantId = u.TenantID,
+                Status = u.Status,
+                Addresses = u.UserAddresses
+                        .Select(ua => new CreateUserAddressDto
+                        {
+                            PhoneNumber = ua.Address.PhoneNumber,
+                            AddressLine = ua.Address.AddressLine,
+                            PostalCode = ua.Address.PostalCode,
+                            City = ua.Address.City,
+                            State = ua.Address.State,
+                            Country = ua.Address.Country,
+                            IsDefault = ua.Address.IsDefault
+                        }).ToList()
+            }).FirstOrDefaultAsync();
+
+            return user;
         }
     }
 }

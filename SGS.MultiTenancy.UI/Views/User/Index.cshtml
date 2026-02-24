@@ -103,12 +103,14 @@
                                     </td>
 
                                     <td>
-                                        <button class="bg-light text-muted p-0 border-0 me-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editUserModal-@user.ID"
-                                                title="Edit">
+
+                                        <a asp-controller="User"
+                                           asp-action="UpdateUser"
+                                           asp-route-id="@user.ID"
+                                           class="bg-light text-muted p-0 border-0 me-3"
+                                           title="Edit">
                                             <i class="bi bi-pencil-square fs-5"></i>
-                                        </button>
+                                        </a>
 
                                         <button class="bg-light text-muted p-0 border-0"
                                                 data-bs-toggle="modal"
@@ -117,15 +119,6 @@
                                             <i class="bi bi-trash fs-5"></i>
                                         </button>
                                     </td>
-
-                                    @await Html.PartialAsync("_EditUserPartial",
-                                    new UserViewModel
-                                    {
-                                        User = user,
-                                        States = Model.States,
-                                        Countries = Model.Countries,
-                                        StatusOptions = Model.StatusOptions
-                                    })
 
                             @await Html.PartialAsync("_DeleteUserModal",
                                                         new UserViewModel

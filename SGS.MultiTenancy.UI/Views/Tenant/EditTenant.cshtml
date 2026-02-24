@@ -1,0 +1,127 @@
+﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
+@model TenantDto
+
+@{
+    ViewData["Title"] = "Edit Tenant";
+}
+
+<div class="container-fluid px-4">
+
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h4 class="fw-semibold mb-0">Edit Tenant</h4>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+            Back to List
+        </a>
+    </div>
+
+    
+        <form asp-action="EditTenant"
+              method="post"
+              enctype="multipart/form-data">
+
+          
+
+        <input asp-for="ID" hidden />
+        <input asp-for="LogoUrl" hidden />
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <strong>Business Details</strong>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name"
+                               class="form-control"
+                               id="TenantName"
+                               placeholder="Enter business name" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Slug" class="form-label">Subdomain</label>
+                        <input asp-for="Slug"
+                               class="form-control"
+                               id="Slug"
+                               placeholder="Enter subdomain" />
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Domain" class="form-label"></label>
+                        <input asp-for="Domain"
+                               class="form-control"
+                               placeholder="Enter domain" />
+                        <span asp-validation-for="Domain" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Business Logo</label>
+                        <div class="logo-upload-wrapper">
+                            <img src="/@Model.LogoUrl"
+                                 alt="No Logo"
+                                 class="logo-preview" />
+
+                            <div class="logo-overlay">
+                                <span>Upload Logo</span>
+                            </div>
+
+                            <input type="file"
+                                   asp-for="BusinessLogo"
+                                   accept="image/*"
+                                   class="logo-input" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label d-block">Tenant Status</label>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Status"
+                                   value="Active">
+                            <label class="form-check-label">
+                                Active
+                            </label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   asp-for="Status"
+                                   value="Inactive">
+                            <label class="form-check-label">
+                                Inactive
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary rounded-pill px-4">
+                Update Tenant
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.getElementById("TenantName")
+        ?.addEventListener("input", function () {
+
+            let text = this.value.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, "")
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-");
+
+            document.getElementById("Slug").value = text;
+        });
+</script>
