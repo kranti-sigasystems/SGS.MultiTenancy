@@ -32,9 +32,6 @@ namespace SGS.MultiTenancy.UI.Controllers
             List<UserDto> users = await _userService.GetUsersByTenantAsync(tenantId);
             UserViewModel model = new UserViewModel();
 
-            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
-
-            model.Countries = (List<SelectListItem>)countries;
 
             foreach (UserDto user in users)
             {
@@ -47,10 +44,8 @@ namespace SGS.MultiTenancy.UI.Controllers
                 }
             }
 
-            string firstCountryId = countries.First().Value;
-            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
             model.UserList = users;
-            model.States = (List<SelectListItem>)states;
+            
             model.StatusOptions = Enum.GetValues<EntityStatus>()
            .Select(s => new SelectListItem
            {
@@ -162,10 +157,9 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
             UserViewModel model = new();
-            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(tenantId, id);
+            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id,tenantId);
             var selectedValue = ((int)user.Status).ToString();
             model.User.Status = user.Status;
-
             model.StatusOptions = Enum.GetValues<EntityStatus>()
                 .Select(s => new SelectListItem
                 {
@@ -176,6 +170,11 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             model.User = user;
 
+            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
+            model.Countries = (List<SelectListItem>)countries;
+            string firstCountryId = countries.First().Value;
+            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
+            model.States = (List<SelectListItem>)states;
             return  View( model);
         }
 
