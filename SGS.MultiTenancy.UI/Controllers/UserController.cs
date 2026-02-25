@@ -32,9 +32,6 @@ namespace SGS.MultiTenancy.UI.Controllers
             List<UserDto> users = await _userService.GetUsersByTenantAsync(tenantId);
             UserViewModel model = new UserViewModel();
 
-            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
-
-            model.Countries = (List<SelectListItem>)countries;
 
             foreach (UserDto user in users)
             {
@@ -47,10 +44,8 @@ namespace SGS.MultiTenancy.UI.Controllers
                 }
             }
 
-            string firstCountryId = countries.First().Value;
-            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
             model.UserList = users;
-            model.States = (List<SelectListItem>)states;
+            
             model.StatusOptions = Enum.GetValues<EntityStatus>()
            .Select(s => new SelectListItem
            {
@@ -154,6 +149,34 @@ namespace SGS.MultiTenancy.UI.Controllers
             IEnumerable<SelectListItem> result = states;
             return Json(result);
         }
+        /// <summary>
+        /// Retrieves a list of states with the specified country identifier.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> UpdateUser(Guid id)
+        {
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
+            UserViewModel model = new();
+            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id,tenantId);
+            var selectedValue = ((int)user.Status).ToString();
+            model.User.Status = user.Status;
+            model.StatusOptions = Enum.GetValues<EntityStatus>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),  
+                    Text = s.ToString()
+                })
+                .ToList();
+
+            model.User = user;
+
+            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
+            model.Countries = (List<SelectListItem>)countries;
+            string firstCountryId = countries.First().Value;
+            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
+            model.States = (List<SelectListItem>)states;
+            return  View( model);
+        }
 
         /// <summary>
         /// Update user info.
@@ -199,7 +222,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
-            UserDto user = await _userService.GetUserByIdAsync(id, tenantId);
+            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id, tenantId);
             return View(user);
         }
     }

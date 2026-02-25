@@ -38,7 +38,7 @@ namespace SGS.MultiTenancy.Web.Controllers
             {
                 RolesList = roles,
                 PermissionList = permissions
-            };
+            }; 
             return View(model);
         }
 

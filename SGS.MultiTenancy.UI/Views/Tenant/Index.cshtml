@@ -49,14 +49,12 @@
                                     </td>
 
                                     <td>
-                                        <button class="bg-light text-muted p-0 me-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editTenantModal-@t.ID"
-                                                data-id="@t.ID"
-                                                title="Edit"
-                                                style="border:none;">
+                                        <a asp-action="EditTenant"
+                                           asp-route-id="@t.ID"
+                                           class="text-muted me-3"
+                                           title="Edit">
                                             <i class="bi bi-pencil-square fs-5"></i>
-                                        </button>
+                                        </a>
 
                                         <button class="bg-light text-muted p-0"
                                                 data-bs-toggle="modal"
@@ -68,7 +66,6 @@
                                         </button>
                                     </td>
                                 </tr>
-                                @await Html.PartialAsync("_EditTenantPartial", t)
                                 @await Html.PartialAsync("_DeleteTenantModal", t)
                             }
                         }

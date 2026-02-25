@@ -2,10 +2,7 @@
 @using SGS.MultiTenancy.Core.Domain.Common
 @model SGS.MultiTenancy.UI.Models.CreateRoleViewModel
 
-
-
 <div class="container-fluid px-4">
-
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center my-4">
         <h4 class="fw-semibold mb-0">Roles List</h4>
@@ -49,19 +46,17 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (role.TenantID == Guid.Parse("00000000-0000-0000-0000-000000000000") == true)
+                                        @if (role.TenantID == Guid.Empty)
                                         {
                                             <i class="bi bi-ban"></i>
                                         }
                                         else
                                         {
-
                                             <button class="bg-light text-muted p-0 border-0 me-3"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#editRoleModal-@role.ID"
                                                     title="Edit">
-                                                <i class="bi bi-pencil - square fs-5"></i>
-
+                                                <i class="bi bi-pencil-square fs-5"></i>
                                             </button>
 
                                             <button class="bg-light text-muted p-0 border-0"
@@ -89,19 +84,17 @@
         </div>
     </div>
 </div>
+
+<!-- Create Role Modal -->
 <div class="modal fade" id="createRoleModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-
             <form asp-action="Create" method="post">
-
                 <div class="modal-header">
                     <h5 class="modal-title">Create New Role</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-
                 <div class="modal-body">
-
                     <div class="mb-3">
                         <label class="form-label">Role Name *</label>
                         <input asp-for="Name" class="form-control" required />
@@ -114,7 +107,6 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Permissions</label>
-
                         @foreach (var permission in Model.PermissionList)
                         {
                             <div class="form-check">
@@ -128,9 +120,7 @@
                             </div>
                         }
                     </div>
-
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
                         Cancel
@@ -139,111 +129,93 @@
                         Save
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
 </div>
-@if (Model.RolesList != null)
+
+<!-- Edit Modals -->
+@foreach (var role in Model.RolesList)
 {
-    foreach (var role in Model.RolesList)
-    {
-        <!-- Edit Modal -->
-        <div class="modal fade" id="editRoleModal-@role.ID" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
+    <div class="modal fade" id="editRoleModal-@role.ID" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form asp-action="Update" method="post">
+                    <input type="hidden" name="Id" value="@role.ID" />
 
-                    <form asp-action="Update" method="post">
-                        <input type="hidden" name="Id" value="@role.ID" />
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Role - @role.Name</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
 
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Role - @role.Name</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Role Name *</label>
+                            <input name="Name" class="form-control" value="@role.Name" required />
                         </div>
 
-                        <div class="modal-body">
-
-                            <div class="mb-3">
-                                <label class="form-label">Role Name *</label>
-                                <input name="Name"
-                                       class="form-control"
-                                       value="@role.Name"
-                                       required />
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Description *</label>
-                                <textarea name="Description"
-                                  class="form-control"
-                                  required>@role.Description</textarea>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Permissions</label>
-
-                                @foreach (var permission in Model.PermissionList)
-                                {
-                                    var isChecked = role.RolePermissions
-                                    ?.Any(rp => rp.ID == permission.ID) ?? false;
-
-                                    <div class="form-check">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               name="SelectedPermissions"
-                                               value="@permission.ID"
-                                               @(isChecked ? "checked" : "") />
-
-                                        <label class="form-check-label">
-                                            @permission.Code
-                                        </label>
-                                    </div>
-                                }
-                            </div>
-
+                        <div class="mb-3">
+                            <label class="form-label">Description *</label>
+                            <textarea name="Description" class="form-control" required>@role.Description</textarea>
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button"
-                                    class="btn btn-light border"
-                                    data-bs-dismiss="modal">
-                                Cancel
-                            </button>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Permissions</label>
+                            @foreach (var permission in Model.PermissionList)
+                            {
+                                var isChecked = role.RolePermissions?.Any(rp => rp.ID == permission.ID) ?? false;
 
-                            <button type="submit"
-                                    class="btn btn-primary">
-                                Update
-                            </button>
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="SelectedPermissions"
+                                           value="@permission.ID"
+                                           @(isChecked ? "checked" : "") />
+                                    <label class="form-check-label">
+                                        @permission.Code
+                                    </label>
+                                </div>
+                            }
                         </div>
+                    </div>
 
-                    </form>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Update
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- Delete Modal -->
-        <div class="modal fade" id="deleteRoleModal-@role.ID" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteRoleModal-@role.ID" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="Id" value="@role.ID" />
+                    @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Delete Role"))
 
-                    <form asp-action="Delete" method="post">
-                        <input type="hidden" name="Id" value="@role.ID" />
-                        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Delete Role"))
+                    <div class="modal-body text-center">
+                        <p class="mb-0">
+                            Are you sure you want to delete <strong>@role.Name</strong>?
+                        </p>
+                    </div>
 
-                        <div class="modal-body text-center">
-                            <p class="mb-0">
-                                Are you sure you want to delete
-                                <strong>@role.Name</strong>?
-                            </p>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-outline-primary">Delete</button>
-                        </div>
-
-                    </form>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-outline-primary">
+                            Delete
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    }
+    </div>
 }

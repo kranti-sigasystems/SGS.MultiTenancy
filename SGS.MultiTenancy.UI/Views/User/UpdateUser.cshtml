@@ -1,19 +1,25 @@
-@model SGS.MultiTenancy.UI.Models.UserViewModel
+﻿@model SGS.MultiTenancy.UI.Models.UserViewModel
 
 @{
-    ViewData["Title"] = "Add User";
+    ViewData["Title"] = "Edit User";
 }
 
 <div class="container-fluid mt-4">
 
     <div class="mb-4">
-        <h4 class="fw-semibold">Add User</h4>
+        <h4 class="fw-semibold">Edit User</h4>
     </div>
 
-    <form asp-action="Create"
+    <form asp-action="UpdateUser"
+          asp-controller="User"
           method="post"
           enctype="multipart/form-data"
           novalidate>
+
+        <input asp-for="User.ID" type="hidden" />
+        <input asp-for="User.AvtarUrl" type="hidden" />
+
+        <!-- USER DETAILS -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-light">
                 <strong>User Details</strong>
@@ -37,6 +43,7 @@
                                placeholder="Enter email address" />
                         <span asp-validation-for="User.Email" class="text-danger"></span>
                     </div>
+
                     <div class="col-md-4">
                         <label class="form-label">Phone Number</label>
                         <input asp-for="User.Addresses[0].PhoneNumber"
@@ -44,34 +51,59 @@
                                placeholder="Enter phone number" />
                     </div>
 
+                    <!-- STATUS -->
                     <div class="col-md-4">
-                        <label asp-for="User.Password" class="form-label"></label>
-                        <input asp-for="User.Password"
-                               type="password"
-                               class="form-control"
-                               placeholder="Enter password" />
-                        <span asp-validation-for="User.Password" class="text-danger"></span>
+                        <label class="form-label">Status</label>
+                        <div class="mt-2">
+                            @foreach (var option in Model.StatusOptions!)
+                            {
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           asp-for="User.Status"
+                                           value="@option.Value" />
+                                    <label class="form-check-label">
+                                        @option.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                        <span asp-validation-for="User.Status" class="text-danger"></span>
                     </div>
 
+                    <!-- AVATAR -->
                     <div class="col-md-4">
                         <label class="form-label">Avatar</label>
+
+                        @if (!string.IsNullOrEmpty(Model.User.AvtarUrl))
+                        {
+                            <div class="mb-2">
+                                <img src="/@Model.User.AvtarUrl"
+                                     class="img-thumbnail"
+                                     style="max-height:100px;" />
+                            </div>
+                        }
+
                         <input type="file"
                                asp-for="User.ProfileImage"
                                class="form-control"
                                accept="image/*" />
                     </div>
+
                 </div>
             </div>
         </div>
 
+        <!-- ADDRESS DETAILS -->
         <div class="card shadow-sm">
             <div class="card-header bg-light">
                 <strong>Address Details</strong>
             </div>
 
             <div class="card-body">
+                <div class="row g-3">
 
-                <div class="row g-3 address-item">
+                    <input asp-for="User.Addresses[0].Id" type="hidden" />
 
                     <div class="col-md-4">
                         <label class="form-label">Address Line</label>
@@ -100,10 +132,10 @@
                                 asp-items="Model.Countries"
                                 class="form-select countryDropdown"
                                 data-index="0">
+                            <option value="">-- Select Country --</option>
                         </select>
                     </div>
 
-                    <!-- State Dropdown -->
                     <div class="col-md-4">
                         <label class="form-label">State</label>
                         <select asp-for="User.Addresses[0].State"
@@ -115,10 +147,8 @@
 
                     <div class="col-md-4 d-flex align-items-center">
                         <div class="form-check mt-3">
-                            <input type="checkbox"
-                                   asp-for="User.Addresses[0].IsDefault"
-                                   class="form-check-input"
-                                   value="true" />
+                            <input asp-for="User.Addresses[0].IsDefault"
+                                   class="form-check-input" />
                             <label class="form-check-label">
                                 Default Address
                             </label>
@@ -129,7 +159,17 @@
             </div>
         </div>
 
-        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
+        <div class="mt-4 d-flex justify-content-end gap-2">
+            <a asp-action="Index"
+               asp-controller="User"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Update User
+            </button>
+        </div>
 
     </form>
 </div>
