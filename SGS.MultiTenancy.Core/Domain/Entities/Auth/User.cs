@@ -1,6 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
-using SGS.MultiTenancy.Core.Entities.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Domain.Entities.Auth

@@ -38,6 +38,11 @@ namespace SGS.MultiTenancy.Core.Domain.Entities.Auth
         public EntityStatus Status { get; set; }
 
         /// <summary>
+        /// Gets or sets the registration number.
+        /// </summary>
+        public string RegistrationNumber { get; set; }
+
+        /// <summary>
         /// Gets or sets logo URL.
         /// </summary>
         [MaxLength(500)]

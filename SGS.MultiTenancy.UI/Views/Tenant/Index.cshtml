@@ -27,6 +27,7 @@
                             <th class="border-0 rounded-start ps-sm-2">Name</th>
                             <th class="border-0 ps-sm-2">Slug</th>
                             <th class="border-0 ps-sm-2">Domain</th>
+                            <th class="border-0 ps-sm-2">Registration Number</th>
                             <th class="border-0 ps-sm-2">Status</th>
                             <th class="border-0 rounded-end ps-sm-3">Action</th>
                         </tr>
@@ -41,9 +42,10 @@
                                     <td class="fw-bold">@t.Name</td>
                                     <td class="text-muted">@(string.IsNullOrWhiteSpace(t.Slug) ? "-" : t.Slug)</td>
                                     <td>@(string.IsNullOrWhiteSpace(t.Domain) ? "-" : t.Domain)</td>
+                                    <td>@(string.IsNullOrWhiteSpace(t.RegistrationNumber) ? "-" : t.RegistrationNumber)</td>
 
                                     <td>
-                                        <span class="status-badge @(t.Status == EntityStatus.Active ? "status-active" : "status-inactive")">
+                                        <span class="status-badge fw-bold   @(t.Status == EntityStatus.Active ? "status-active text-success p-1 rounded" : "status-inactive text-secondary p-1 rounded")">
                                             @t.Status
                                         </span>
                                     </td>
