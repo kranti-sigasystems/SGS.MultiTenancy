@@ -26,10 +26,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HasPermission(permissionId:Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
         {
-            List<TenantDto> list = (await _tenantService.GetAllAsync())
-                        .Where(t => t.Status == EntityStatus.Active)
-                        .ToList();
-
+            List<TenantDto> list = await _tenantService.GetAllAsync();
             return View(list);
         }
 
@@ -99,13 +96,13 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <param name="id">The unique identifier of the tenant.</param>
         /// <returns>A view for updating the tenant or NotFound if not found.</returns>
         [HttpGet]
-        public async Task<IActionResult> UpdateTenant(Guid id)
+        public async Task<IActionResult> EditTenant(Guid id)
         {
             TenantDto tenant = await _tenantService.GetEditModelAsync(id);
             if (tenant == null)
                 return NotFound();
 
-            return PartialView("_EditTenantPartial", tenant);
+            return View(tenant); 
         }
 
         /// <summary>
@@ -115,22 +112,22 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>Redirects to the tenant list or redisplays the form if invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateTenant(TenantDto model)
+        public async Task<IActionResult> EditTenant(TenantDto model)
         {
-
             if (model.BusinessLogo != null)
             {
                 if (model.BusinessLogo.Length > Constants.MaxImageSize)
                 {
                     ModelState.AddModelError(
-                        "BusinessLogo",
+                        nameof(model.BusinessLogo),
                         Constants.ImageSizeErrorMessage
                     );
                 }
-                else if (!model.BusinessLogo.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                else if (!model.BusinessLogo.ContentType
+                    .StartsWith("image/", StringComparison.OrdinalIgnoreCase))
                 {
                     ModelState.AddModelError(
-                        "BusinessLogo",
+                        nameof(model.BusinessLogo),
                         Constants.ImageFormatErrorMessage
                     );
                 }
@@ -138,17 +135,27 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             if (!ModelState.IsValid)
             {
-                return PartialView("_EditTenantPartial", model);
+                return View(model);
             }
 
-            await _tenantService.UpdateAsync(model);
+            try
+            {
+                await _tenantService.UpdateAsync(model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(model);
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
-        /// Deletes the tenant identified by the specified unique identifier.
+        /// Deletes a tenant by its unique identifier.
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTenant(Guid id)

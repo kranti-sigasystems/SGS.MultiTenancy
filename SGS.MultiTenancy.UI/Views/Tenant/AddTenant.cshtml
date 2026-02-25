@@ -52,7 +52,7 @@
                     <div class="col-md-4">
                         <label class="form-label">Business Logo</label>
                         <input type="file"
-                               name="BusinessLogo"
+                               asp-for="BusinessLogo"
                                class="form-control"
                                accept="image/*" />
                         <span asp-validation-for="BusinessLogo" class="text-danger"></span>
@@ -95,7 +95,7 @@
                     <div class="col-md-4">
                         <label class="form-label">Avatar</label>
                         <input type="file"
-                               name="UserDto.ProfileImage"
+                               asp-for="UserDto.ProfileImage"
                                class="form-control"
                                accept="image/*" />
                         <span asp-validation-for="UserDto.ProfileImage" class="text-danger"></span>

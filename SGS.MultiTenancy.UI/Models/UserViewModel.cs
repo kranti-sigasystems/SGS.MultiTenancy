@@ -40,5 +40,10 @@ namespace SGS.MultiTenancy.UI.Models
         /// Gets or set list of the entities status.
         /// </summary>
         public IEnumerable<SelectListItem>? StatusOptions { get; set; }
+
+        /// <summary>
+        /// Gets or set entitie status.
+        /// </summary>
+        public string Status { get; set; } = string.Empty;
     }
 }

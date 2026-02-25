@@ -1,11 +1,5 @@
 ﻿@model SGS.MultiTenancy.Core.Application.DTOs.Auth.UserDto
 
-@{
-    ViewData["Title"] = "User Profile";
-    var primaryAddress = Model.Addresses?.FirstOrDefault(a => a.IsDefault)
-                         ?? Model.Addresses?.FirstOrDefault();
-}
-
 <style>
     .profile-container {
         max-width: 1080px;
@@ -112,7 +106,7 @@
 
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <div class="avatar-wrapper">
-                        @if (!string.IsNullOrWhiteSpace(Model.AvtarUrl))
+                        @if (!string.IsNullOrWhiteSpace(Model?.AvtarUrl))
                         {
                             <img src="/@Model.AvtarUrl" alt="Profile Image" />
                         }
@@ -137,9 +131,9 @@
 
                 <div class="label-sm">Primary Phone</div>
                 <div class="value-md">
-                    @(string.IsNullOrWhiteSpace(primaryAddress?.PhoneNumber)
+                    @(string.IsNullOrWhiteSpace(Model.Addresses[0]?.PhoneNumber)
                                         ? "Not provided"
-                                        : primaryAddress.PhoneNumber)
+                                        : Model.Addresses[0]?.PhoneNumber)
                 </div>
 
             </div>

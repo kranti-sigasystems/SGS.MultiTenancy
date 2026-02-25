@@ -154,6 +154,30 @@ namespace SGS.MultiTenancy.UI.Controllers
             IEnumerable<SelectListItem> result = states;
             return Json(result);
         }
+        /// <summary>
+        /// Retrieves a list of states with the specified country identifier.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> UpdateUser(Guid id)
+        {
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
+            UserViewModel model = new();
+            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(tenantId, id);
+            var selectedValue = ((int)user.Status).ToString();
+            model.User.Status = user.Status;
+
+            model.StatusOptions = Enum.GetValues<EntityStatus>()
+                .Select(s => new SelectListItem
+                {
+                    Value = s.ToString(),  
+                    Text = s.ToString()
+                })
+                .ToList();
+
+            model.User = user;
+
+            return  View( model);
+        }
 
         /// <summary>
         /// Update user info.
@@ -199,7 +223,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
-            UserDto user = await _userService.GetUserByIdAsync(id, tenantId);
+            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id, tenantId);
             return View(user);
         }
     }
