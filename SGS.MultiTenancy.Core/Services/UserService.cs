@@ -217,6 +217,7 @@ namespace SGS.MultiTenancy.Core.Services
                 Email = userDto.Email,
                 UserName = userDto.UserName,
                 TenantID = userDto.TenantId,
+                Status = userDto.Status,
                 PasswordHash = _passwordHasherService.HashPassword(userDto.Password),
                 AvatarUrl = userDto.AvtarUrl,
                 CreateBy = (Guid)userDto.TenantId!,
@@ -228,6 +229,8 @@ namespace SGS.MultiTenancy.Core.Services
             {
                 foreach (CreateUserAddressDto addressDto in userDto.Addresses)
                 {
+                    addressDto.Country = await _locationService.GetCountryNameByIdAsync(addressDto.Country);
+                    addressDto.State = await _locationService.GetStateNameByIdAsync(addressDto.State);
                     Address address = new Address
                     {
                         ID = Guid.NewGuid(),

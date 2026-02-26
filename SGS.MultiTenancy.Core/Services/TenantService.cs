@@ -44,6 +44,7 @@ namespace SGS.MultiTenancy.Core.Services
                     Slug = t.Slug,
                     Domain = t.Domain,
                     Status = t.Status,
+                    RegistrationNumber = t.RegistrationNumber,
                     LogoUrl = t.LogoUrl
                 })
                 .ToListAsync();
@@ -79,12 +80,14 @@ namespace SGS.MultiTenancy.Core.Services
                 Domain = model.Domain,
                 Status = EntityStatus.Active,
                 LogoUrl = bussinessLogoPath,
+                RegistrationNumber = model.RegistrationNumber,
                 CreateOn = DateTime.UtcNow
             };
 
             Tenant tenantResult = await _tenantRepo.AddAsync(tenant);
             await _tenantRepo.CompleteAsync();
             Guid userID = Guid.NewGuid();
+            model.UserDto.Status = EntityStatus.Active;
             model.UserDto.TenantId = tenant.ID;
             model.UserDto.RoleIds.Add(Guid.Parse(Constants.TenantRoleId));
             UserDto userResult = await _userService.AddUserAsync(model.UserDto);
@@ -143,7 +146,7 @@ namespace SGS.MultiTenancy.Core.Services
             {
                 model.LogoUrl = await _fileStorageRepository.SaveAsync(model.BusinessLogo, model.ID.ToString());
             }
-            else 
+            else
             {
                 bool fileDeteled = _fileStorageRepository.DeleteAsync(tenant.LogoUrl!);
                 if (fileDeteled)

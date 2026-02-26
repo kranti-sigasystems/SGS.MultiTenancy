@@ -18,13 +18,13 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// </summary>
         [Required]
         [MaxLength(200)]
-        [Display(Name = "Bussiness Name")]
+        [Display(Name = Constants.BussinessName)]
         public string Name { get; set; }
 
         /// <summary>
         /// Unique slug for subdomains.
         /// </summary>
-        [Display(Name = "Subdomain")]
+        [Display(Name = Constants.SubDomainDisplay)]
         [Required(ErrorMessage = Constants.SubDomainError)]
         [MaxLength(100, ErrorMessage = Constants.MaxErrorMessage)]
         [RegularExpression(@"^[a-z0-9\-]+$", ErrorMessage = Constants.SlugInvalid)]
@@ -50,7 +50,16 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Tenants
         /// <summary>
         /// Gets or set business logo.
         /// </summary>
+        [Display(Name = Constants.BussinessLogoDisplay)]
         public IFormFile? BusinessLogo { get; set; }
+
+        /// <summary>
+        /// Official business registration number issued by government authority.
+        /// </summary>
+        [Required(ErrorMessage = Constants.RegistrationNumberError)]
+        [Display(Name = Constants.RegistrationDisplay)]
+        public string RegistrationNumber { get; set; } = string.Empty;
+
         /// <summary>
         /// Get or set user information related to the tenant. 
         /// </summary>

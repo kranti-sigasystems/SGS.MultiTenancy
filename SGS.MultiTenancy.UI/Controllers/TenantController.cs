@@ -1,21 +1,26 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Domain.Common;
-using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Attribute;
+using SGS.MultiTenancy.UI.Models;
 
 namespace SGS.MultiTenancy.UI.Controllers
 {
-    [Authorize (Roles = "SGS_SuperHost")]
+    [Authorize(Roles = "SGS_SuperHost")]
     public class TenantController : Controller
     {
         private readonly ITenantService _tenantService;
+        private readonly ILocationService _locationService;
 
-        public TenantController(ITenantService tenantService)
+        public TenantController(ITenantService tenantService, ILocationService locationService)
         {
             _tenantService = tenantService;
+            _locationService = locationService;
         }
 
         /// <summary>
@@ -23,7 +28,7 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// </summary>
         /// <returns>A view displaying the list of tenants.</returns>
         [HttpGet]
-        [HasPermission(permissionId:Permissions.Tenant_View)]
+        [HasPermission(permissionId: Permissions.Tenant_View)]
         public async Task<IActionResult> Index()
         {
             List<TenantDto> list = await _tenantService.GetAllAsync();
@@ -37,7 +42,24 @@ namespace SGS.MultiTenancy.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTenant()
         {
-            return View(new TenantDto());
+            TenantViewModel model = new TenantViewModel();
+
+            IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
+            model.Countries = (List<SelectListItem>)countries;
+            model.Tenant.UserDto = new UserDto
+            {
+                Addresses = new List<CreateUserAddressDto>
+                 {
+                     new CreateUserAddressDto()
+                 }
+            };
+            string firstCountryId = countries.First().Value;
+            model.Tenant.UserDto.Addresses[0].Country = firstCountryId;
+
+            IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
+
+            model.States = (List<SelectListItem>)states;
+            return View(model);
         }
 
         /// <summary>
@@ -47,34 +69,34 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>Redirects to the tenant list or redisplays the form if invalid.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTenant(TenantDto model)
+        public async Task<IActionResult> AddTenant(TenantViewModel model)
         {
-            if (model.BusinessLogo != null)
+            if (model.Tenant.BusinessLogo != null)
             {
-                if (model.BusinessLogo.Length > Constants.MaxImageSize)
+                if (model.Tenant.BusinessLogo.Length > Constants.MaxImageSize)
                 {
                     ModelState.AddModelError(
                         "BusinessLogo",
                         Constants.ImageSizeErrorMessage
                     );
                 }
-                else if (!model.BusinessLogo.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                else if (!model.Tenant.BusinessLogo.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
                 {
                     ModelState.AddModelError(
                         "BusinessLogo",
                         Constants.ImageFormatErrorMessage
                     );
                 }
-                if (model.UserDto?.ProfileImage != null)
+                if (model.Tenant.UserDto?.ProfileImage != null)
                 {
-                    if (model.UserDto.ProfileImage.Length > Constants.MaxImageSize)
+                    if (model.Tenant.UserDto.ProfileImage.Length > Constants.MaxImageSize)
                     {
                         ModelState.AddModelError(
                             "UserDto.ProfileImage",
                             Constants.ImageSizeErrorMessage
                         );
                     }
-                    else if (!model.UserDto.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                    else if (!model.Tenant.UserDto.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
                     {
                         ModelState.AddModelError(
                             "UserDto.ProfileImage",
@@ -86,7 +108,7 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             if (!ModelState.IsValid)
                 return View(model);
-            await _tenantService.CreateAsync(model);
+            await _tenantService.CreateAsync(model.Tenant);
             return RedirectToAction(nameof(Index));
         }
 
@@ -102,7 +124,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             if (tenant == null)
                 return NotFound();
 
-            return View(tenant); 
+            return View(tenant);
         }
 
         /// <summary>

@@ -39,6 +39,14 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         public string Password { get; set; }
 
         /// <summary>
+        /// Gets or set confirm password.
+        /// </summary>
+        [Required(ErrorMessage = Constants.RequiredErrorMessage)]
+        [Compare("Password", ErrorMessage = Constants.PasswordsDoNotMatch)]
+        [Display(Name = "Confirm Password")]
+        public string ConfirmPassword { get; set; }
+
+        /// <summary>
         /// Gets or set user avtar url.
         /// </summary>
         public string? AvtarUrl { get; set; }
@@ -46,6 +54,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// <summary>
         /// Get or set user profile image file.
         /// </summary>
+        [Display(Name = "Profile Image")]
         public IFormFile? ProfileImage { get; set; }
 
         /// <summary>
@@ -56,7 +65,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs.Auth
         /// <summary>
         /// Gets or set role ids.
         /// </summary>
-        public List<Guid>? RoleIds { get; set; }= new List<Guid>();
+        public List<Guid>? RoleIds { get; set; } = new List<Guid>();
 
         /// <summary>
         /// Gets or sets the list of addresses associated with the user.

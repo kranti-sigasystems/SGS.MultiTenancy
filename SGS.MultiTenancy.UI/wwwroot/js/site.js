@@ -67,3 +67,39 @@ document.addEventListener("change", function (e) {
         }
     }
 });
+// tenant address management script
+let addressIndex = @Model.Tenant.UserDto.Addresses.Count;
+const container = document.getElementById('address-container');
+const template = document.getElementById('address-template');
+
+document.addEventListener('click', function (e) {
+
+    if (e.target.closest('.add-address')) {
+        const html = template.innerHTML.replaceAll('__index__', addressIndex);
+        container.insertAdjacentHTML('beforeend', html);
+        addressIndex++;
+    }
+
+    if (e.target.closest('.remove-address')) {
+        e.target.closest('.address-item').remove();
+    }
+});
+
+document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('default-checkbox')) {
+        document.querySelectorAll('.default-checkbox')
+            .forEach(cb => {
+                if (cb !== e.target) cb.checked = false;
+            });
+    }
+});
+
+document.getElementById("TenantName")?.addEventListener("input", function () {
+    const slug = this.value.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+
+    document.getElementById("Slug").value = slug;
+});

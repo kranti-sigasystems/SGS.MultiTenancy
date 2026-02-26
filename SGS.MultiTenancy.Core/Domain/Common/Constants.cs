@@ -32,6 +32,20 @@
         /// </summary>
         public const string TenantID = "TenantID";
 
+        /// <summary>
+        /// Gets the Registration number display label.
+        /// </summary>
+        public const string RegistrationDisplay = "Registration Number";
+
+        /// <summary>
+        /// Represents the display name used for the business logo.
+        /// </summary>
+        public const string BussinessLogoDisplay = "Bussiness Logo";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string SubDomainDisplay = "Subdomain";
         #endregion
 
         #region Role Names
@@ -213,5 +227,10 @@
         /// Image format error message.
         /// </summary>
         public const string ImageFormatErrorMessage = "Only image files are allowed.";
+
+        /// <summary>
+        /// Registration number required error message.
+        /// </summary>
+        public const string RegistrationNumberError = "Registration number is required.";
     }
 }

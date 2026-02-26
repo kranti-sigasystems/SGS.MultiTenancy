@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace SGS.MultiTenancy.Core.Application.DTOs
 {
@@ -14,6 +15,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs
         /// </summary>
         [Required]
         [MaxLength(25)]
+        [DisplayName("Phone Number")]
         public string PhoneNumber { get; set; }
 
         /// <summary>
@@ -21,6 +23,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs
         /// </summary>
         [Required]
         [MaxLength(250)]
+        [DisplayName("Address line")]
         public string AddressLine { get; set; }
 
         /// <summary>
@@ -28,6 +31,7 @@ namespace SGS.MultiTenancy.Core.Application.DTOs
         /// </summary>
         [Required]
         [MaxLength(10)]
+        [DisplayName("Postal Code")]
         public string PostalCode { get; set; }
 
         /// <summary>

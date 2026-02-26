@@ -1,11 +1,11 @@
-﻿@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
-@model TenantDto
+﻿@using SGS.MultiTenancy.UI.Models
+@model TenantViewModel
 
 @{
     ViewData["Title"] = "Add Tenant";
 }
 
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-4 page-wrapper">
 
     <div class="mb-4">
         <h4 class="fw-semibold">Add Tenant</h4>
@@ -24,44 +24,52 @@
                 <div class="row g-3">
 
                     <div class="col-md-4">
-                        <label asp-for="Name" class="form-label"></label>
-                        <input asp-for="Name"
+                        <label asp-for="Tenant.Name" class="form-label"></label>
+                        <input asp-for="Tenant.Name"
                                class="form-control"
                                id="TenantName"
                                placeholder="Enter business name" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.Name" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Tenant.RegistrationNumber" class="form-label"></label>
+                        <input asp-for="Tenant.RegistrationNumber"
+                               class="form-control"
+                               id="RegistrationNumber"
+                               placeholder="Enter Registration number " />
+                        <span asp-validation-for="Tenant.RegistrationNumber" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="Slug" class="form-label">Subdomain</label>
-                        <input asp-for="Slug"
+                        <label asp-for="Tenant.Slug" class="form-label">Subdomain</label>
+                        <input asp-for="Tenant.Slug"
                                class="form-control"
                                id="Slug"
                                placeholder="Enter subdomain" />
-                        <span asp-validation-for="Slug" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.Slug" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="Domain" class="form-label"></label>
-                        <input asp-for="Domain"
+                        <label asp-for="Tenant.Domain" class="form-label"></label>
+                        <input asp-for="Tenant.Domain"
                                class="form-control"
                                placeholder="Enter domain" />
-                        <span asp-validation-for="Domain" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.Domain" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Business Logo</label>
-                        <input type="file"
-                               asp-for="BusinessLogo"
+                        <label asp-for="Tenant.BusinessLogo" class="form-label"></label>
+                        <input asp-for="Tenant.BusinessLogo"
+                               type="file"
                                class="form-control"
                                accept="image/*" />
-                        <span asp-validation-for="BusinessLogo" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.BusinessLogo" class="text-danger"></span>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="card shadow-sm">
+
+        <div class="card shadow-sm mb-4">
             <div class="card-header bg-light">
                 <strong>User Details</strong>
             </div>
@@ -69,55 +77,203 @@
                 <div class="row g-3">
 
                     <div class="col-md-4">
-                        <label asp-for="UserDto.UserName" class="form-label"></label>
-                        <input asp-for="UserDto.UserName"
+                        <label asp-for="Tenant.UserDto.UserName" class="form-label"></label>
+                        <input asp-for="Tenant.UserDto.UserName"
                                class="form-control"
                                placeholder="Enter username" />
-                        <span asp-validation-for="UserDto.UserName" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.UserDto.UserName" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="UserDto.Email" class="form-label"></label>
-                        <input asp-for="UserDto.Email"
+                        <label asp-for="Tenant.UserDto.Email" class="form-label"></label>
+                        <input asp-for="Tenant.UserDto.Email"
                                class="form-control"
                                placeholder="Enter email address" />
-                        <span asp-validation-for="UserDto.Email" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.UserDto.Email" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label asp-for="UserDto.Password" class="form-label"></label>
-                        <input asp-for="UserDto.Password" type="password"
+                        <label asp-for="Tenant.UserDto.Password" class="form-label"></label>
+                        <input asp-for="Tenant.UserDto.Password"
+                               type="password"
                                class="form-control"
                                placeholder="Enter password" />
-                        <span asp-validation-for="UserDto.Password" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.UserDto.Password" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
-                        <label class="form-label">Avatar</label>
-                        <input type="file"
-                               asp-for="UserDto.ProfileImage"
+                        <label asp-for="Tenant.UserDto.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="Tenant.UserDto.ConfirmPassword"
+                               type="password"
+                               class="form-control"
+                               placeholder="Confirm password" />
+                        <span asp-validation-for="Tenant.UserDto.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Tenant.UserDto.ProfileImage" class="form-label"></label>
+                        <input asp-for="Tenant.UserDto.ProfileImage"
+                               type="file"
                                class="form-control"
                                accept="image/*" />
-                        <span asp-validation-for="UserDto.ProfileImage" class="text-danger"></span>
+                        <span asp-validation-for="Tenant.UserDto.ProfileImage" class="text-danger"></span>
                     </div>
                 </div>
             </div>
         </div>
-        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml",false)
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <strong>Address Details</strong>
+
+                <button type="button"
+                        class="btn btn-sm btn-outline-primary add-address">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
+
+            <div class="card-body">
+                <div id="address-container">
+
+                    @for (int i = 0; i < Model.Tenant.UserDto.Addresses.Count; i++)
+                    {
+                        <div class="border rounded p-3 mb-3 address-item bg-white">
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">Address @(i + 1)</h6>
+
+                                @if (i > 0)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger remove-address">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                }
+                            </div>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-4">
+                                    <label asp-for="Tenant.UserDto.Addresses[i].PhoneNumber" class="form-label"></label>
+                                    <input asp-for="Tenant.UserDto.Addresses[i].PhoneNumber" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Tenant.UserDto.Addresses[i].AddressLine" class="form-label"></label>
+                                    <input asp-for="Tenant.UserDto.Addresses[i].AddressLine" class="form-control" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label asp-for="Tenant.UserDto.Addresses[i].City" class="form-label"></label>
+                                    <input asp-for="Tenant.UserDto.Addresses[i].City" class="form-control" />
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Country</label>
+                                    <select asp-for="Tenant.UserDto.Addresses[i].Country"
+                                            asp-items="Model.Countries"
+                                            class="form-select">
+                                        <option value="">-- Select Country --</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">State</label>
+                                    <select asp-for="Tenant.UserDto.Addresses[i].State"
+                                            asp-items="Model.States"
+                                            class="form-select">
+                                        <option value="">-- Select State --</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label asp-for="Tenant.UserDto.Addresses[i].PostalCode" class="form-label"></label>
+                                    <input asp-for="Tenant.UserDto.Addresses[i].PostalCode" class="form-control" />
+                                </div>
+
+                                <div class="col-md-4 d-flex align-items-center mt-4">
+                                    <div class="form-check">
+                                        <input asp-for="Tenant.UserDto.Addresses[i].IsDefault"
+                                               class="form-check-input default-checkbox"
+                                               checked="@(i == 0)" />
+                                        <label asp-for="Tenant.UserDto.Addresses[i].IsDefault"
+                                               class="form-check-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml", false)
     </form>
 </div>
+
+<template id="address-template">
+    <div class="border rounded p-3 mb-3 address-item bg-white">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">Address</h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-address">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <input class="form-control"
+                       name="Tenant.UserDto.Addresses[__index__].AddressLine"
+                       placeholder="Address Line" />
+            </div>
+
+            <div class="col-md-6">
+                <input class="form-control"
+                       name="Tenant.UserDto.Addresses[__index__].City"
+                       placeholder="City" />
+            </div>
+
+            <div class="col-md-4">
+                <select name="Tenant.UserDto.Addresses[__index__].Country"
+                        class="form-select">
+                    <option value="">-- Select Country --</option>
+                    @foreach (var c in Model.Countries)
+                    {
+                        <option value="@c.Value">@c.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <select name="Tenant.UserDto.Addresses[__index__].State"
+                        class="form-select">
+                    <option value="">-- Select State --</option>
+                    @foreach (var s in Model.States)
+                    {
+                        <option value="@s.Value">@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <input class="form-control"
+                       name="Tenant.UserDto.Addresses[__index__].PostalCode"
+                       placeholder="Postal Code" />
+            </div>
+
+            <div class="col-md-4 d-flex align-items-center mt-4">
+                <div class="form-check">
+                    <input type="checkbox"
+                           name="Tenant.UserDto.Addresses[__index__].IsDefault"
+                           value="true"
+                           class="form-check-input default-checkbox" />
+                    <label class="form-check-label">Default</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-<script>
-    document.getElementById("TenantName")?.addEventListener("input", function () {
-        const slug = this.value.toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, "")
-            .trim()
-            .replace(/\s+/g, "-")
-            .replace(/-+/g, "-");
-
-        document.getElementById("Slug").value = slug;
-    });
-</script>
