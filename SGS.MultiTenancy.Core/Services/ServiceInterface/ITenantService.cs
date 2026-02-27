@@ -1,5 +1,7 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Domain.Enums;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
@@ -40,5 +42,16 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// Ensures tenant is hidden from UI but kept in the database.
         /// </summary>
         Task<bool> DeleteAsync(Guid id);
+       
+        /// <summary>
+        /// Retrive the paged results.
+        /// </summary>
+        /// <param name="paginationParams"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<PagedResult<TenantDto>> GetPagedAsync(PaginationParams paginationParams,
+                                                    string? searchTerm,
+                                                    EntityStatus? status);
     }
 }

@@ -2,9 +2,11 @@
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
+using SGS.MultiTenancy.Core.Extensions;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
 namespace SGS.MultiTenancy.Core.Services
@@ -176,6 +178,46 @@ namespace SGS.MultiTenancy.Core.Services
             await _tenantRepo.UpdateAsync(tenant);
             await _tenantRepo.CompleteAsync();
             return true;
+        }
+
+        /// <summary>
+        /// Retrieves a paginated list of tenants with optional search and status filtering.
+        /// </summary>
+        public async Task<PagedResult<TenantDto>> GetPagedAsync(
+     PaginationParams paginationParams,
+     string? searchTerm,
+     EntityStatus? status)
+        {
+            IQueryable<Tenant> query = _tenantRepo.Query();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                string term = searchTerm.ToLower();
+
+                query = query.Where(x =>
+                    x.Name.ToLower().Contains(term) ||
+                    x.Slug.ToLower().Contains(term) ||
+                    x.Domain.ToLower().Contains(term) ||
+                    x.RegistrationNumber.ToLower().Contains(term));
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(x => x.Status == status.Value);
+            }
+
+            IQueryable<TenantDto>? dtoQuery = query
+                .OrderByDescending(x => x.CreateOn)
+                .Select(x => new TenantDto
+                {
+                    ID = x.ID,
+                    Name = x.Name,
+                    Slug = x.Slug,
+                    Domain = x.Domain,
+                    RegistrationNumber = x.RegistrationNumber,
+                    Status = x.Status
+                });
+            return await dtoQuery.ToPagedResultAsync(paginationParams);
         }
     }
 }
