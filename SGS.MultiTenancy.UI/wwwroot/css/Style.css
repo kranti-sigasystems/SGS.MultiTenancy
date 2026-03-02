@@ -759,3 +759,181 @@ td, tfoot, th, thead, tr {
     overflow-y: auto;
     padding-bottom: 30px;
 }
+
+/*home page template css*/
+h1 {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--ui-black);
+    margin-bottom: 1.5rem;
+}
+
+.hero-desc {
+    font-size: 1.25rem;
+    color: var(--ui-gray-500);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+}
+
+/* Components */
+.btn-ui {
+    padding: 10px 24px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-primary-ui {
+    background: var(--ui-primary);
+    color: #fff;
+    border: 1px solid var(--ui-primary);
+}
+
+.btn-outline-ui {
+    background: #fff;
+    color: var(--ui-primary);
+    border: 1px solid var(--ui-primary);
+}
+
+.btn-ui:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+.btn-outline-ui:hover {
+    background: var(--ui-primary);
+    color: #fff !important;
+}
+
+/* Features & Cards */
+.ui-card {
+    border: 1px solid var(--ui-gray-200);
+    padding: 2rem;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.icon-box {
+    color: var(--ui-primary);
+    margin-bottom: 1.25rem;
+}
+
+/* Integration Steps */
+.step-number {
+    width: 32px;
+    height: 32px;
+    background: var(--ui-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Time Saved Calculator */
+.stats-box {
+    background: var(--ui-gray-100);
+    padding: 3rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--ui-gray-200);
+}
+
+.stat-value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    display: block;
+    color: var(--ui-primary);
+}
+
+/* Pricing */
+.pricing-card {
+    border: 1px solid var(--ui-gray-200);
+    padding: 2.5rem;
+    border-radius: 12px;
+    height: 100%;
+    background: #fff;
+    transition: transform 0.2s ease;
+}
+
+    .pricing-card.featured {
+        border: 2px solid var(--ui-primary);
+        background: #fff;
+        z-index: 1;
+    }
+
+@media (min-width: 992px) {
+    .pricing-card.featured {
+        transform: scale(1.05);
+    }
+}
+
+.price-val {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ui-primary);
+}
+
+/* Testimonials */
+.testimonial-text {
+    font-size: 1.125rem;
+    font-style: italic;
+    color: var(--ui-gray-600);
+    margin-bottom: 1.5rem;
+    border-left: 3px solid var(--ui-primary);
+    padding-left: 1.5rem;
+}
+
+/* Footer */
+.footer {
+    border-top: 1px solid var(--ui-gray-200);
+    padding: 80px 0 40px;
+    background: #fff;
+}
+
+.footer-link {
+    color: var(--ui-gray-500);
+    text-decoration: none;
+    font-size: 0.9375rem;
+}
+
+    .footer-link:hover {
+        color: var(--ui-primary);
+    }
+
+.input-ui {
+    border: 1px solid var(--ui-gray-200);
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+}
+
+    .input-ui:focus {
+        outline: none;
+        border-color: var(--ui-primary);
+    }
+
+.section-title {
+    font-weight: 700;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.section-tag {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--ui-primary);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+}

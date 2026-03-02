@@ -44,6 +44,15 @@
                     </div>
 
                     <div class="col-md-4">
+                        <label asp-for="RegistrationNumber" class="form-label"></label>
+                        <input asp-for="RegistrationNumber"
+                               class="form-control"
+                               id="RegistrationNumber"
+                               placeholder="Enter Registration number " />
+                        <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
                         <label asp-for="Slug" class="form-label">Subdomain</label>
                         <input asp-for="Slug"
                                class="form-control"
@@ -105,13 +114,33 @@
                 </div>
             </div>
         </div>
-  
-        <div class="text-end">
-            <button type="submit" class="btn btn-primary rounded-pill px-4">
+
+        <div class="text-end gap-3 border-danger">
+            <a asp-action="Index" class="btn btn-gray-200 ms-2 mx-4"> close</a>
+            <button type="button" class="btn btn-outline-primary " data-bs-toggle="modal" data-bs-target="#confirmModal">
                 Update Tenant
             </button>
         </div>
+        @* Bootstrap Modal (Centered) *@
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmModalLabel">Confirm Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to update this tenant?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 
+                        @* This button actually submits the form *@
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 
