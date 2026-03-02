@@ -1,10 +1,10 @@
-﻿@model List<SGS.MultiTenancy.Core.Application.DTOs.Tenants.TenantDto>
-@using SGS.MultiTenancy.Core.Domain.Common
+﻿@model PagedListViewModel<TenantDto>
+@using SGS.MultiTenancy.Core.Application.DTOs.Tenants
 @using SGS.MultiTenancy.Core.Domain.Enums
-@using System.ComponentModel
 
 @{
     ViewData["Title"] = "Tenants";
+    var query = Context.Request.Query;
 }
 
 <div class="container-fluid px-4">
@@ -18,34 +18,74 @@
         </a>
     </div>
 
-    <div class="card border-0 shadow mb-4">
+    <form method="get" asp-action="Index" class="row g-2 mb-4">
+
+        <div class="col-md-3">
+            <input type="text"
+                   name="SearchTerm"
+                   value="@query["SearchTerm"]"
+                   class="form-control"
+                   placeholder="Keyword Search" />
+        </div>
+
+        <div class="col-md-2">
+            <select name="Status" class="form-select">
+                <option value="">All Status</option>
+                <option value="Active" selected="@(query["Status"] == "Active")">Active</option>
+                <option value="Inactive" selected="@(query["Status"] == "Inactive")">Inactive</option>
+            </select>
+        </div>
+
+        @* <div class="col-md-2">
+            <select name="PageSize"
+                    class="form-select"
+                    onchange="this.form.submit()">
+                <option value="5" selected="@(query["PageSize"] == "5")">5</option>
+                <option value="10" selected="@(query["PageSize"] == "10")">10</option>
+                <option value="25" selected="@(query["PageSize"] == "25")">25</option>
+                <option value="50" selected="@(query["PageSize"] == "50")">50</option>
+            </select>
+        </div> *@
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-primary">
+                Apply
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                Reset
+            </a>
+        </div>
+
+    </form>
+
+    <div class="card border-0 shadow">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-centered table-nowrap mb-0 rounded">
-                    <thead class="thead-light">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th class="border-0 rounded-start ps-sm-2">Name</th>
-                            <th class="border-0 ps-sm-2">Slug</th>
-                            <th class="border-0 ps-sm-2">Domain</th>
-                            <th class="border-0 ps-sm-2">Registration Number</th>
-                            <th class="border-0 ps-sm-2">Status</th>
-                            <th class="border-0 rounded-end ps-sm-3">Action</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Domain</th>
+                            <th>Registration Number</th>
+                            <th>Status</th>
+                            <th width="120">Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @if (Model != null && Model.Any())
+                        @if (Model != null && Model.Data.Items.Any())
                         {
-                            foreach (var t in Model)
+                            foreach (var t in Model.Data.Items)
                             {
                                 <tr>
                                     <td class="fw-bold">@t.Name</td>
-                                    <td class="text-muted">@(string.IsNullOrWhiteSpace(t.Slug) ? "-" : t.Slug)</td>
+                                    <td>@(string.IsNullOrWhiteSpace(t.Slug) ? "-" : t.Slug)</td>
                                     <td>@(string.IsNullOrWhiteSpace(t.Domain) ? "-" : t.Domain)</td>
                                     <td>@(string.IsNullOrWhiteSpace(t.RegistrationNumber) ? "-" : t.RegistrationNumber)</td>
 
                                     <td>
-                                        <span class="status-badge fw-bold   @(t.Status == EntityStatus.Active ? "status-active text-success p-1 rounded" : "status-inactive text-secondary p-1 rounded")">
+                                        <span class="badge @(t.Status == EntityStatus.Active ? "bg-success" : "bg-secondary")">
                                             @t.Status
                                         </span>
                                     </td>
@@ -53,18 +93,14 @@
                                     <td>
                                         <a asp-action="EditTenant"
                                            asp-route-id="@t.ID"
-                                           class="text-muted me-3"
-                                           title="Edit">
-                                            <i class="bi bi-pencil-square fs-5"></i>
+                                           class="text-muted me-2">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
 
-                                        <button class="bg-light text-muted p-0"
+                                        <button class="bg-transparent border-0 text-muted"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#deleteTenantModal-@t.ID"
-                                                data-tenant-id="@t.ID"
-                                                data-tenant-name="@t.Name"
-                                                style="border:none;">
-                                            <i class="bi bi-trash fs-5"></i>
+                                                data-bs-target="#deleteTenantModal-@t.ID">
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -74,7 +110,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
+                                <td colspan="6" class="text-center py-4 text-muted">
                                     No tenants found.
                                 </td>
                             </tr>
@@ -82,6 +118,85 @@
                     </tbody>
                 </table>
             </div>
+            @* @if (Model.Data.TotalPages > 1)
+            { *@
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-end">
+                    <li class="page-item border border-1">
+
+                        <form method="get" asp-action="Index" class="d-flex align-items-center w-100 h-100">
+
+                            <!-- Keep current page -->
+                            <input type="hidden" name="page" value="Page Limit-@{@Model.Data.PageNumber}" />
+
+                            <select name="PageSize"
+                                    class="form-select form-select-sm border-0 "
+                                    style="width: 80px;"
+                                    onchange="this.form.submit()">
+
+                                <option value="5" selected="@(Model.Data.PageSize == 5)">5</option>
+                                <option value="10" selected="@(Model.Data.PageSize == 10)">10</option>
+                                <option value="25" selected="@(Model.Data.PageSize == 25)">25</option>
+                                <option value="50" selected="@(Model.Data.PageSize == 50)">50</option>
+                            </select>
+                        </form>
+                    </li>
+                        <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-route-pageNumber="1"
+                               asp-route-SearchTerm="@query["SearchTerm"]"
+                               asp-route-Status="@query["Status"]"
+                               asp-route-PageSize="@Model.Data.PageSize">
+                               
+                                «
+                            </a>
+                        </li>
+
+                        <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-route-pageNumber="@(Model.Data.PageNumber - 1)"
+                               asp-route-SearchTerm="@query["SearchTerm"]"
+                               asp-route-Status="@query["Status"]"
+                               asp-route-PageSize="@Model.Data.PageSize">
+                                ‹
+                            </a>
+                        </li>
+
+                        <li class="page-item">
+                            <span class="page-link btn-outline-primary">
+                                @Model.Data.PageNumber
+                            </span>
+                        </li>
+
+                        <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-route-pageNumber="@(Model.Data.PageNumber + 1)"
+                               asp-route-SearchTerm="@query["SearchTerm"]"
+                               asp-route-Status="@query["Status"]"
+                               asp-route-PageSize="@Model.Data.PageSize">
+                                ›
+                            </a>
+                        </li>
+
+                        <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-route-pageNumber="@Model.Data.TotalPages"
+                               asp-route-SearchTerm="@query["SearchTerm"]"
+                               asp-route-Status="@query["Status"]"
+                               asp-route-PageSize="@Model.Data.PageSize">
+                                »
+                            </a>
+                        </li>
+                        <li class="page-item ">
+                            <a class="page-link text-black">
+                            Total Count-@Model.Data.TotalCount
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+            @* } *@
+
         </div>
     </div>
 </div>

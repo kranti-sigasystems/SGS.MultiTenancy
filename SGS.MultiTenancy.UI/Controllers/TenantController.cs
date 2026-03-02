@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Common;
+using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Attribute;
 using SGS.MultiTenancy.UI.Models;
@@ -29,10 +31,30 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <returns>A view displaying the list of tenants.</returns>
         [HttpGet]
         [HasPermission(permissionId: Permissions.Tenant_View)]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+        string? searchTerm,
+        EntityStatus? status,
+        int pageNumber = 1,
+        int pageSize = 5)
         {
-            List<TenantDto> list = await _tenantService.GetAllAsync();
-            return View(list);
+            PaginationParams paginationParams = new PaginationParams
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            PagedResult<TenantDto>? result = await _tenantService.GetPagedAsync(
+                paginationParams,
+                searchTerm,
+                status);
+
+            PagedListViewModel<TenantDto> vm = new PagedListViewModel<TenantDto>
+            {
+                Data = result,
+                SearchTerm = searchTerm,
+                Status = status
+            };
+            return View(vm);
         }
 
         /// <summary>
