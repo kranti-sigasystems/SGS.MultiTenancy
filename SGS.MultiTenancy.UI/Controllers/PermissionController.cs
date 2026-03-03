@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SGS.MultiTenancy.Core.Application.DTOs.Permission;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -17,9 +18,9 @@ namespace SGS.MultiTenancy.UI.Controllers
 
             public async Task<IActionResult> Index()
             {
-                var dto = await _permissionService.GetGroupedPermissionsAsync();
+            List<PermissionGroupDto> dto = await _permissionService.GetGroupedPermissionsAsync();
 
-                var model = dto.Select(g => new PermissionGroupViewModel
+            List<PermissionGroupViewModel> model = dto.Select(g => new PermissionGroupViewModel
                 {
                     GroupName = g.GroupName,
                     Permissions = g.Permissions.Select(p => new PermissionItemViewModel
