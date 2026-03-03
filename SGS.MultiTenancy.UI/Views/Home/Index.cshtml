@@ -1,8 +1,430 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SGS | Ship Your SaaS</title>
+    <style>
+        :root {
+            --ui-primary: #002f5e;
+            --ui-black: #000000;
+            --ui-gray-900: #111827;
+            --ui-gray-600: #4b5563;
+            --ui-gray-500: #6b7280;
+            --ui-gray-200: #e5e7eb;
+            --ui-gray-100: #f3f4f6;
+        }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--ui-gray-900);
+            background-color: #ffffff;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Hero */
+        .hero-section {
+            padding: 120px 0 80px;
+        }
+
+        h1 {
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--ui-black);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-desc {
+            font-size: 1.25rem;
+            color: var(--ui-gray-500);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Components */
+        .btn-ui {
+            padding: 10px 24px;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-primary-ui {
+            background: var(--ui-primary);
+            color: #fff;
+            border: 1px solid var(--ui-primary);
+        }
+
+        .btn-outline-ui {
+            background: #fff;
+            color: var(--ui-primary);
+            border: 1px solid var(--ui-primary);
+        }
+
+        .btn-ui:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            color: #fff;
+        }
+
+        .btn-outline-ui:hover {
+            background: var(--ui-primary);
+            color: #fff !important;
+        }
+
+        /* Features & Cards */
+        .ui-card {
+            border: 1px solid var(--ui-gray-200);
+            padding: 2rem;
+            border-radius: 8px;
+            height: 100%;
+        }
+
+        /* Integration Steps */
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--ui-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        /* Time Saved Calculator */
+        .stats-box {
+            background: var(--ui-gray-100);
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--ui-gray-200);
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            display: block;
+            color: var(--ui-primary);
+        }
+
+        /* Pricing */
+        .pricing-card {
+            border: 1px solid var(--ui-gray-200);
+            padding: 2.5rem;
+            border-radius: 12px;
+            height: 100%;
+            background: #fff;
+            transition: transform 0.2s ease;
+        }
+
+            .pricing-card.featured {
+                border: 2px solid var(--ui-primary);
+                background: #fff;
+                z-index: 1;
+            }
+
+        @@media (min-width: 992px) {
+            .pricing-card.featured {
+                transform: scale(1.05);
+            }
+        }
+
+        .price-val {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--ui-primary);
+        }
+
+        /* Testimonials */
+        .testimonial-text {
+            font-size: 1.125rem;
+            font-style: italic;
+            color: var(--ui-gray-600);
+            margin-bottom: 1.5rem;
+            border-left: 3px solid var(--ui-primary);
+            padding-left: 1.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--ui-gray-200);
+            padding: 80px 0 40px;
+            background: #fff;
+        }
+
+        .footer-link {
+            color: var(--ui-gray-500);
+            text-decoration: none;
+            font-size: 0.9375rem;
+        }
+
+            .footer-link:hover {
+                color: var(--ui-primary);
+            }
+
+        .input-ui {
+            border: 1px solid var(--ui-gray-200);
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.9375rem;
+        }
+
+            .input-ui:focus {
+                outline: none;
+                border-color: var(--ui-primary);
+            }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .section-tag {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--ui-primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .icon-primary {
+            color: var(--ui-primary);
+        }
+    </style>
+</head>
+<body>
+    <header class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4">Launch your SaaS <br>in a weekend with SGS.</h1>
+            <p class="hero-desc">The essential .NET starter kit for building modern web applications. SGS provides the features you need to ship faster.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="#" class="btn-ui btn-primary-ui">Buy SGS Boilerplate</a>
+                <a href="#" class="btn-ui btn-outline-ui">View Demo</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Time Saved -->
+    <section class="py-5">
+        <div class="container">
+            <div class="stats-box">
+                <span class="section-tag">Value Proposition</span>
+                <h2 class="fw-bold mb-4">Stop wasting time on setup</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <span class="stat-value">120+</span>
+                        <p class="text-muted">Hours saved with SGS Auth & Billing</p>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="stat-value">0</span>
+                        <p class="text-muted">Database configuration required</p>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="stat-value">1st Day</span>
+                        <p class="text-muted">Time to first SGS production deploy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps -->
+    <section id="how-it-works" class="py-5">
+        <div class="container py-5">
+            <span class="section-tag text-center">The Process</span>
+            <h2 class="section-title">3 Steps to SGS Integration</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="ui-card">
+                        <div class="step-number">1</div>
+                        <h5 class="fw-bold">Clone SGS Repo</h5>
+                        <p class="text-muted small">Download source code and add your keys to <code>appsettings.json</code>.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ui-card">
+                        <div class="step-number">2</div>
+                        <h5 class="fw-bold">Customize UI</h5>
+                        <p class="text-muted small">Update branding using SGS variables and build your core business features.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ui-card">
+                        <div class="step-number">3</div>
+                        <h5 class="fw-bold">Deploy SGS</h5>
+                        <p class="text-muted small">Use GitHub Actions to deploy SGS to your cloud provider in one click.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community -->
+    <section class="py-5 bg-light">
+        <div class="container py-5 text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <span class="section-tag">Support</span>
+                    <h2 class="fw-bold mb-3">Build with SGS Community</h2>
+                    <p class="text-muted mb-4">Join 500+ .NET developers in our private SGS Slack community for architectural advice and code reviews.</p>
+                    <div class="d-flex justify-content-center gap-4">
+                        <div class="text-start">
+                            <p class="mb-1 fw-bold"><i class="bi bi-slack me-2 icon-primary"></i> Private Channel</p>
+                            <p class="mb-1 fw-bold"><i class="bi bi-people me-2 icon-primary"></i> Weekly Office Hours</p>
+                        </div>
+                        <div class="text-start">
+                            <p class="mb-1 fw-bold"><i class="bi bi-github me-2 icon-primary"></i> Direct Repo Access</p>
+                            <p class="mb-1 fw-bold"><i class="bi bi-chat-dots me-2 icon-primary"></i> 24h Response Time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5">
+        <div class="container py-5">
+            <span class="section-tag text-center">Success Stories</span>
+            <h2 class="section-title">What our SGS users say</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="ui-card">
+                        <p class="testimonial-text">"SGS saved me literally weeks of work. The Stripe integration alone is worth the price."</p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:40px; height:40px; border-radius:50%; background:var(--ui-primary); opacity:0.1"></div>
+                            <div>
+                                <p class="fw-bold mb-0 small">Alex Rivera</p>
+                                <p class="text-muted extra-small mb-0">Founder, ShipFast</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="ui-card">
+                        <p class="testimonial-text">"The clean SGS architecture makes it so easy to maintain. Best investment I've made this year."</p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:40px; height:40px; border-radius:50%; background:var(--ui-primary); opacity:0.1"></div>
+                            <div>
+                                <p class="fw-bold mb-0 small">Sarah Chen</p>
+                                <p class="text-muted extra-small mb-0">CTO, DevScale</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-5 bg-light">
+        <div class="container py-5">
+            <span class="section-tag text-center">Pricing</span>
+            <h2 class="section-title">Simple SGS Pricing</h2>
+            <div class="row g-4 justify-content-center align-items-stretch">
+                <!-- Hobby Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card">
+                        <p class="fw-bold mb-1">SGS Standard</p>
+                        <p class="text-muted small mb-4">Perfect for side projects.</p>
+                        <div class="mb-4">
+                            <span class="price-val">$149</span>
+                            <span class="text-muted">/once</span>
+                        </div>
+                        <ul class="list-unstyled mb-5 text-muted small">
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Full SGS Source Code</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Documentation Access</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> 1 Project License</li>
+                            <li class="mb-2 text-danger"><i class="bi bi-x-lg me-1"></i> Priority Support</li>
+                        </ul>
+                        <button class="btn-ui btn-outline-ui w-100">Get Started</button>
+                    </div>
+                </div>
+                <!-- Pro Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card featured">
+                        <p class="fw-bold mb-1">SGS Unlimited</p>
+                        <p class="text-muted small mb-4">For serial entrepreneurs.</p>
+                        <div class="mb-4">
+                            <span class="price-val">$299</span>
+                            <span class="text-muted">/once</span>
+                        </div>
+                        <ul class="list-unstyled mb-5 text-muted small">
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Everything in Standard</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Unlimited Projects</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> SGS Community Access</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Priority Support</li>
+                        </ul>
+                        <button class="btn-ui btn-primary-ui w-100">Buy SGS Unlimited</button>
+                    </div>
+                </div>
+                <!-- Enterprise Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card">
+                        <p class="fw-bold mb-1">SGS Enterprise</p>
+                        <p class="text-muted small mb-4">For agencies & teams.</p>
+                        <div class="mb-4">
+                            <span class="price-val">$799</span>
+                            <span class="text-muted">/once</span>
+                        </div>
+                        <ul class="list-unstyled mb-5 text-muted small">
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> SGS Agency License</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> 1-on-1 Architecture Call</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Custom SGS Components</li>
+                            <li class="mb-2"><i class="bi bi-check2 icon-primary me-1"></i> Lifetime Updates</li>
+                        </ul>
+                        <button class="btn-ui btn-outline-ui w-100">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <p class="fw-bold mb-3" style="color:var(--ui-primary)">SGS</p>
+                    <p class="text-muted small">The ultimate .NET boilerplate for building professional SaaS applications in record time with SGS.</p>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <p class="fw-bold small mb-3">Product</p>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">Features</a></li>
+                        <li><a href="#how-it-works" class="footer-link">SGS Integration</a></li>
+                        <li><a href="#pricing" class="footer-link">Pricing</a></li>
+                        <li><a href="#" class="footer-link">Demo</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 offset-lg-2">
+                    <p class="fw-bold small mb-3">Stay Updated with SGS</p>
+                    <div class="d-flex gap-2">
+                        <input type="email" class="input-ui w-100" placeholder="Enter email">
+                        <button class="btn-ui btn-primary-ui">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 pt-4 border-top text-center">
+                <p class="text-muted small mb-0">&copy; 2026 SGS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

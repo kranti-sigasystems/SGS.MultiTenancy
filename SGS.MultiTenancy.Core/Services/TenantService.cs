@@ -17,18 +17,16 @@ namespace SGS.MultiTenancy.Core.Services
     public class TenantService : ITenantService
     {
         private readonly IGenericRepository<Tenant> _tenantRepo;
-        private readonly IGenericRepository<UserRoles> _userRolesRepo;
         private readonly IUserService _userService;
         private readonly IFileStorageRepository _fileStorageRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TenantService"/> class.
         /// </summary>
-        public TenantService(IGenericRepository<Tenant> tenantRepo, IUserService userService, IGenericRepository<UserRoles> userRolesRepo, IFileStorageRepository fileStorageRepository)
+        public TenantService(IGenericRepository<Tenant> tenantRepo, IUserService userService, IFileStorageRepository fileStorageRepository)
         {
             _tenantRepo = tenantRepo;
             _userService = userService;
-            _userRolesRepo = userRolesRepo;
             _fileStorageRepository = fileStorageRepository;
         }
 
@@ -111,6 +109,7 @@ namespace SGS.MultiTenancy.Core.Services
                     Slug = t.Slug,
                     Domain = t.Domain,
                     Status = t.Status,
+                    RegistrationNumber = t.RegistrationNumber,
                     LogoUrl = t.LogoUrl
                 })
                 .FirstOrDefaultAsync();
@@ -159,6 +158,7 @@ namespace SGS.MultiTenancy.Core.Services
             tenant.Domain = model.Domain;
             tenant.Status = model.Status;
             tenant.LogoUrl = model.LogoUrl;
+            tenant.RegistrationNumber = model.RegistrationNumber;
             tenant.LastUpdateOn = DateTime.UtcNow;
 
             await _tenantRepo.UpdateAsync(tenant);

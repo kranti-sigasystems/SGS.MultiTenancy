@@ -7,7 +7,6 @@
 
     <title>@ViewData["Title"] - SGS.MultiTenancy.UI</title>
 
-    <!-- Bootstrap CSS (Local) -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="~/css/Style.css" asp-append-version="true" />
@@ -44,7 +43,6 @@
                                 type="button"
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
-
                             <span class="username">@User.Identity.Name</span>
                         </button>
 
@@ -68,23 +66,13 @@
             </div>
         </nav>
     </header>
-    <div class="d-flex" style="min-height: calc(100vh - 56px);">
-        @* <!-- Sidebar -->
-        <aside class="bg-dark text-white p-3" style="width:240px;">
-            @await Html.PartialAsync("_DashboardSidebar")
-        </aside> *@
-
-        <!-- Main content -->
+    <div class="d-flex" >
+       
         <main class="flex-fill p-4 bg-light">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted ">
-        <div class="container">
-            &copy; 2026 - SGS.MultiTenancy.UI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @* <script src="~/js/site.js" asp-append-version="true"></script> *@

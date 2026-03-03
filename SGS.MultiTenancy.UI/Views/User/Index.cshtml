@@ -26,6 +26,7 @@
                         <tr>
                             <th class="border-0 rounded-start ps-sm-2">User Name</th>
                             <th class="border-0 ps-sm-2">Email</th>
+                            <th class="border-0 ps-sm-2">Status</th>
                             <th class="border-0 ps-sm-2">Addresses</th>
                             <th class="border-0 rounded-end ps-sm-3">Action</th>
                         </tr>
@@ -38,7 +39,11 @@
                                 <tr>
                                     <td class="fw-bold">@user.UserName</td>
                                     <td class="text-muted">@user.Email</td>
-
+                                    <td>
+                                        <span class="status-badge fw-bold   @(user.Status == SGS.MultiTenancy.Core.Domain.Enums.EntityStatus.Active ? "status-active text-success p-1 rounded" : "status-inactive text-secondary p-1 rounded")">
+                                            @user.Status
+                                        </span>
+                                    </td>
                                     <td>
                                         <button type="button"
                                                 class="btn btn-sm btn-outline-primary "
