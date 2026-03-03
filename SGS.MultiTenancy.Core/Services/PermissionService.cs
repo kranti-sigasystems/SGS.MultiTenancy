@@ -15,19 +15,19 @@ namespace SGS.MultiTenancy.Core.Services
         {
             _permissionRepository = permissionRepository;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
 
+        /// <summary>
+        /// Retrieves all permissions from the repository, groups them by their top-level code segment,
+        /// and returns a list of grouped permissions.
+        /// </summary>
         public async Task<List<PermissionGroupDto>> GetGroupedPermissionsAsync()
         {
-            var permissions = await _permissionRepository
+            List<Permission> permissions = await _permissionRepository
                                         .Query()
                                         .AsNoTracking()
                                         .ToListAsync();
 
-            var grouped = permissions
+            List<PermissionGroupDto> grouped = permissions
                 .Where(p => !string.IsNullOrWhiteSpace(p.Code))
                 .GroupBy(p => p.Code.Split('.', 2)[0])
                 .Select(g => new PermissionGroupDto
