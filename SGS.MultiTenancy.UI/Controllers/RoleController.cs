@@ -26,19 +26,32 @@ namespace SGS.MultiTenancy.Web.Controllers
         /// <summary>
         /// Displays the role management page for the current tenant.
         /// </summary>        
-        [HttpGet]
+        [HttpGet]    
         public async Task<IActionResult> Index()
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
+            var roles = await _roleService.GetRolesByTenantAsync(tenantId);
 
-            List<PermissionDto> permissions = await _roleService.GetAllPermissionsAsync();
-            List<RoleDto> roles = await _roleService.GetRolesByTenantAsync(tenantId);
-          
+            var model = new CreateRoleViewModel
+            {
+                RolesList = roles
+            };
+            return View(model);
+        }
+
+        /// <summary>
+        /// Handles GET requests for creating a new role.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            // We need the list of permissions to show in the matrix
+            List<PermissionDto>? permissions = await _roleService.GetAllPermissionsAsync();
+
             CreateRoleViewModel model = new CreateRoleViewModel
             {
-                RolesList = roles,
-                PermissionList = permissions
-            }; 
+                PermissionList = permissions // Assuming this is a List<PermissionDto>
+            };
             return View(model);
         }
 
@@ -46,17 +59,28 @@ namespace SGS.MultiTenancy.Web.Controllers
         /// Handles the creation of a new role for the current tenant.
         /// </summary>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateRoleViewModel model)
         {
+            ModelState.Remove(nameof(model.PermissionList));
+            ModelState.Remove(nameof(model.RolesList));
             if (!ModelState.IsValid)
-            {
-                List<PermissionDto> permissions = await _roleService.GetAllPermissionsAsync();
-                model.PermissionList= permissions;
-                return View("Index", model);
+            { 
+                model.PermissionList = await _roleService.GetAllPermissionsAsync();
+                return View(model);
             }
+
+            var roleDto = new RoleCreateDto
+            {
+                Name = model.Name,
+                Description = model.Description,
+                SelectedPermissions = model.SelectedPermissions ?? new List<Guid>()
+            };
+
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
-            await _roleService.CreateRoleAsync(model, tenantId);
-            return RedirectToAction("Index");
+            await _roleService.CreateRoleAsync(roleDto, tenantId);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

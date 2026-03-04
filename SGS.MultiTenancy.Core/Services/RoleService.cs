@@ -3,7 +3,6 @@ using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
-using SGS.MultiTenancy.UI.Models;
 
 namespace SGS.MultiTenancy.Core.Services
 {
@@ -50,35 +49,33 @@ namespace SGS.MultiTenancy.Core.Services
         /// Creates a new role for the specified tenant and assigns
         /// the selected permissions to the role.
         /// </summary>
-        public async Task CreateRoleAsync(CreateRoleViewModel model, Guid tenantId)
+        public async Task CreateRoleAsync(RoleCreateDto dto, Guid tenantId)
         {
             Role role = new Role
             {
                 ID = Guid.NewGuid(),
-                Name = model.Name,
-                Description = model.Description,
+                Name = dto.Name,
+                Description = dto.Description,
                 TenantID = tenantId,
                 IsDefault = false
             };
 
             await _roleRepository.AddAsync(role);
-            await _roleRepository.CompleteAsync();
+            // Suggestion: Only call CompleteAsync once at the end for better performance/transaction integrity
 
-            if (model.SelectedPermissions != null)
+            if (dto.SelectedPermissions != null)
             {
-                foreach (var permissionId in model.SelectedPermissions)
+                foreach (var permissionId in dto.SelectedPermissions)
                 {
-                    RolePermission rolePermission = new RolePermission
+                    await _rolePermissionRepository.AddAsync(new RolePermission
                     {
                         RoleID = role.ID,
                         PermissionID = permissionId,
                         TenantID = tenantId
-                    };
-
-                    await _rolePermissionRepository.AddAsync(rolePermission);
-                    await _rolePermissionRepository.CompleteAsync();
+                    });
                 }
             }
+            await _roleRepository.CompleteAsync();
         }
         /// <summary>
         /// Retrieves all roles associated with a specific tenant.

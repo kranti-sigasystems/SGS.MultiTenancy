@@ -1,5 +1,4 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs;
-using SGS.MultiTenancy.UI.Models;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
@@ -19,7 +18,7 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// Creates a new role for the specified tenant and assigns
         /// the selected permissions to that role.
         /// </summary>
-        Task CreateRoleAsync(CreateRoleViewModel model, Guid tenantId);
+        Task CreateRoleAsync(RoleCreateDto dto, Guid tenantId);
 
         /// <summary>
         /// Retrieves all roles associated with a specific tenant.

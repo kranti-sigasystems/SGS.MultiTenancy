@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs;
+
 namespace SGS.MultiTenancy.UI.Models
 {
     /// <summary>
