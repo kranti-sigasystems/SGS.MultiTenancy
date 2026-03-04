@@ -59,13 +59,11 @@ namespace SGS.MultiTenancy.Core.Services
                 TenantID = tenantId,
                 IsDefault = false
             };
-
             await _roleRepository.AddAsync(role);
-            // Suggestion: Only call CompleteAsync once at the end for better performance/transaction integrity
 
             if (dto.SelectedPermissions != null)
             {
-                foreach (var permissionId in dto.SelectedPermissions)
+                foreach (Guid permissionId in dto.SelectedPermissions)
                 {
                     await _rolePermissionRepository.AddAsync(new RolePermission
                     {

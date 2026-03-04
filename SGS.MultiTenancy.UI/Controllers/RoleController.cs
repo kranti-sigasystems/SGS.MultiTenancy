@@ -30,9 +30,9 @@ namespace SGS.MultiTenancy.Web.Controllers
         public async Task<IActionResult> Index()
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
-            var roles = await _roleService.GetRolesByTenantAsync(tenantId);
+            List<RoleDto> roles = await _roleService.GetRolesByTenantAsync(tenantId);
 
-            var model = new CreateRoleViewModel
+            CreateRoleViewModel model = new CreateRoleViewModel
             {
                 RolesList = roles
             };
