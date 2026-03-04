@@ -69,6 +69,9 @@ namespace SGS.MultiTenancy.Core.Services
             bool slugExists = await _tenantRepo.AnyAsync(t => t.Slug == model.Slug);
             if (slugExists)
                 throw new Exception("Slug already exists");
+            bool tenantexist = await _tenantRepo.AnyAsync(t => t.Name == model.Name);
+            if (slugExists)
+                throw new Exception("Tenant name already in use");
 
             Guid tenantId = Guid.NewGuid();
             string bussinessLogoPath = await _fileStorageRepository.SaveAsync(model.BusinessLogo, tenantId.ToString());

@@ -1,1 +1,32 @@
-﻿<h2> Welcome Permission Page</h2>
+﻿@model List<SGS.MultiTenancy.UI.Models.PermissionGroupViewModel>
+
+@{
+    ViewData["Title"] = "Permissions";
+}
+
+<h2 class="mb-4">Permissions</h2>
+
+<div class="row">
+    @foreach (var group in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>@group.GroupName</strong>
+                </div>
+
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var permission in group.Permissions)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                @permission.Name
+                                <small class="text-muted">@permission.Code</small>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+</div>

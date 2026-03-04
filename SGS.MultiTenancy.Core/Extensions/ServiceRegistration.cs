@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+
 using SGS.MultiTenancy.Core.Services;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
@@ -16,6 +17,7 @@ namespace SGS.MultiTenancy.Core.Extension
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPasswordHasherService, PasswordHasherService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IPermissionService, PermissionService> ();
             return services;
         }
     }
