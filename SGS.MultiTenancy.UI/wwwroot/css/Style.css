@@ -937,3 +937,52 @@ h1 {
     margin-bottom: 0.5rem;
     display: block;
 }
+/* Background override */
+.bg-light {
+    background-color: #f8fafc !important;
+}
+
+/* Card animation */
+.card {
+    transition: transform 0.2s ease;
+}
+
+/* Permission Cards */
+.perm-card {
+    background: #fff;
+    transition: all 0.2s ease-in-out;
+    border-color: #e2e8f0 !important;
+    cursor: pointer;
+}
+
+    .perm-card:hover {
+        border-color: #3b82f6 !important;
+        background-color: #eff6ff;
+    }
+
+    /* When checkbox is checked */
+    .perm-card:has(.permission-checkbox:checked) {
+        border-color: #3b82f6 !important;
+        background-color: #eff6ff;
+        box-shadow: 0 0 0 1px #3b82f6;
+    }
+
+/* Permission checkbox size */
+.permission-checkbox {
+    width: 1.2em;
+    height: 1.2em;
+    cursor: pointer;
+}
+
+/* Smooth animation utility */
+.transition-all {
+    transition: all 0.2s;
+}
+
+/* Breadcrumb arrow style */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-size: 1.2rem;
+    line-height: 1;
+    vertical-align: middle;
+}
