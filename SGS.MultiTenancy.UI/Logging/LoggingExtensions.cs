@@ -4,6 +4,10 @@ namespace SGS.MultiTenancy.UI.Infrastructure.Logging;
 
 public static class LoggingExtensions
 {
+    /// <summary>
+    /// Adds Serilog logging to the application, configuring it to read settings from the application's configuration
+    /// </summary>
+    /// <param name="builder"></param>
     public static WebApplicationBuilder AddSerilogLogging(this WebApplicationBuilder builder)
     {
         builder.Host.UseSerilog((context, services, config) =>

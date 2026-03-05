@@ -35,12 +35,14 @@ namespace SGS.MultiTenancy.Core.Services
                     GroupName = g.Key.ToUpper(),
                     Permissions = g.Select(p =>
                     {
-                        var parts = p.Code.Split('.', 2);
+                        string[]? parts = p.Code.Split('.', 2);
 
                         return new PermissionItemDto
                         {
                             Id = p.ID,
                             Code = p.Code,
+                            Description = p.Description,
+                            TenantId = p.TenantID,
                             Name = parts.Length > 1 ? parts[1] : p.Code
                         };
                     }).ToList()

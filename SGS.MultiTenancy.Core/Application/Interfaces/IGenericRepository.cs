@@ -132,6 +132,13 @@ namespace SGS.MultiTenancy.Core.Application.Interfaces
         Task DeleteAsync(TEntity entity);
 
         /// <summary>
+        /// Deletes multiple entities.
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        Task DeleteRangeAsync(IEnumerable<TEntity> entities);
+
+        /// <summary>
         /// Persists all pending changes to the data store.
         /// </summary>
         /// <returns>The number of affected records.</returns>

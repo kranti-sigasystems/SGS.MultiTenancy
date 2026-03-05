@@ -13,6 +13,12 @@ namespace SGS.MultiTenancy.Infra.Repository
             _env = env;
         }
 
+        /// <summary>
+        /// Save the file.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public async Task<string?> SaveAsync(IFormFile? file, string? fileName)
         {
             if (file == null)
@@ -37,6 +43,12 @@ namespace SGS.MultiTenancy.Infra.Repository
             return Path.Combine("uploads", storedName)
                        .Replace("\\", "/");
         }
+
+        /// <summary>
+        /// Delete the file by relative path.
+        /// </summary>
+        /// <param name="relativePath"></param>
+        /// <returns></returns>
         public bool DeleteAsync(string? relativePath)
         {
             if (string.IsNullOrWhiteSpace(relativePath))

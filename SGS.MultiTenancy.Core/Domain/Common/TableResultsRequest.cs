@@ -8,15 +8,7 @@ namespace SGS.MultiTenancy.Core.Domain.Common
     /// </summary>
     public class TableResultsRequest : IResultsSortRequest, IResultsPageRequest
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TableResultsRequest"/> class.
-        /// </summary>
-
-        public TableResultsRequest()
-        {
-
-        }
-
+       
         /// <summary>
         /// Initializes a new instance of the <see cref="TableResults Request"/> class.
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Application.DTOs.Role;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
@@ -34,8 +35,7 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<List<PermissionDto>> GetAllPermissionsAsync()
         {
             return await _permissionRepository
-                .Query()
-                .Where(p => p.TenantID == Guid.Empty)
+                .Query(p => p.TenantID == Guid.Empty || p.TenantID == Guid.Parse("00000000-0000-0000-0000-000000000000"))
                 .Select(p => new PermissionDto
                 {
                     ID = p.ID,
@@ -63,15 +63,16 @@ namespace SGS.MultiTenancy.Core.Services
 
             if (dto.SelectedPermissions != null)
             {
-                foreach (Guid permissionId in dto.SelectedPermissions)
-                {
-                    await _rolePermissionRepository.AddAsync(new RolePermission
-                    {
-                        RoleID = role.ID,
-                        PermissionID = permissionId,
-                        TenantID = tenantId
-                    });
-                }
+                List<RolePermission>? rolePermissions = dto.SelectedPermissions
+                                         .Distinct()
+                                         .Select(permissionId => new RolePermission
+                                         {
+                                             RoleID = role.ID,
+                                             PermissionID = permissionId,
+                                             TenantID = tenantId
+                                         })
+                                         .ToList();
+                await _rolePermissionRepository.AddRangeAsync(rolePermissions);
             }
             await _roleRepository.CompleteAsync();
         }
@@ -81,8 +82,7 @@ namespace SGS.MultiTenancy.Core.Services
         public async Task<List<RoleDto>> GetRolesByTenantAsync(Guid tenantId)
         {
             return await _roleRepository
-                .Query()
-                .Where(r => r.TenantID == tenantId)
+                .Query(r => r.TenantID == tenantId)
                 .Select(r => new RoleDto
                 {
                     ID = r.ID,
@@ -90,7 +90,85 @@ namespace SGS.MultiTenancy.Core.Services
                     Description = r.Description,
                     TenantID = r.TenantID,
                     IsDefault = r.IsDefault
-                }) .ToListAsync();
+                }).ToListAsync();
+        }
+
+       /// <inheritdoc/>
+        public async Task<RoleDto> GetRolesByIdandTenantIdAsync(Guid roleid, Guid tenantId)
+        {
+
+            Role? role = await _roleRepository.Query(role => role.ID == roleid && role.TenantID == tenantId).FirstOrDefaultAsync();
+
+            List<RolePermission> rolepermissions = await _rolePermissionRepository.Query(rp => rp.RoleID == roleid)
+                     .Include(rp => rp.Permission)
+                     .ToListAsync();
+            return new RoleDto
+            {
+                ID = role.ID,
+                Name = role.Name,
+                Description = role.Description,
+                TenantID = role.TenantID,
+                IsDefault = role.IsDefault,
+                RolePermissions = rolepermissions
+            };
+        }
+
+
+        /// <inheritdoc/>
+        public async Task UpdateRoleAsync(UpdateRoleDto dto, Guid tenantId)
+        {
+            Role? role = await _roleRepository.Query(r => r.ID == dto.Id && r.TenantID == tenantId).FirstOrDefaultAsync();
+            if (role != null)
+            {
+                role.Name = dto.Name;
+                role.Description = dto.Description;
+                await _roleRepository.UpdateAsync(role);
+                List<Guid>? existingPermissions = await _rolePermissionRepository
+                    .Query(rp => rp.RoleID == role.ID && rp.TenantID == tenantId)
+                    .Select(rp => rp.PermissionID).ToListAsync();
+
+                List<Guid>? incomingPermissionIds = dto.SelectedPermissions?
+                                               .Distinct()
+                                               .ToList() ?? new List<Guid>();
+
+                
+                List<Guid>? permissionsToAdd = incomingPermissionIds
+                    .Except(existingPermissions)
+                    .ToList();
+
+                List<Guid>? permissionsToRemove = existingPermissions
+                    .Except(incomingPermissionIds)
+                    .ToList();
+
+                
+                if (permissionsToAdd.Count > 0)
+                {
+                    IEnumerable<RolePermission>? newEntities = permissionsToAdd
+                        .Select(pid => new RolePermission
+                        {
+                            RoleID = role.ID,
+                            PermissionID = pid,
+                            TenantID = tenantId
+                        });
+
+                    await _rolePermissionRepository.AddRangeAsync(newEntities);
+                }
+
+                
+                if (permissionsToRemove.Count > 0)
+                {
+                    List<RolePermission>? removeEntities = await _rolePermissionRepository
+                        .Query(rp =>
+                            rp.RoleID == role.ID &&
+                            rp.TenantID == tenantId &&
+                            permissionsToRemove.Contains(rp.PermissionID))
+                        .ToListAsync();
+
+                    await _rolePermissionRepository.DeleteRangeAsync(removeEntities);
+                }
+
+                await _roleRepository.CompleteAsync();
+            }
         }
     }
 }

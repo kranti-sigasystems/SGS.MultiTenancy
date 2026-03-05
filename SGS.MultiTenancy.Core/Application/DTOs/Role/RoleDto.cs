@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using System.ComponentModel.DataAnnotations;
 
-namespace SGS.MultiTenancy.Core.Application.DTOs
+namespace SGS.MultiTenancy.Core.Application.DTOs.Role
 {
     public class RoleDto
     {
@@ -37,6 +38,6 @@ namespace SGS.MultiTenancy.Core.Application.DTOs
         /// <summary>
         /// Gets or sets the collection of role permissions assigned to the user.
         /// </summary>
-        public List<RoleDto> RolePermissions { get; set; }
+        public List<RolePermission> RolePermissions { get; set; }
     }
 }

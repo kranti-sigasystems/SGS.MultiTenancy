@@ -2,7 +2,6 @@
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Infra.DataContext;
-
 public class SubdomainRoutingMiddleware
 {
     private readonly RequestDelegate _next;
@@ -12,6 +11,11 @@ public class SubdomainRoutingMiddleware
         _next = next;
     }
 
+    /// <summary>
+    /// Invokes the middleware to handle subdomain routing and tenant resolution.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
     public async Task InvokeAsync(HttpContext context)
     {
         string path = context.Request.Path.Value?.TrimEnd('/').ToLower() ?? "/";

@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Application.DTOs.Role;
 
 namespace SGS.MultiTenancy.UI.Models
 {

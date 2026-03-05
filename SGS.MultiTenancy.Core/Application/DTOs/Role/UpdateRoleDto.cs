@@ -1,10 +1,12 @@
-﻿namespace SGS.MultiTenancy.Core.Application.DTOs
+﻿namespace SGS.MultiTenancy.Core.Application.DTOs.Role
 {
-    /// <summary>
-    /// Represents the data transfer object for creating a role.
-    /// </summary>
-    public class RoleCreateDto
+    public class UpdateRoleDto
     {
+
+        /// <summary>
+        /// Gets or set id.
+        /// </summary>
+        public Guid Id { get; set; }
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -19,5 +21,6 @@
         /// Gets or sets the selected permissions.
         /// </summary>
         public List<Guid> SelectedPermissions { get; set; }
+
     }
 }

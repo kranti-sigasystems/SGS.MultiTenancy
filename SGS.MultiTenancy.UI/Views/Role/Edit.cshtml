@@ -1,0 +1,140 @@
+﻿@using SGS.MultiTenancy.Core.Application.DTOs
+@model SGS.MultiTenancy.UI.Models.CreateRoleViewModel
+
+@{
+    ViewData["Title"] = "Update Role";
+}
+
+<div class="container-fluid py-5 bg-light min-vh-100">
+    <div class="mx-auto" style="max-width: 1000px;">
+
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none">Roles</a></li>
+                <li class="breadcrumb-item active">Update Role</li>
+            </ol>
+        </nav>
+
+        <form asp-action="Edit" method="post" class="needs-validation" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark h3 mb-1">Update role</h2>
+                    <p class="text-secondary mb-0">Define permissions and access levels for your team members.</p>
+                </div>
+                <div class="d-none d-md-flex gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary border-0 fw-semibold">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm fw-semibold">Save Role</button>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-2">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3">Role Details</h6>
+
+                            <div class="mb-3">
+                                <label asp-for="Name" class="form-label small fw-semibold">Display Name</label>
+                                <input asp-for="Name" class="form-control bg-light border-0 py-2" placeholder="e.g. Editor" required />
+                                <div class="form-text mt-2">Visible to other administrators.</div>
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-0">
+                                <label asp-for="Description" class="form-label small fw-semibold">Description</label>
+                                <textarea asp-for="Description" class="form-control bg-light border-0" rows="4" placeholder="Briefly describe what this role can do..." required></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="card-header bg-white border-0 py-3 px-4">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="fw-bold mb-0">Permissions Matrix</h6>
+                                </div>
+                                <div class="col-auto d-flex gap-2">
+                                    <div class="input-group input-group-sm" style="max-width: 200px;">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                                        <input type="text" id="permSearch" class="form-control bg-light border-0" placeholder="Search permissions...">
+                                    </div>
+                                    <button type="button" id="selectAll" class="btn btn-sm btn-light border fw-semibold">Select All</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body bg-white px-4 pb-4">
+                            <div class="row g-2" id="permissionGrid">
+                                @if (Model.PermissionList != null)
+                                {
+                                    @foreach (PermissionDto? permission in Model.PermissionList)
+                                    {
+                                        <div class="col-md-4 col-sm-6 perm-item">
+                                            <label class="perm-card d-flex align-items-center p-3 rounded-3 border h-100 transition-all cursor-pointer" for="perm-@permission.ID">
+                                                <div class="form-check mb-0">
+                                                    <input class="form-check-input permission-checkbox"
+                                                           type="checkbox"
+                                                           name="SelectedPermissions"
+                                                           value="@permission.ID"
+                                                           id="perm-@permission.ID"
+                                                           @(permission.IsSelected == true ? "checked=\"checked\"" : "")>
+                                                </div>
+                                                <div class="ms-2">
+                                                    <div class="fw-semibold small text-dark perm-code">@permission.Code</div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-md-none sticky-bottom bg-white border-top p-3 mt-4 mx-n3">
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary py-2">Save Role</button>
+                    <a asp-action="Index" class="btn btn-light border py-2">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Live Search Filtering
+        document.getElementById('permSearch').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.perm-item');
+
+            items.forEach(item => {
+                const code = item.querySelector('.perm-code').innerText.toLowerCase();
+                if(code.includes(term)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Toggle all checkboxes
+        document.getElementById('selectAll').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('.permission-checkbox');
+            const visibleCheckboxes = Array.from(checkboxes).filter(c => c.closest('.perm-item').style.display !== 'none');
+
+            const allChecked = visibleCheckboxes.every(c => c.checked);
+            visibleCheckboxes.forEach(c => c.checked = !allChecked);
+
+            this.innerText = allChecked ? 'Select All' : 'Deselect All';
+            this.classList.toggle('btn-primary', !allChecked);
+            this.classList.toggle('btn-light', allChecked);
+        });
+    </script>
+}

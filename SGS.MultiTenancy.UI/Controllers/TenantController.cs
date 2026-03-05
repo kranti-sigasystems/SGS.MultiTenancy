@@ -43,10 +43,7 @@ namespace SGS.MultiTenancy.UI.Controllers
                 PageSize = pageSize
             };
 
-            PagedResult<TenantDto>? result = await _tenantService.GetPagedAsync(
-                paginationParams,
-                searchTerm,
-                status);
+            PagedResult<TenantDto>? result = await _tenantService.GetPagedAsync(paginationParams, searchTerm, status);
 
             PagedListViewModel<TenantDto> vm = new PagedListViewModel<TenantDto>
             {
