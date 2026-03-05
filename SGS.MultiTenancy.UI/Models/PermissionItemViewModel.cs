@@ -16,5 +16,15 @@
         /// Gets or sets the display name of the permission.
         /// </summary>
         public string Name { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or set Description.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or set tenant id.
+        /// </summary>
+        public Guid? TenantId { get; set; }
     }
 }

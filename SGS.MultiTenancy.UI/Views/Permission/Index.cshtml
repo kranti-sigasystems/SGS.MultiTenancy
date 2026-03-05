@@ -1,32 +1,111 @@
-﻿@model List<SGS.MultiTenancy.UI.Models.PermissionGroupViewModel>
-
+﻿@model List<PermissionGroupViewModel>
+@using SGS.MultiTenancy.Core.Application.DTOs.Permission
 @{
     ViewData["Title"] = "Permissions";
+    var query = Context.Request.Query;
 }
 
-<h2 class="mb-4">Permissions</h2>
+<div class="container-fluid px-4">
 
-<div class="row">
-    @foreach (var group in Model)
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <strong>@group.GroupName</strong>
-                </div>
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h4 class="fw-semibold mb-0">Permissions List</h4>
 
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        @foreach (var permission in group.Permissions)
+        <a asp-action="CreatePermission"
+           class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i> Create Permission
+        </a>
+    </div>
+
+    <form method="get" asp-action="Index" class="row g-2 mb-4">
+
+        <div class="col-md-3">
+            <input type="text"
+                   name="SearchTerm"
+                   value="@query["SearchTerm"]"
+                   class="form-control"
+                   placeholder="Keyword Search" />
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-primary">
+                Apply
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                Reset
+            </a>
+        </div>
+    </form>
+
+    <div class="card border-0 shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="border-0 rounded-start ps-sm-2">Code</th>
+                            <th class="border-0 ps-sm-2">Group</th>
+                            <th class="border-0 ps-sm-2">Description</th>
+                            <th class="border-0 ps-sm-2">Tenant Id</th>
+                            <th class="border-0 rounded-end ps-sm-3">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model != null && Model.Any())
                         {
-                            <li class="list-group-item d-flex justify-content-between">
-                                @permission.Name
-                                <small class="text-muted">@permission.Code</small>
-                            </li>
+                            foreach (var group in Model)
+                            {
+                                if (group.Permissions != null && group.Permissions.Any())
+                                {
+                                    foreach (PermissionItemViewModel permission in group.Permissions)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">
+                                                @(string.IsNullOrWhiteSpace(permission.Code) ? "-" : permission.Code)
+                                            </td>
+
+                                            <td>
+                                                @(string.IsNullOrWhiteSpace(group.GroupName) ? "-" : group.GroupName)
+                                            </td>
+
+                                            <td>
+                                                @(string.IsNullOrWhiteSpace(permission.Description) ? "-" : permission.Description)
+                                            </td>
+
+                                            <td>
+                                                @(permission.TenantId.HasValue? permission.TenantId.ToString() : "-")
+                                            </td>
+
+                                            <td>
+                                                <a asp-action="EditPermission"
+                                                   asp-route-code="@permission.Code"
+                                                   class="text-muted me-2">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+
+                                                <button class="bg-transparent border-0 text-muted"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deletePermissionModal-@permission.Code">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @* @await Html.PartialAsync("_DeletePermissionModal", permission) *@
+                                    }
+                                }
+                            }
                         }
-                    </ul>
-                </div>
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    No Permissions found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    }
+    </div>
 </div>

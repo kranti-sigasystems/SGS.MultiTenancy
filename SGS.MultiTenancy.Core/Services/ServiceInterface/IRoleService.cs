@@ -1,4 +1,5 @@
 ﻿using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Application.DTOs.Role;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
@@ -26,5 +27,21 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="tenantId"></param>
         /// <returns>List of roles.</returns>
         Task<List<RoleDto>> GetRolesByTenantAsync(Guid tenantId);
+
+        /// <summary>
+        /// Retrieves a role by its unique identifier and tenant ID, including its assigned permissions.
+        /// </summary>
+        /// <param name="roleid"></param>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        Task<RoleDto> GetRolesByIdandTenantIdAsync(Guid roleid, Guid tenantId);
+
+        /// <summary>
+        /// Update the existing role with the provided details and permissions for the specufied tenant.
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <param name="tenantId"></param>
+        /// <returns></returns>
+        Task UpdateRoleAsync(UpdateRoleDto dto, Guid tenantId);
     }
 }

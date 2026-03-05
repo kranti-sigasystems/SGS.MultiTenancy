@@ -15,16 +15,21 @@ namespace SGS.MultiTenancy.Core.Application.DTOs
         /// </summary>
         [Required]
         [StringLength(50)]
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         /// <summary>
         /// Gets or sets the description of the permission.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier of the tenant.
         /// </summary>
         public Guid? TenantID { get; set; }
+
+        /// <summary>
+        /// Gets or set is selected permission.
+        /// </summary>
+        public bool? IsSelected { get; set; }
     }
 }

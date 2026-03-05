@@ -13,10 +13,19 @@ namespace SGS.MultiTenancy.UI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Gets the home page view.
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             return View();
         }
+
+        /// <summary>
+        /// Gets the Error page view.
+        /// </summary>
+        /// <returns></returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

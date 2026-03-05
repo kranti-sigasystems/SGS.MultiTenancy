@@ -6,6 +6,11 @@ namespace SGS.MultiTenancy.Core.Services
 {
     public class PasswordHasherService : IPasswordHasherService
     {
+        /// <summary>
+        /// Hashes a password.
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
@@ -14,6 +19,12 @@ namespace SGS.MultiTenancy.Core.Services
             return Convert.ToHexString(hashBytes);
         }
 
+        /// <summary>
+        /// Verigy the given hashed password with the stored hash.
+        /// </summary>
+        /// <param name="enteredPassword"></param>
+        /// <param name="storedHash"></param>
+        /// <returns></returns>
         public bool VerifyPassword(string enteredPassword, string storedHash)
         {
             string enteredPasswordHash = HashPassword(enteredPassword);

@@ -275,6 +275,14 @@ namespace SGS.MultiTenancy.Infra.Repository
             _dbSet.Update(entity);
             await Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        public async Task DeleteRangeAsync(IEnumerable<TEntity> entities)
+        {
+             _dbSet.RemoveRange(entities);
+
+            await _context.SaveChangesAsync();
+        }
         /// <summary>
         /// Persists all pending changes to the database.
         /// </summary>
