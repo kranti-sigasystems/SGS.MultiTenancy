@@ -146,5 +146,19 @@ namespace SGS.MultiTenancy.Web.Controllers
             await _roleService.UpdateRoleAsync(roleDto, tenantId);
             return RedirectToAction(nameof(Index));
         }
+
+        /// <summary>
+        /// Delete method to delete role.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            Guid tenantId = _tenantProvider.TenantId.Value;
+            await _roleService.DeleteAsync(id, tenantId);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

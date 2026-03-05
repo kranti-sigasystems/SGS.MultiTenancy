@@ -93,7 +93,7 @@ namespace SGS.MultiTenancy.Core.Services
                 }).ToListAsync();
         }
 
-       /// <inheritdoc/>
+        /// <inheritdoc/>
         public async Task<RoleDto> GetRolesByIdandTenantIdAsync(Guid roleid, Guid tenantId)
         {
 
@@ -131,7 +131,7 @@ namespace SGS.MultiTenancy.Core.Services
                                                .Distinct()
                                                .ToList() ?? new List<Guid>();
 
-                
+
                 List<Guid>? permissionsToAdd = incomingPermissionIds
                     .Except(existingPermissions)
                     .ToList();
@@ -140,7 +140,7 @@ namespace SGS.MultiTenancy.Core.Services
                     .Except(incomingPermissionIds)
                     .ToList();
 
-                
+
                 if (permissionsToAdd.Count > 0)
                 {
                     IEnumerable<RolePermission>? newEntities = permissionsToAdd
@@ -154,7 +154,7 @@ namespace SGS.MultiTenancy.Core.Services
                     await _rolePermissionRepository.AddRangeAsync(newEntities);
                 }
 
-                
+
                 if (permissionsToRemove.Count > 0)
                 {
                     List<RolePermission>? removeEntities = await _rolePermissionRepository
@@ -167,6 +167,26 @@ namespace SGS.MultiTenancy.Core.Services
                     await _rolePermissionRepository.DeleteRangeAsync(removeEntities);
                 }
 
+                await _roleRepository.CompleteAsync();
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task DeleteAsync(Guid id, Guid tenantid)
+        {
+
+            Role? role = await _roleRepository.Query(role => role.ID == id && role.TenantID == tenantid).FirstOrDefaultAsync();
+
+            if (role == null)
+            {
+                return;
+            }
+            else
+            {
+                List<RolePermission>? rolePermissions = await _rolePermissionRepository.Query(rp => rp.RoleID == id && tenantid == role.TenantID).ToListAsync();
+                await _rolePermissionRepository.DeleteRangeAsync(rolePermissions);
+                await _rolePermissionRepository.CompleteAsync();
+                await _roleRepository.DeleteAsync(role.ID);
                 await _roleRepository.CompleteAsync();
             }
         }

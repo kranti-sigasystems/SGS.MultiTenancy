@@ -251,7 +251,7 @@ namespace SGS.MultiTenancy.Infra.Repository
             var entity = await GetByIdAsync(id);
             if (entity != null)
             {
-                await DeleteAsync(entity);
+                _dbSet.Remove(entity);
             }
         }
 
@@ -279,7 +279,7 @@ namespace SGS.MultiTenancy.Infra.Repository
         /// <inheritdoc/>
         public async Task DeleteRangeAsync(IEnumerable<TEntity> entities)
         {
-             _dbSet.RemoveRange(entities);
+            _dbSet.RemoveRange(entities);
 
             await _context.SaveChangesAsync();
         }

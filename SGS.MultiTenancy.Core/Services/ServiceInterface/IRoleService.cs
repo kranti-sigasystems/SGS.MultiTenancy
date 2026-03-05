@@ -33,7 +33,6 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// </summary>
         /// <param name="roleid"></param>
         /// <param name="tenantId"></param>
-        /// <returns></returns>
         Task<RoleDto> GetRolesByIdandTenantIdAsync(Guid roleid, Guid tenantId);
 
         /// <summary>
@@ -41,7 +40,13 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// </summary>
         /// <param name="dto"></param>
         /// <param name="tenantId"></param>
-        /// <returns></returns>
         Task UpdateRoleAsync(UpdateRoleDto dto, Guid tenantId);
+
+        /// <summary>
+        /// Delete role based on the identifier and tenant id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="tenantid"></param>
+        Task DeleteAsync(Guid id, Guid tenantId);
     }
 }

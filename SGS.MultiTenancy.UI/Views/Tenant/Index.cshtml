@@ -36,17 +36,6 @@
             </select>
         </div>
 
-        @* <div class="col-md-2">
-            <select name="PageSize"
-                    class="form-select"
-                    onchange="this.form.submit()">
-                <option value="5" selected="@(query["PageSize"] == "5")">5</option>
-                <option value="10" selected="@(query["PageSize"] == "10")">10</option>
-                <option value="25" selected="@(query["PageSize"] == "25")">25</option>
-                <option value="50" selected="@(query["PageSize"] == "50")">50</option>
-            </select>
-        </div> *@
-
         <div class="col-md-2">
             <button type="submit" class="btn btn-outline-primary">
                 Apply
@@ -118,15 +107,12 @@
                     </tbody>
                 </table>
             </div>
-            @* @if (Model.Data.TotalPages > 1)
-            { *@
                 <nav class="mt-4">
                     <ul class="pagination justify-content-end">
                     <li class="page-item border border-1">
 
                         <form method="get" asp-action="Index" class="d-flex align-items-center w-100 h-100">
 
-                            <!-- Keep current page -->
                             <input type="hidden" name="page" value="Page Limit-@{@Model.Data.PageNumber}" />
 
                             <select name="PageSize"
