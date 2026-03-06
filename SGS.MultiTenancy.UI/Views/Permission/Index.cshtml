@@ -77,20 +77,26 @@
                                             </td>
 
                                             <td>
-                                                <a asp-action="EditPermission"
-                                                   asp-route-code="@permission.Code"
-                                                   class="text-muted me-2">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
+                                                @if (permission.TenantId != Guid.Empty)
+                                                {
+                                                    <a asp-action="EditPermission"
+                                                       asp-route-code="@permission.Code"
+                                                       class="text-muted me-2">
+                                                        <i class="bi bi-pencil-square fs-5"></i>
+                                                    </a>
 
-                                                <button class="bg-transparent border-0 text-muted"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deletePermissionModal-@permission.Code">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                    <button class="bg-transparent border-0 text-muted"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deletePermissionModal-@permission.Code">
+                                                        <i class="bi bi-trash fs-5"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-lock-fill text-muted" title="System Role"></i>
+                                                }
                                             </td>
                                         </tr>
-                                        @* @await Html.PartialAsync("_DeletePermissionModal", permission) *@
                                     }
                                 }
                             }

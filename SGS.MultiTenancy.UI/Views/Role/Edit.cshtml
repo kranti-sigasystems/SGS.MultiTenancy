@@ -17,7 +17,6 @@
 
         <form asp-action="Edit" method="post" class="needs-validation" novalidate>
             @Html.AntiForgeryToken()
-
             <div class="d-flex justify-content-between align-items-end mb-4">
                 <div>
                     <h2 class="fw-bold text-dark h3 mb-1">Update role</h2>
@@ -25,7 +24,7 @@
                 </div>
                 <div class="d-none d-md-flex gap-2">
                     <a asp-action="Index" class="btn btn-outline-secondary border-0 fw-semibold">Cancel</a>
-                    <button type="submit" class="btn btn-primary px-4 shadow-sm fw-semibold">Save Role</button>
+                    <button type="submit" class="btn btn-outline-primary px-4 shadow-sm fw-semibold">Save Role</button>
                 </div>
             </div>
 
@@ -109,7 +108,6 @@
 
 @section Scripts {
     <script>
-        // Live Search Filtering
         document.getElementById('permSearch').addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
             const items = document.querySelectorAll('.perm-item');
@@ -124,7 +122,6 @@
             });
         });
 
-        // Toggle all checkboxes
         document.getElementById('selectAll').addEventListener('click', function() {
             const checkboxes = document.querySelectorAll('.permission-checkbox');
             const visibleCheckboxes = Array.from(checkboxes).filter(c => c.closest('.perm-item').style.display !== 'none');
