@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
@@ -148,13 +148,15 @@ namespace SGS.MultiTenancy.Core.Services
             }
             if (tenant.LogoUrl == null)
             {
-                model.LogoUrl = await _fileStorageRepository.SaveAsync(model.BusinessLogo, model.ID.ToString());
+                model.LogoUrl = await _fileStorageRepository
+                    .SaveAsync(model.BusinessLogo, model.ID.ToString());
             }
             else
             {
                 bool fileDeteled = _fileStorageRepository.DeleteAsync(tenant.LogoUrl!);
                 if (fileDeteled)
-                    model.LogoUrl = await _fileStorageRepository.SaveAsync(model.BusinessLogo, model.ID.ToString());
+                    model.LogoUrl = await _fileStorageRepository
+                        .SaveAsync(model.BusinessLogo, model.ID.ToString());
             }
             tenant.Name = model.Name;
             tenant.Slug = model.Slug.ToLower();
@@ -187,9 +189,9 @@ namespace SGS.MultiTenancy.Core.Services
         /// Retrieves a paginated list of tenants with optional search and status filtering.
         /// </summary>
         public async Task<PagedResult<TenantDto>> GetPagedAsync(
-     PaginationParams paginationParams,
-     string? searchTerm,
-     EntityStatus? status)
+                        PaginationParams paginationParams,
+                        string? searchTerm,
+                        EntityStatus? status)
         {
             IQueryable<Tenant> query = _tenantRepo.Query();
 
