@@ -1,4 +1,4 @@
-﻿@model List<PermissionGroupViewModel>
+@model List<PermissionGroupViewModel>
 @using SGS.MultiTenancy.Core.Application.DTOs.Permission
 @{
     ViewData["Title"] = "Permissions";
@@ -10,7 +10,7 @@
     <div class="d-flex justify-content-between align-items-center my-4">
         <h4 class="fw-semibold mb-0">Permissions List</h4>
 
-        <a asp-action="CreatePermission"
+        <a asp-action="Create"
            class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
             <i class="bi bi-plus-circle me-2"></i> Create Permission
         </a>
