@@ -50,8 +50,28 @@
                                class="form-control"
                                placeholder="Enter phone number" />
                     </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Roles</label>
 
-                    <!-- STATUS -->
+                        @foreach (var role in Model.Roles)
+                        {
+                            var isChecked = Model.User.RoleIds != null &&
+                            Model.User.RoleIds.Contains(Guid.Parse(role.Value));
+
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="User.RoleIds"
+                                       value="@role.Value"
+                                       @(isChecked ? "checked" : "") />
+
+                                <label class="form-check-label">
+                                    @role.Text
+                                </label>
+                            </div>
+                        }
+                    </div>
+
                     <div class="col-md-4">
                         <label class="form-label">Status</label>
                         <div class="mt-2">
@@ -71,7 +91,6 @@
                         <span asp-validation-for="User.Status" class="text-danger"></span>
                     </div>
 
-                    <!-- AVATAR -->
                     <div class="col-md-4">
                         <label class="form-label">Avatar</label>
 

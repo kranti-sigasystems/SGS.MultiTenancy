@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+using SGS.MultiTenancy.Core.Application.DTOs.Role;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
+using SGS.MultiTenancy.Core.Services;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -15,11 +18,13 @@ namespace SGS.MultiTenancy.UI.Controllers
         private readonly IUserService _userService;
         private readonly ITenantProvider _tenantProvider;
         private readonly ILocationService _locationService;
-        public UserController(IUserService userService, ITenantProvider tenantProvider, ILocationService locationService)
+            private readonly IRoleService _roleService;
+        public UserController(IUserService userService, ITenantProvider tenantProvider, ILocationService locationService, IRoleService roleService)
         {
             _userService = userService;
             _tenantProvider = tenantProvider;
             _locationService = locationService;
+            _roleService = roleService;
         }
 
         /// <summary>
@@ -63,6 +68,13 @@ namespace SGS.MultiTenancy.UI.Controllers
         public async Task<IActionResult> Create()
         {
             UserViewModel model = new UserViewModel();
+            List<RoleDto> roles = await _roleService.GetRolesByTenantAsync((Guid)_tenantProvider.TenantId);
+
+            model.Roles = roles.Select(r => new SelectListItem
+            {
+                Value = r.ID.ToString(),
+                Text = r.Name
+            }).ToList();
 
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
             model.User.TenantId = (Guid)_tenantProvider.TenantId!;
@@ -89,41 +101,57 @@ namespace SGS.MultiTenancy.UI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserViewModel dto)
+        public async Task<IActionResult> Create(UserViewModel model)
         {
-            if (dto?.User.ProfileImage != null)
+            if (model?.User.ProfileImage != null)
             {
-                if (dto?.User.ProfileImage.Length > Constants.MaxImageSize)
+                if (model.User.ProfileImage.Length > Constants.MaxImageSize)
                 {
-                    ModelState.AddModelError(
-                        "User.ProfileImage",
-                        Constants.ImageSizeErrorMessage
-                    );
+                    ModelState.AddModelError("User.ProfileImage", Constants.ImageSizeErrorMessage);
                 }
-                else if (!dto.User.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                else if (!model.User.ProfileImage.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
                 {
-                    ModelState.AddModelError(
-                        "User.ProfileImage",
-                        Constants.ImageFormatErrorMessage
-                    );
+                    ModelState.AddModelError("User.ProfileImage", Constants.ImageFormatErrorMessage);
                 }
             }
 
+            ModelState.Remove("User.ConfirmPassword");
             if (!ModelState.IsValid)
             {
-                return View(dto);
+                Guid tenantId = (Guid)_tenantProvider.TenantId!;
+
+                List<RoleDto> roles = await _roleService.GetRolesByTenantAsync(tenantId);
+                model.Roles = roles.Select(r => new SelectListItem
+                {
+                    Value = r.ID.ToString(),
+                    Text = r.Name
+                }).ToList();
+
+                IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
+                model.Countries = countries.ToList();
+
+                if (model.User.Addresses != null && model.User.Addresses.Count > 0)
+                {
+                    IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(model.User.Addresses[0].Country));
+                    model.States = states.ToList();
+                }
+
+                return View(model);
             }
-            foreach (CreateUserAddressDto address in dto.User.Addresses)
+
+            try
             {
-                address.Country = await _locationService.GetCountryNameByIdAsync(address.Country);
-                address.State = await _locationService.GetStateNameByIdAsync(address.State);
+                model.User.TenantId = (Guid)_tenantProvider.TenantId!;
+
+                await _userService.AddUserAsync(model.User);
+
+                return RedirectToAction("Index");
             }
-            Guid tenantId = (Guid)_tenantProvider.TenantId!;
-            dto.User.TenantId = tenantId;
-            dto.User.Status = EntityStatus.Active;
-            dto.User.RoleIds.Add(Guid.Parse(Constants.UserRoleId));
-            await _userService.AddUserAsync(dto.User);
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(model);
+            }
         }
 
         /// <summary>
@@ -149,6 +177,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             IEnumerable<SelectListItem> result = states;
             return Json(result);
         }
+
         /// <summary>
         /// Retrieves a list of states with the specified country identifier.
         /// </summary>
@@ -157,25 +186,35 @@ namespace SGS.MultiTenancy.UI.Controllers
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
             UserViewModel model = new();
-            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id,tenantId);
-            var selectedValue = ((int)user.Status).ToString();
-            model.User.Status = user.Status;
+            UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id, tenantId);
+
+            if (user == null)
+                return NotFound();
+
+            model.User = user;
             model.StatusOptions = Enum.GetValues<EntityStatus>()
                 .Select(s => new SelectListItem
                 {
-                    Value = s.ToString(),  
+                    Value = ((int)s).ToString(),
                     Text = s.ToString()
                 })
                 .ToList();
 
-            model.User = user;
+            List<RoleDto> roles = await _roleService.GetRolesByTenantAsync(tenantId);
+            model.Roles = roles.Select(r => new SelectListItem
+            {
+                Value = r.ID.ToString(),
+                Text = r.Name
+            }).ToList();
 
+           
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
-            model.Countries = (List<SelectListItem>)countries;
+            model.Countries = countries.ToList();
             string firstCountryId = countries.First().Value;
             IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
-            model.States = (List<SelectListItem>)states;
-            return  View( model);
+            model.States = states.ToList();
+
+            return View(model);
         }
 
         /// <summary>
