@@ -45,5 +45,10 @@ namespace SGS.MultiTenancy.UI.Models
         /// Gets or set entitie status.
         /// </summary>
         public string Status { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or set list of roles.
+        /// </summary>
+        public List<SelectListItem> Roles { get; set; } = new();
     }
 }

@@ -217,7 +217,7 @@ namespace SGS.MultiTenancy.Core.Services
                 Email = userDto.Email,
                 UserName = userDto.UserName,
                 TenantID = userDto.TenantId,
-                Status = userDto.Status,
+                Status = EntityStatus.Active,
                 PasswordHash = _passwordHasherService.HashPassword(userDto.Password),
                 AvatarUrl = userDto.AvtarUrl,
                 CreateBy = (Guid)userDto.TenantId!,
@@ -328,6 +328,7 @@ namespace SGS.MultiTenancy.Core.Services
             user.Email = userDto.Email;
             user.UserName = userDto.UserName;
             user.Status = userDto.Status;
+           
             if (userDto.ProfileImage is not null)
             {
                 if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
@@ -336,6 +337,29 @@ namespace SGS.MultiTenancy.Core.Services
                 }
                 user.AvatarUrl = await _fileStorageRepository.SaveAsync(userDto.ProfileImage, user.ID.ToString());
             }
+            if (userDto.RoleIds != null && userDto.RoleIds.Any())
+{
+                List<Guid> existingRoleIds = await _userRoles
+                    .Query(ur => ur.UserID == user.ID)
+                    .Select(ur => ur.RoleID)
+                    .ToListAsync();
+
+                foreach (Guid roleId in userDto.RoleIds)
+                {
+
+                    if (existingRoleIds.Contains(roleId))
+                        continue;
+
+                    await _userRoles.AddAsync(new UserRoles
+                    {
+                        UserID = user.ID,
+                        RoleID = roleId,
+                        TenantID = userDto.TenantId
+                    });
+                }
+
+            await _userRoles.CompleteAsync();
+}
 
             if (userDto.Addresses != null && userDto.Addresses.Any())
             {
@@ -406,7 +430,9 @@ namespace SGS.MultiTenancy.Core.Services
                         }
                     }
                 }
+
             }
+
             await _userRepositery.UpdateAsync(user);
             return userDto;
         }
@@ -449,6 +475,10 @@ namespace SGS.MultiTenancy.Core.Services
                 AvtarUrl = u.AvatarUrl,
                 TenantId = u.TenantID,
                 Status = u.Status,
+
+                RoleIds = u.UserRoles
+                .Select(ur => ur.RoleID)
+                .ToList(),
                 Addresses = u.UserAddresses
                         .Select(ua => new CreateUserAddressDto
                         {
