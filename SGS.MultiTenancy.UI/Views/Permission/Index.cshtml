@@ -1,5 +1,6 @@
-@model List<PermissionGroupViewModel>
 @using SGS.MultiTenancy.Core.Application.DTOs.Permission
+@using SGS.MultiTenancy.Core.Domain.Common
+@model PagedListViewModel<PermissionListDto>
 @{
     ViewData["Title"] = "Permissions";
     var query = Context.Request.Query;
@@ -27,12 +28,8 @@
         </div>
 
         <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-primary">
-                Apply
-            </button>
-            <a asp-action="Index" class="btn btn-outline-secondary">
-                Reset
-            </a>
+            <button type="submit" class="btn btn-outline-primary">Apply</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
         </div>
     </form>
 
@@ -40,78 +37,205 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead>
+
+                    <thead class="bg-light">
                         <tr>
-                            <th class="border-0 rounded-start ps-sm-2">Code</th>
-                            <th class="border-0 ps-sm-2">Group</th>
-                            <th class="border-0 ps-sm-2">Description</th>
-                            <th class="border-0 ps-sm-2">Tenant Id</th>
-                            <th class="border-0 rounded-end ps-sm-3">Action</th>
+                            <th class="ps-4 py-3 border-radius-top-start-2xl">Code</th>
+                            <th class="py-3">Group</th>
+                            <th class="py-3">Name</th>
+                            <th class="py-3">Description</th>
+                            <th class="py-3">Tenant Id</th>
+                            <th class="py-3 text-end border-radius-top-end-2xl">Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @if (Model != null && Model.Any())
+
+                        @if (Model.Data.Items != null && Model.Data.Items.Any())
                         {
-                            foreach (var group in Model)
+                            foreach (var permission in Model.Data.Items)
                             {
-                                if (group.Permissions != null && group.Permissions.Any())
-                                {
-                                    foreach (PermissionItemViewModel permission in group.Permissions)
-                                    {
-                                        <tr>
-                                            <td class="fw-bold">
-                                                @(string.IsNullOrWhiteSpace(permission.Code) ? "-" : permission.Code)
-                                            </td>
+                                <tr>
 
-                                            <td>
-                                                @(string.IsNullOrWhiteSpace(group.GroupName) ? "-" : group.GroupName)
-                                            </td>
+                                    <td class="ps-4 fw-bold">
+                                        @(permission.Code ?? "-")
+                                    </td>
 
-                                            <td>
-                                                @(string.IsNullOrWhiteSpace(permission.Description) ? "-" : permission.Description)
-                                            </td>
+                                    <td>
+                                        @(permission.GroupName ?? "-")
+                                    </td>
 
-                                            <td>
-                                                @(permission.TenantId.HasValue? permission.TenantId.ToString() : "-")
-                                            </td>
+                                    <td>
+                                        @(permission.Name ?? "-")
+                                    </td>
 
-                                            <td>
-                                                @if (permission.TenantId != Guid.Empty)
-                                                {
-                                                    <a asp-action="EditPermission"
-                                                       asp-route-code="@permission.Code"
-                                                       class="text-muted me-2">
-                                                        <i class="bi bi-pencil-square fs-5"></i>
-                                                    </a>
+                                    <td class="text-muted small">
+                                        @(permission.Description ?? "-")
+                                    </td>
 
-                                                    <button class="bg-transparent border-0 text-muted"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#deletePermissionModal-@permission.Code">
-                                                        <i class="bi bi-trash fs-5"></i>
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <i class="bi bi-lock-fill text-muted" title="System Role"></i>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            }
+                                    <td>
+                                        @(permission.TenantId == Guid.Empty ? "-" : permission.TenantId.ToString())
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        @if (permission.TenantId != Guid.Empty)
+                                        {
+                                            <a asp-action="Update"
+                                               asp-route-id="@permission.Id"
+                                               class="btn btn-sm btn-link text-muted">
+                                                <i class="bi bi-pencil-square fs-5"></i>
+                                            </a>
+
+                                            @* <button class="btn btn-sm btn-link text-muted"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal"
+                                                    data-id="@permission.Id"
+                                                    data-code="@permission.Code">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button> *@
+                                            <button class="btn btn-sm btn-link text-muted"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal-@permission.Id">
+                                                <i class="bi bi-trash fs-5"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-lock-fill text-muted fs-5" title="System Permission"></i>
+                                        }
+                                    </td>
+                                    <div class="modal fade" id="deleteModal-@permission.Id" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+
+                                                <form asp-action="Delete" asp-controller="Permission" method="post">
+
+                                                    <input type="hidden" name="Id" value="@permission.Id" />
+
+                                                    @await Html.PartialAsync(
+                                                    "~/Views/Shared/Modals/_ModalHeader.cshtml",
+                                                                                        new ModalHeaderViewModel("Confirm Delete"))
+
+                                            <div class="modal-body">
+                                                Are you sure you want to delete
+                                                <strong>@permission.Code</strong>?
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button"
+                                                        class="btn btn-light"
+                                                        data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-primary">
+                                                    Delete
+                                                </button>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </tr>
+                                       }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center py-4 text-muted">
-                                    No Permissions found.
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    No records found.
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
+
+            <hr />
+
+            <nav class="mt-4">
+                <ul class="pagination justify-content-end">
+
+                    <li class="page-item">
+                        <form method="get" asp-action="Index" class="d-flex align-items-center">
+
+                            <input type="hidden" name="pageNumber" value="@Model.Data.PageNumber" />
+                            <input type="hidden" name="SearchTerm" value="@query["SearchTerm"]" />
+                            <input type="hidden" name="GroupName" value="@query["GroupName"]" />
+
+                            <select name="PageSize"
+                                    class="form-select form-select-sm mx-1"
+                                    onchange="this.form.submit()">
+
+                                <option value="5" selected="@(Model.Data.PageSize == 5)">5</option>
+                                <option value="10" selected="@(Model.Data.PageSize == 10)">10</option>
+                                <option value="25" selected="@(Model.Data.PageSize == 25)">25</option>
+                                <option value="50" selected="@(Model.Data.PageSize == 50)">50</option>
+
+                            </select>
+
+                        </form>
+                    </li>
+
+                    <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="1"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-GroupName="@query["GroupName"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            «
+                        </a>
+                    </li>
+
+                    <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="@(Model.Data.PageNumber - 1)"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-GroupName="@query["GroupName"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            ‹
+                        </a>
+                    </li>
+
+                    <li class="page-item">
+                        <span class="page-link btn-outline-primary">
+                            @Model.Data.PageNumber
+                        </span>
+                    </li>
+
+                    <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="@(Model.Data.PageNumber + 1)"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-GroupName="@query["GroupName"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            ›
+                        </a>
+                    </li>
+
+                    <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="@Model.Data.TotalPages"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-GroupName="@query["GroupName"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            »
+                        </a>
+                    </li>
+
+                    <li class="page-item">
+                        <span class="page-link text-black">
+                            @Model.Data.TotalCount
+                        </span>
+                    </li>
+
+                </ul>
+            </nav>
+
         </div>
     </div>
 </div>

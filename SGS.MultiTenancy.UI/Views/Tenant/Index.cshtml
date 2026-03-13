@@ -1,4 +1,4 @@
-ï»¿@model PagedListViewModel<TenantDto>
+@model PagedListViewModel<TenantDto>
 @using SGS.MultiTenancy.Core.Application.DTOs.Tenants
 @using SGS.MultiTenancy.Core.Domain.Enums
 
@@ -37,12 +37,8 @@
         </div>
 
         <div class="col-md-2">
-            <button type="submit" class="btn btn-outline-primary">
-                Apply
-            </button>
-            <a asp-action="Index" class="btn btn-outline-secondary">
-                Reset
-            </a>
+            <button type="submit" class="btn btn-outline-primary">Apply</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
         </div>
 
     </form>
@@ -51,14 +47,14 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead>
+                    <thead class="bg-light">
                         <tr>
-                            <th>Name</th>
-                            <th>Slug</th>
-                            <th>Domain</th>
-                            <th>Registration Number</th>
-                            <th>Status</th>
-                            <th width="120">Action</th>
+                            <th class="ps-4 py-3 border-radius-top-start-2xl">Name</th>
+                            <th class="py-3">Slug</th>
+                            <th class="py-3">Domain</th>
+                            <th class="py-3">Registration Number</th>
+                            <th class="py-3">Status</th>
+                            <th class="py-3 text-end border-radius-top-end-2xl">Action</th>
                         </tr>
                     </thead>
 
@@ -68,28 +64,32 @@
                             foreach (var t in Model.Data.Items)
                             {
                                 <tr>
-                                    <td class="fw-bold">@t.Name</td>
-                                    <td>@(string.IsNullOrWhiteSpace(t.Slug) ? "-" : t.Slug)</td>
-                                    <td>@(string.IsNullOrWhiteSpace(t.Domain) ? "-" : t.Domain)</td>
-                                    <td>@(string.IsNullOrWhiteSpace(t.RegistrationNumber) ? "-" : t.RegistrationNumber)</td>
 
-                                    <td>
+                                    <td class="ps-4 fw-bold">@t.Name</td>
+
+                                    <td class="ps-4">@(string.IsNullOrWhiteSpace(t.Slug) ? "-" : t.Slug)</td>
+
+                                    <td class="ps-4">@(string.IsNullOrWhiteSpace(t.Domain) ? "-" : t.Domain)</td>
+
+                                    <td class="ps-4">@(string.IsNullOrWhiteSpace(t.RegistrationNumber) ? "-" : t.RegistrationNumber)</td>
+
+                                    <td class="ps-4">
                                         <span class="badge @(t.Status == EntityStatus.Active ? "bg-success" : "bg-secondary")">
                                             @t.Status
                                         </span>
                                     </td>
 
-                                    <td>
+                                    <td class="text-end">
                                         <a asp-action="EditTenant"
                                            asp-route-id="@t.ID"
-                                           class="text-muted me-2">
-                                            <i class="bi bi-pencil-square"></i>
+                                           class="btn btn-sm btn-link text-muted">
+                                            <i class="bi bi-pencil-square fs-5"></i>
                                         </a>
 
-                                        <button class="bg-transparent border-0 text-muted"
+                                        <button class="btn btn-sm btn-link text-muted"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#deleteTenantModal-@t.ID">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash fs-5"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -100,26 +100,28 @@
                         {
                             <tr>
                                 <td colspan="6" class="text-center py-4 text-muted">
-                                    No tenants found.
+                                    No records found.
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
-                <nav class="mt-4">
-                    <ul class="pagination justify-content-end">
-                    <li class="page-item border border-1">
+            <hr />
+            <nav class="mt-4">
+                <ul class="pagination justify-content-end">
+                    <li class="page-item rounded-circle">
 
-                        <form method="get" asp-action="Index" class="d-flex align-items-center w-100 h-100">
+                        <form method="get" asp-action="Index" class="d-flex align-items-center w-100 h-100 border-0">
 
-                            <input type="hidden" name="page" value="Page Limit-@{@Model.Data.PageNumber}" />
+                            <input type="hidden" name="page" value="Page Limit-@{
+                            @Model.Data.PageNumber
+                                                                                                                                                                                                                                }
+" />
 
                             <select name="PageSize"
-                                    class="form-select form-select-sm border-0 "
-                                    style="width: 80px;"
+                                    class="form-select form-select-sm mx-1"
                                     onchange="this.form.submit()">
-
                                 <option value="5" selected="@(Model.Data.PageSize == 5)">5</option>
                                 <option value="10" selected="@(Model.Data.PageSize == 10)">10</option>
                                 <option value="25" selected="@(Model.Data.PageSize == 25)">25</option>
@@ -127,62 +129,60 @@
                             </select>
                         </form>
                     </li>
-                        <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-route-pageNumber="1"
-                               asp-route-SearchTerm="@query["SearchTerm"]"
-                               asp-route-Status="@query["Status"]"
-                               asp-route-PageSize="@Model.Data.PageSize">
-                               
-                                Â«
-                            </a>
-                        </li>
+                    <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="1"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-Status="@query["Status"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
 
-                        <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-route-pageNumber="@(Model.Data.PageNumber - 1)"
-                               asp-route-SearchTerm="@query["SearchTerm"]"
-                               asp-route-Status="@query["Status"]"
-                               asp-route-PageSize="@Model.Data.PageSize">
-                                â€¹
-                            </a>
-                        </li>
+                            «
+                        </a>
+                    </li>
 
-                        <li class="page-item">
-                            <span class="page-link btn-outline-primary">
-                                @Model.Data.PageNumber
-                            </span>
-                        </li>
+                    <li class="page-item @(Model.Data.PageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="@(Model.Data.PageNumber - 1)"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-Status="@query["Status"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            ‹
+                        </a>
+                    </li>
 
-                        <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-route-pageNumber="@(Model.Data.PageNumber + 1)"
-                               asp-route-SearchTerm="@query["SearchTerm"]"
-                               asp-route-Status="@query["Status"]"
-                               asp-route-PageSize="@Model.Data.PageSize">
-                                â€º
-                            </a>
-                        </li>
+                    <li class="page-item">
+                        <span class="page-link btn-outline-primary">
+                            @Model.Data.PageNumber
+                        </span>
+                    </li>
 
-                        <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-route-pageNumber="@Model.Data.TotalPages"
-                               asp-route-SearchTerm="@query["SearchTerm"]"
-                               asp-route-Status="@query["Status"]"
-                               asp-route-PageSize="@Model.Data.PageSize">
-                                Â»
-                            </a>
-                        </li>
-                        <li class="page-item ">
-                            <a class="page-link text-black">
-                            Total Count-@Model.Data.TotalCount
-                            </a>
-                        </li>
+                    <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="@(Model.Data.PageNumber + 1)"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-Status="@query["Status"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            ›
+                        </a>
+                    </li>
 
-                    </ul>
-                </nav>
-            @* } *@
+                    <li class="page-item @(Model.Data.PageNumber == Model.Data.TotalPages ? "disabled" : "")">
+                        <a class="page-link"
+                           asp-route-pageNumber="@Model.Data.TotalPages"
+                           asp-route-SearchTerm="@query["SearchTerm"]"
+                           asp-route-Status="@query["Status"]"
+                           asp-route-PageSize="@Model.Data.PageSize">
+                            »
+                        </a>
+                    </li>
+                    <li class="page-item ">
+                        <a class="page-link text-black">
+                            @Model.Data.TotalCount
+                        </a>
+                    </li>
 
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

@@ -1,5 +1,7 @@
-﻿using SGS.MultiTenancy.Core.Application.DTOs;
+using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Role;
+using SGS.MultiTenancy.Core.Application.Pagination;
+using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
@@ -48,5 +50,14 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="id"></param>
         /// <param name="tenantid"></param>
         Task DeleteAsync(Guid id, Guid tenantId);
+
+        /// <summary>
+        /// Retrive the roles by tenatn id paged form.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="paginationParams"></param>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>
+        Task<PagedResult<RoleDto>> GetRolesByTenantPagedAsync(Guid tenantId, PaginationParams paginationParams, string? searchTerm);
     }
 }

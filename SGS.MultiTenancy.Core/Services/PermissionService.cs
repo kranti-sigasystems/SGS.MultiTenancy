@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs.Permission;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Extensions;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
+using System.Diagnostics.Contracts;
 
 namespace SGS.MultiTenancy.Core.Services
 {
@@ -82,7 +85,7 @@ namespace SGS.MultiTenancy.Core.Services
             List<RolePermission> rolepermissionlist = await _rolePermissionRepository.Query(rp => rp.PermissionID == id).ToListAsync();
             await _rolePermissionRepository.DeleteRangeAsync(rolepermissionlist);
             await _rolePermissionRepository.CompleteAsync();
-            await _permissionRepository.DeleteAsync(per);
+            await _permissionRepository.DeleteAsync(per.ID);
             await _permissionRepository.CompleteAsync();
         }
 
@@ -109,12 +112,79 @@ namespace SGS.MultiTenancy.Core.Services
         /// <inheritdoc/>
         public async Task UpdatePermissionAsync(PermissionUpdateDto model)
         {
-            Permission? permission = await _permissionRepository.Query(permission => permission.ID == model.Id).FirstOrDefaultAsync();
+            Permission? permission = await _permissionRepository.Query(permission => permission.ID == model.ID).FirstOrDefaultAsync();
             if (permission == null) return;
             permission.Code = model.Code ?? permission.Code;
-            permission.Description = model.Descrition ?? permission.Description;
+            permission.Description = model.Description ?? permission.Description;
             await _permissionRepository.UpdateAsync(permission);
             await _permissionRepository.CompleteAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<PagedResult<PermissionListDto>> GetPermissionsPagedAsync(
+                           Guid tenantId,
+                           PaginationParams paginationParams,
+                           string? searchTerm,
+                           string? groupName)
+        {
+            IQueryable<Permission> query = _permissionRepository
+                .Query(p => p.TenantID == tenantId || p.TenantID == Guid.Empty)
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                string term = searchTerm.ToLower();
+
+                query = query.Where(p =>
+                    p.Code!.ToLower().Contains(term) ||
+                    p.Description!.ToLower().Contains(term));
+            }
+
+            if (!string.IsNullOrWhiteSpace(groupName))
+            {
+                query = query.Where(p => p.Code!.StartsWith(groupName + "."));
+            }
+
+            query = query.OrderBy(p => p.Code);
+
+            PagedResult<Permission> pagedPermissions =
+                await query.ToPagedResultAsync(paginationParams);
+
+            List<PermissionListDto> items = pagedPermissions.Items
+                .Select(p =>
+                {
+                    string[] parts = p.Code!.Split('.', 2);
+
+                    return new PermissionListDto
+                    {
+                        Id = p.ID,
+                        Code = p.Code,
+                        Name = parts.Length > 1 ? parts[1] : p.Code,
+                        GroupName = parts[0].ToUpper(),
+                        Description = p.Description,
+                        TenantId = Guid.Parse(p.TenantID.ToString())
+                    };
+                })
+                .ToList();
+
+            return new PagedResult<PermissionListDto>(
+                items,
+                pagedPermissions.TotalCount,
+                pagedPermissions.PageNumber,
+                pagedPermissions.PageSize);
+        }
+
+        public async Task<PermissionItemDto> GetPermissionById(Guid id)
+        {
+            Permission? permission = await _permissionRepository.Query(permission => permission.ID == id).FirstOrDefaultAsync();
+
+            return new PermissionItemDto
+            {
+                Code = permission!.Code,
+                Description = permission.Description,
+                TenantId = permission.TenantID,
+                Id = permission.ID
+            };
         }
     }
 }

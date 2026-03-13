@@ -1,0 +1,82 @@
+@using SGS.MultiTenancy.Core.Domain.Common
+@model SGS.MultiTenancy.Core.Application.DTOs.Permission.PermissionUpdateDto;
+
+@{
+    ViewData["Title"] = "Update Permission";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        @await Html.PartialAsync("~/Views/Shared/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Create Permission"))
+
+        <div class="card-body">
+            <form asp-action="Update" asp-controller="Permission" method="post" id="permissionForm">
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Group" class="form-label"></label>
+                        <input asp-for="Group" class="form-control" id="groupField" />
+                        <span asp-validation-for="Group" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Action" class="form-label"></label>
+                        <input asp-for="Action" class="form-control" id="actionField" />
+                        <span asp-validation-for="Action" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Code" class="form-label"></label>
+                    <input asp-for="Code" class="form-control" id="permissionField" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2 align-items-end justify-content-end">
+                    <a asp-action="Index" asp-controller="Permission" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-outline-primary">
+                        Update
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+
+            const groupInput = document.getElementById('groupField');
+            const actionInput = document.getElementById('actionField');
+            const permissionInput = document.getElementById('permissionField');
+
+            function updatePermission() {
+
+                const group = groupInput.value.trim();
+                const action = actionInput.value.trim();
+
+                if (group && action) {
+                    group.toLowerCase();
+                    action.toLowerCase();
+                    permissionInput.value = group + "." + action;
+                } else {
+                    permissionInput.value = "";
+                }
+            }
+            groupInput.addEventListener('input', updatePermission);
+            actionInput.addEventListener('input', updatePermission);
+
+        })();
+    </script>
+
+    <partial name="_ValidationScriptsPartial" />
+}

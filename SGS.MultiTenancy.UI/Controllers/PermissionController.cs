@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SGS.MultiTenancy.Core.Application.DTOs.Permission;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -19,39 +20,89 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <summary>
         /// Gets a Index view with all permissions grouped by their group name.
         /// </summary>
-        /// <returns></returns>
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index(
+               string? searchTerm,
+               string? groupName,
+               int pageNumber = 1,
+               int pageSize = 10)
         {
-            List<PermissionGroupDto> dto = await _permissionService.GetGroupedPermissionsAsync((Guid)_tenantProvider.TenantId!);
+            Guid tenantId = (Guid)_tenantProvider.TenantId!;
 
-            List<PermissionGroupViewModel> model = dto.Select(g => new PermissionGroupViewModel
+            PaginationParams paginationParams = new()
             {
-                GroupName = g.GroupName,
-                Permissions = g.Permissions.Select(p => new PermissionItemViewModel
-                {
-                    Id = p.Id,
-                    Code = p.Code,
-                    Name = p.Name,
-                    Description = p.Description,
-                    TenantId = p.TenantId
-                }).ToList()
-            }).ToList();
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
 
-            return View(model);
+            PagedResult<PermissionListDto> result =
+                await _permissionService.GetPermissionsPagedAsync(
+                    tenantId,
+                    paginationParams,
+                    searchTerm,
+                    groupName);
+
+            PagedListViewModel<PermissionListDto> vm = new()
+            {
+                Data = result,
+                SearchTerm = searchTerm,
+            };
+
+            return View(vm);
         }
 
+        /// <summary>
+        /// Create page form.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             return View(new PermissionCreateDto());
         }
 
+        /// <summary>
+        /// Create permission.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Create(PermissionCreateDto model)
         {
             model.Code = model.Code.ToLower();
             model.TenantId = (Guid)_tenantProvider.TenantId!;
             await _permissionService.CreatePermissionAsync(model);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(Guid Id)
+        {
+            PermissionItemDto permission = await _permissionService.GetPermissionById(Id);
+            string[] parts = permission.Code!.Split('.', 2);
+            PermissionUpdateDto model = new PermissionUpdateDto
+            {
+                Code = permission.Code,
+                Description = permission.Description,
+                Group = parts[0],
+                Action = parts[1],
+                ID = permission.Id,
+                TenantId = permission.TenantId
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(PermissionUpdateDto updateDto)
+        {
+            await _permissionService.UpdatePermissionAsync(updateDto);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _permissionService.DeletePermissionAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

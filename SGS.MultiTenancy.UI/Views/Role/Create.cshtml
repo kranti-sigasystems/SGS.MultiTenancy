@@ -122,7 +122,6 @@
             });
         });
 
-        // Toggle all checkboxes
         document.getElementById('selectAll').addEventListener('click', function() {
             const checkboxes = document.querySelectorAll('.permission-checkbox');
             const visibleCheckboxes = Array.from(checkboxes).filter(c => c.closest('.perm-item').style.display !== 'none');

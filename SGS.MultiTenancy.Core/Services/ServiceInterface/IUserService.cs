@@ -1,4 +1,6 @@
-﻿using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+using SGS.MultiTenancy.Core.Application.DTOs.Auth;
+using SGS.MultiTenancy.Core.Application.Pagination;
+using SGS.MultiTenancy.Core.Domain.Enums;
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
     public interface IUserService
@@ -33,7 +35,7 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// </summary>
         /// <param name="userDto"></param>
         /// <returns></returns>
-         Task<UserDto> AddUserAsync(UserDto userDto);
+        Task<UserDto> AddUserAsync(UserDto userDto);
 
         /// <summary>
         /// Fetch users associated with tenants.
@@ -62,5 +64,18 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// </summary>
         Task<bool> DeleteUserAsync(Guid userId, Guid tenantId);
 
+        /// <summary>
+        /// Retrive the uses in the form of the pagination.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="paginationParams"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        Task<PagedResult<UserDto>> GetUsersByTenantPagedAsync(
+               Guid tenantId,
+               PaginationParams paginationParams,
+               string? searchTerm,
+               EntityStatus? status);
     }
 }

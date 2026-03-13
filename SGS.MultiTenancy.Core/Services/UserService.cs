@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.Interfaces;
 using SGS.MultiTenancy.Core.Application.Interfaces.Repositories;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
 using SGS.MultiTenancy.Core.Domain.Enums;
@@ -493,6 +494,66 @@ namespace SGS.MultiTenancy.Core.Services
             }).FirstOrDefaultAsync();
 
             return user;
+        }
+
+        /// <inheritdoc/>
+        public async Task<PagedResult<UserDto>> GetUsersByTenantPagedAsync(
+              Guid tenantId,
+              PaginationParams paginationParams,
+              string? searchTerm,
+              EntityStatus? status)
+        {
+            IQueryable<User> query = _userRepositery
+                .Query(u => u.TenantID == tenantId)
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                string term = searchTerm.Trim().ToLower();
+
+                query = query.Where(u =>
+                    u.UserName.ToLower().Contains(term) ||
+                    u.Email.ToLower().Contains(term));
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(u => u.Status == status.Value);
+            }
+
+            int totalCount = await query.CountAsync();
+
+            List<UserDto>? users = await query
+                .OrderBy(u => u.UserName)
+                .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+                .Take(paginationParams.PageSize)
+                .Select(u => new UserDto
+                {
+                    ID = u.ID,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    AvtarUrl = u.AvatarUrl,
+                    TenantId = u.TenantID,
+                    Status = u.Status,
+                    Addresses = u.UserAddresses.Select(ua => new CreateUserAddressDto
+                    {
+                        PhoneNumber = ua.Address.PhoneNumber,
+                        AddressLine = ua.Address.AddressLine,
+                        PostalCode = ua.Address.PostalCode,
+                        City = ua.Address.City,
+                        State = ua.Address.State,
+                        Country = ua.Address.Country,
+                        IsDefault = ua.Address.IsDefault
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return new PagedResult<UserDto>(
+                users,
+                totalCount,
+                paginationParams.PageNumber,
+                paginationParams.PageSize
+            );
         }
     }
 }

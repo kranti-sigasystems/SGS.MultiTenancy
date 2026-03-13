@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Role;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Entities.Auth;
+using SGS.MultiTenancy.Core.Extensions;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 
 namespace SGS.MultiTenancy.Core.Services
@@ -189,6 +191,37 @@ namespace SGS.MultiTenancy.Core.Services
                 await _roleRepository.DeleteAsync(role.ID);
                 await _roleRepository.CompleteAsync();
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<PagedResult<RoleDto>> GetRolesByTenantPagedAsync(
+                 Guid tenantId,
+                 PaginationParams paginationParams,
+                 string? searchTerm)
+        {
+            IQueryable<Role> query = _roleRepository.Query(r => r.TenantID == tenantId);
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                string term = searchTerm.ToLower();
+
+                query = query.Where(r =>
+                    r.Name.ToLower().Contains(term) ||
+                    r.Description!.ToLower().Contains(term));
+            }
+
+            IQueryable<RoleDto> dtoQuery = query
+                .OrderBy(r => r.Name)
+                .Select(r => new RoleDto
+                {
+                    ID = r.ID,
+                    Name = r.Name,
+                    Description = r.Description,
+                    TenantID = r.TenantID,
+                    IsDefault = r.IsDefault
+                });
+
+            return await dtoQuery.ToPagedResultAsync(paginationParams);
         }
     }
 }

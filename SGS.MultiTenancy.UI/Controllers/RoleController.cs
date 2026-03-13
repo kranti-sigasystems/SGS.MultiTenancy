@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Role;
+using SGS.MultiTenancy.Core.Application.DTOs.Tenants;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Services.ServiceInterface;
 using SGS.MultiTenancy.UI.Models;
 
@@ -28,16 +30,25 @@ namespace SGS.MultiTenancy.Web.Controllers
         /// Displays the role management page for the current tenant.
         /// </summary>        
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm, int pageNumber = 1, int pageSize = 5)
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
-            List<RoleDto> roles = await _roleService.GetRolesByTenantAsync(tenantId);
 
-            CreateRoleViewModel model = new CreateRoleViewModel
+            PaginationParams paginationParams = new PaginationParams
             {
-                RolesList = roles
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
-            return View(model);
+
+            PagedResult<RoleDto>? result =
+                await _roleService.GetRolesByTenantPagedAsync(tenantId, paginationParams,searchTerm);
+
+            PagedListViewModel<RoleDto> vm = new PagedListViewModel<RoleDto>
+            {
+                Data = result,
+                SearchTerm = searchTerm,
+            };
+            return View(vm);
         }
 
         /// <summary>
