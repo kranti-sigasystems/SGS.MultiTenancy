@@ -1,4 +1,5 @@
 using SGS.MultiTenancy.Core.Application.DTOs.Permission;
+using SGS.MultiTenancy.Core.Application.Pagination;
 namespace SGS.MultiTenancy.Core.Services.ServiceInterface
 {
     public interface IPermissionService
@@ -34,5 +35,21 @@ namespace SGS.MultiTenancy.Core.Services.ServiceInterface
         /// <param name="id"></param>
         /// <returns></returns>
         Task<PermissionCreateDto> GetPermissionByAsync(Guid id);
+
+        /// <summary>
+        /// Gets a permission in the pagination format.
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="paginationParams"></param>
+        /// <param name="searchTerm"></param>
+        /// <param name="groupName"></param>
+        /// <returns></returns>
+        Task<PagedResult<PermissionListDto>> GetPermissionsPagedAsync(
+                 Guid tenantId,
+                 PaginationParams paginationParams,
+                 string? searchTerm,
+                 string? groupName);
+
+        Task<PermissionItemDto> GetPermissionById(Guid id);
     }
 }

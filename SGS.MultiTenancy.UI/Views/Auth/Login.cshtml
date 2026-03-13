@@ -1,20 +1,21 @@
-﻿@model SGS.MultiTenancy.UI.Models.LoginViewModel
+@model SGS.MultiTenancy.UI.Models.LoginViewModel
 @{
     ViewData["Title"] = "Sign In";
     Layout = "_Layout";
 }
-    <section class="vh-lg-100 bg-soft d-flex align-items-center pt-5">
-        <div class="container mt-5">
+<section class="vh-100 bg-soft d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-sm-10">
 
-            <div class="col-12 d-flex align-items-center justify-content-center">
-                <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500 mt-4">
+                <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100">
 
-                <div class="text-center mb-4 mt-md-0">
-                    <img src="~/images/SGSM.png"
-                         alt="Login"
-                         class="img-fluid mb-2"/>
-                </div>
-               
+                    <div class="text-center mb-4 mt-md-0">
+                        <img src="~/images/SGSM.png"
+                             alt="Login"
+                             class="img-fluid mb-2" />
+                    </div>
+
                     @if (TempData["SuccessMessage"] is string successMessage && !string.IsNullOrWhiteSpace(successMessage))
                     {
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -37,7 +38,7 @@
                         <div class="form-group mb-4">
                             <label class="form-label">User Name</label>
                             <div class="input-group">
-                                <span class="input-group-text">
+                                <span class="input-group-text mx-1">
                                     <svg class="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm-7 8a7 7 0 1114 0H3z"></path>
                                     </svg>
@@ -53,7 +54,7 @@
                         <div class="form-group mb-4">
                             <label class="form-label">Password</label>
                             <div class="input-group">
-                                <span class="input-group-text">
+                                <span class="input-group-text mx-1">
                                     <svg class="icon icon-xs text-gray-600"
                                          fill="currentColor"
                                          viewBox="0 0 20 20">
@@ -80,7 +81,8 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 @section Scripts {
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

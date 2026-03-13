@@ -1,5 +1,6 @@
-﻿@using SGS.MultiTenancy.Core.Domain.Common
-@model SGS.MultiTenancy.UI.Models.UserViewModel
+@using SGS.MultiTenancy.Core.Application.DTOs.Auth
+@using SGS.MultiTenancy.Core.Domain.Common
+@model SGS.MultiTenancy.UI.Models.PagedListViewModel<UserDto>
 @{
     ViewData["Title"] = "Users";
 }
@@ -32,9 +33,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model.UserList != null && Model.UserList.Any())
+                        @if (Model.Data.Items != null && Model.Data.Items.Any())
                         {
-                            @foreach (var user in Model.UserList)
+                            @foreach (var user in Model.Data.Items)
                             {
                                 <tr>
                                     <td class="fw-bold">@user.UserName</td>
@@ -129,9 +130,7 @@
 
                             @await Html.PartialAsync("_DeleteUserModal", new UserViewModel
                                                         {
-                                                            User = user,
-                                                            States = Model.States,
-                                                            Countries = Model.Countries
+                                                            User = user                                                        
                                                         })
                         </tr>
                                                 }

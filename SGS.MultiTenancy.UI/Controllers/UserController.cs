@@ -1,10 +1,11 @@
-﻿using Humanizer;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SGS.MultiTenancy.Core.Application.DTOs;
 using SGS.MultiTenancy.Core.Application.DTOs.Auth;
 using SGS.MultiTenancy.Core.Application.DTOs.Role;
 using SGS.MultiTenancy.Core.Application.Interfaces;
+using SGS.MultiTenancy.Core.Application.Pagination;
 using SGS.MultiTenancy.Core.Domain.Common;
 using SGS.MultiTenancy.Core.Domain.Enums;
 using SGS.MultiTenancy.Core.Services;
@@ -30,37 +31,42 @@ namespace SGS.MultiTenancy.UI.Controllers
         /// <summary>
         /// Returns the default view for the Index page.
         /// </summary>
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( string? searchTerm, EntityStatus? status, int pageNumber = 1, int pageSize = 5)
         {
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
 
-            List<UserDto> users = await _userService.GetUsersByTenantAsync(tenantId);
-            UserViewModel model = new UserViewModel();
+            PaginationParams paginationParams = new PaginationParams
+                                {
+                                    PageNumber = pageNumber,
+                                    PageSize = pageSize
+                                      };
 
+            PagedResult<UserDto>? result =
+                await _userService.GetUsersByTenantPagedAsync( tenantId, paginationParams,  searchTerm,status);
 
-            foreach (UserDto user in users)
+            if (result?.Items != null)
             {
-                if (user.Addresses == null || !user.Addresses.Any())
+                foreach (var user in result.Items)
                 {
-                    user.Addresses = new List<CreateUserAddressDto>
+                    if (user.Addresses == null || !user.Addresses.Any())
                     {
-                        new CreateUserAddressDto()
-                    };
+                        user.Addresses = new List<CreateUserAddressDto>
+                {
+                    new CreateUserAddressDto()
+                };
+                    }
                 }
             }
 
-            model.UserList = users;
-            
-            model.StatusOptions = Enum.GetValues<EntityStatus>()
-           .Select(s => new SelectListItem
-           {
-               Value = ((int)s).ToString(),
-               Text = s.ToString(),
-               Selected = s == model.User.Status
-           });
-            return View(model);
+            PagedListViewModel<UserDto> vm = new PagedListViewModel<UserDto>
+            {
+                Data = result!,
+                SearchTerm = searchTerm,
+                Status = status
+            };
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            return View(vm);
         }
-
         /// <summary>
         /// Creates a new user form.
         /// </summary>
@@ -101,6 +107,7 @@ namespace SGS.MultiTenancy.UI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Create(UserViewModel model)
         {
             if (model?.User.ProfileImage != null)
@@ -187,15 +194,12 @@ namespace SGS.MultiTenancy.UI.Controllers
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
             UserViewModel model = new();
             UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id, tenantId);
-
-            if (user == null)
-                return NotFound();
-
-            model.User = user;
+            string? selectedValue = ((int)user.Status).ToString();
+            model.User.Status = user.Status;
             model.StatusOptions = Enum.GetValues<EntityStatus>()
                 .Select(s => new SelectListItem
                 {
-                    Value = ((int)s).ToString(),
+                    Value = s.ToString(),
                     Text = s.ToString()
                 })
                 .ToList();
@@ -206,14 +210,13 @@ namespace SGS.MultiTenancy.UI.Controllers
                 Value = r.ID.ToString(),
                 Text = r.Name
             }).ToList();
-
+            model.User = user;
            
             IEnumerable<SelectListItem> countries = await _locationService.GetCountriesAsync();
             model.Countries = countries.ToList();
             string firstCountryId = countries.First().Value;
             IEnumerable<SelectListItem> states = await _locationService.GetStatesByCountryAsync(Guid.Parse(firstCountryId));
-            model.States = states.ToList();
-
+            model.States = (List<SelectListItem>)states;
             return View(model);
         }
 
