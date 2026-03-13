@@ -58,7 +58,7 @@ namespace SGS.MultiTenancy.UI.Controllers
                 }
             }
 
-            var vm = new PagedListViewModel<UserDto>
+            PagedListViewModel<UserDto> vm = new PagedListViewModel<UserDto>
             {
                 Data = result!,
                 SearchTerm = searchTerm,
@@ -194,7 +194,7 @@ namespace SGS.MultiTenancy.UI.Controllers
             Guid tenantId = (Guid)_tenantProvider.TenantId!;
             UserViewModel model = new();
             UserDto? user = await _userService.GetUserByTenantIDAndUserIDAsync(id, tenantId);
-            var selectedValue = ((int)user.Status).ToString();
+            string? selectedValue = ((int)user.Status).ToString();
             model.User.Status = user.Status;
             model.StatusOptions = Enum.GetValues<EntityStatus>()
                 .Select(s => new SelectListItem
